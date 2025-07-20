@@ -1,0 +1,44 @@
+syntax = "proto3";
+package user_profile;
+
+import "google/protobuf/timestamp.proto";
+
+service UserProfileService {
+  rpc GetProfile (GetProfileRequest) returns (GetProfileResponse);
+  rpc UpdateProfile (UpdateProfileRequest) returns (UpdateProfileResponse);
+}
+
+message GetProfileRequest {
+  int64 user_id = 1;
+}
+
+message GetProfileResponse {
+  int64 user_id = 1;
+  string name = 2;
+  string email = 3;
+  string phone = 4;
+  string avatar_url = 5;
+  bool is_verified = 6;
+  google.protobuf.Timestamp registered_at = 7;
+  UserRole role = 8;
+}
+
+message UpdateProfileRequest {
+  int64 user_id = 1;
+  string name = 2;
+  string email = 3;
+  string phone = 4;
+  string avatar_url = 5;
+}
+
+message UpdateProfileResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+enum UserRole {
+  UNKNOWN = 0;
+  DONOR = 1;
+  DOCTOR = 2;
+  ADMIN = 3;
+}
