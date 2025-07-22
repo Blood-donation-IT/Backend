@@ -2,6 +2,7 @@ from src.domain.irepositories.i_user_repository import IUserRepository
 from src.domain.services.i_id_generator import IIDGenerator
 from src.domain.entities.user import User
 import datetime
+from typing import Optional
 class CreateUserUseCase:
     def __init__(self, repository: IUserRepository,
                  id_generator: IIDGenerator):
@@ -10,10 +11,15 @@ class CreateUserUseCase:
     def execute(self,
                 full_name:str,
                 email:str,
-                blood_type:str|None=None,
+                blood_type:Optional[str]=None,
                 is_verified:bool=False,
                 total_donations:int=0,
-                last_donation_at:datetime.datetime|None=None)->int:
+                last_donation_at:Optional[datetime.datetime]=None,
+                roles: Optional[list[str]] = None,
+                is_active: bool = True,
+                is_banned: bool = False,
+                created_at: Optional[datetime.datetime] = None,
+                updated_at: Optional[datetime.datetime] = None)->int:
         user_id:int = self.id_generator.generate()
         user:User = User(
             id=user_id,
@@ -22,7 +28,13 @@ class CreateUserUseCase:
             blood_type=blood_type,
             is_verified=is_verified,
             total_donations=total_donations,
-            last_donation_at=last_donation_at
+            last_donation_at=last_donation_at,
+            roles=roles,
+            is_active=is_active,
+            is_banned=is_banned,
+            created_at=created_at,
+            updated_at=updated_at 
+            
         )
         self.user_repository.save(user)
         return user_id
