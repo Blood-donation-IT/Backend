@@ -1,6 +1,6 @@
 from src.domain.irepositories.i_user_repository import IUserRepository
 from src.domain.services.i_id_generator import IIDGenerator
-from src.domain.models.user import User
+from src.domain.entities.user import User
 import datetime
 class CreateUserUseCase:
     def __init__(self, repository: IUserRepository,
