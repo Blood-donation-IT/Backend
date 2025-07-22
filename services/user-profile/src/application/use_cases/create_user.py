@@ -8,7 +8,7 @@ class CreateUserUseCase:
                  id_generator: IIDGenerator):
         self.user_repository:IUserRepository = repository
         self.id_generator:IIDGenerator = id_generator
-    def execute(self,
+    async def execute(self,
                 full_name:str,
                 email:str,
                 blood_type:Optional[str]=None,
@@ -36,7 +36,7 @@ class CreateUserUseCase:
             updated_at=updated_at 
             
         )
-        self.user_repository.save(user)
+        await self.user_repository.save(user)
         return user_id
     
         
