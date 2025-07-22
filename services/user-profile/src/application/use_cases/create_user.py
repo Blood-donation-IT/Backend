@@ -24,7 +24,7 @@ class CreateUserUseCase:
             total_donations=total_donations,
             last_donation_at=last_donation_at
         )
-        # self.user_repository. 
+        self.user_repository.save(user)
         return user_id
     
         
