@@ -1,4 +1,5 @@
 import datetime
+from typing import Optional
 
 class User:
     def __init__(self, id: int,
@@ -7,8 +8,12 @@ class User:
                  blood_type: str = None,
                  is_verified: bool = False,
                  total_donations: int = 0,
-                 last_donation_at: datetime.datetime = None,
-                 
+                 last_donation_at: Optional[datetime.datetime] = None,
+                 roles: Optional[list[str]] = None,
+                 is_active: bool = True,
+                 is_banned: bool = False,
+                 created_at: Optional[datetime.datetime] = None,
+                 updated_at: Optional[datetime.datetime] = None,
                  ):
         self.id:int = id
         self.full_name:str = full_name
@@ -16,7 +21,12 @@ class User:
         self.blood_type:str = blood_type
         self.is_verified:bool = is_verified
         self.total_donations:int = total_donations
-        self.last_donation_at:datetime.datetime = last_donation_at
+        self.last_donation_at:Optional[datetime.datetime] = last_donation_at
+        self.roles:Optional[list[str]] = roles or ["donor"]
+        self.is_active:bool = is_active
+        self.is_banned:bool = is_banned
+        self.created_at:Optional[datetime.datetime] = created_at
+        self.updated_at:Optional[datetime.datetime] = updated_at
         
         
         #??
