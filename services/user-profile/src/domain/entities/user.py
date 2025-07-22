@@ -1,7 +1,5 @@
 import datetime
-from dataclasses import dataclass
 
-@dataclass
 class User:
     def __init__(self, id: int,
                  full_name: str,
