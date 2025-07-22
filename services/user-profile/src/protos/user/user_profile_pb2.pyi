@@ -4,7 +4,9 @@ isort:skip_file
 """
 
 import builtins
+import collections.abc
 import google.protobuf.descriptor
+import google.protobuf.internal.containers
 import google.protobuf.internal.enum_type_wrapper
 import google.protobuf.message
 import google.protobuf.timestamp_pb2
@@ -38,7 +40,7 @@ ADMIN: UserRole.ValueType  # 3
 global___UserRole = UserRole
 
 @typing.final
-class GetProfileRequest(google.protobuf.message.Message):
+class DeleteProfileRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     USER_ID_FIELD_NUMBER: builtins.int
@@ -50,14 +52,87 @@ class GetProfileRequest(google.protobuf.message.Message):
     ) -> None: ...
     def ClearField(self, field_name: typing.Literal["user_id", b"user_id"]) -> None: ...
 
-global___GetProfileRequest = GetProfileRequest
+global___DeleteProfileRequest = DeleteProfileRequest
+
+@typing.final
+class DeleteProfileResponse(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    SUCCESS_FIELD_NUMBER: builtins.int
+    MESSAGE_FIELD_NUMBER: builtins.int
+    success: builtins.bool
+    message: builtins.str
+    def __init__(
+        self,
+        *,
+        success: builtins.bool = ...,
+        message: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["message", b"message", "success", b"success"]) -> None: ...
+
+global___DeleteProfileResponse = DeleteProfileResponse
+
+@typing.final
+class GetProfileRequestByEmail(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    EMAIL_FIELD_NUMBER: builtins.int
+    email: builtins.str
+    def __init__(
+        self,
+        *,
+        email: builtins.str = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["email", b"email"]) -> None: ...
+
+global___GetProfileRequestByEmail = GetProfileRequestByEmail
+
+@typing.final
+class CreateProfileRequest(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    FULL_NAME_FIELD_NUMBER: builtins.int
+    EMAIL_FIELD_NUMBER: builtins.int
+    PHONE_FIELD_NUMBER: builtins.int
+    ROLES_FIELD_NUMBER: builtins.int
+    full_name: builtins.str
+    email: builtins.str
+    phone: builtins.str
+    @property
+    def roles(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[global___UserRole.ValueType]: ...
+    def __init__(
+        self,
+        *,
+        full_name: builtins.str = ...,
+        email: builtins.str = ...,
+        phone: builtins.str = ...,
+        roles: collections.abc.Iterable[global___UserRole.ValueType] | None = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["email", b"email", "full_name", b"full_name", "phone", b"phone", "roles", b"roles"]) -> None: ...
+
+global___CreateProfileRequest = CreateProfileRequest
+
+@typing.final
+class GetProfileRequestById(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    USER_ID_FIELD_NUMBER: builtins.int
+    user_id: builtins.int
+    def __init__(
+        self,
+        *,
+        user_id: builtins.int = ...,
+    ) -> None: ...
+    def ClearField(self, field_name: typing.Literal["user_id", b"user_id"]) -> None: ...
+
+global___GetProfileRequestById = GetProfileRequestById
 
 @typing.final
 class GetProfileResponse(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     USER_ID_FIELD_NUMBER: builtins.int
-    NAME_FIELD_NUMBER: builtins.int
+    FULL_NAME_FIELD_NUMBER: builtins.int
     EMAIL_FIELD_NUMBER: builtins.int
     PHONE_FIELD_NUMBER: builtins.int
     AVATAR_URL_FIELD_NUMBER: builtins.int
@@ -65,7 +140,7 @@ class GetProfileResponse(google.protobuf.message.Message):
     REGISTERED_AT_FIELD_NUMBER: builtins.int
     ROLE_FIELD_NUMBER: builtins.int
     user_id: builtins.int
-    name: builtins.str
+    full_name: builtins.str
     email: builtins.str
     phone: builtins.str
     avatar_url: builtins.str
@@ -77,7 +152,7 @@ class GetProfileResponse(google.protobuf.message.Message):
         self,
         *,
         user_id: builtins.int = ...,
-        name: builtins.str = ...,
+        full_name: builtins.str = ...,
         email: builtins.str = ...,
         phone: builtins.str = ...,
         avatar_url: builtins.str = ...,
@@ -86,7 +161,7 @@ class GetProfileResponse(google.protobuf.message.Message):
         role: global___UserRole.ValueType = ...,
     ) -> None: ...
     def HasField(self, field_name: typing.Literal["registered_at", b"registered_at"]) -> builtins.bool: ...
-    def ClearField(self, field_name: typing.Literal["avatar_url", b"avatar_url", "email", b"email", "is_verified", b"is_verified", "name", b"name", "phone", b"phone", "registered_at", b"registered_at", "role", b"role", "user_id", b"user_id"]) -> None: ...
+    def ClearField(self, field_name: typing.Literal["avatar_url", b"avatar_url", "email", b"email", "full_name", b"full_name", "is_verified", b"is_verified", "phone", b"phone", "registered_at", b"registered_at", "role", b"role", "user_id", b"user_id"]) -> None: ...
 
 global___GetProfileResponse = GetProfileResponse
 
@@ -95,25 +170,35 @@ class UpdateProfileRequest(google.protobuf.message.Message):
     DESCRIPTOR: google.protobuf.descriptor.Descriptor
 
     USER_ID_FIELD_NUMBER: builtins.int
-    NAME_FIELD_NUMBER: builtins.int
+    FULL_NAME_FIELD_NUMBER: builtins.int
     EMAIL_FIELD_NUMBER: builtins.int
-    PHONE_FIELD_NUMBER: builtins.int
-    AVATAR_URL_FIELD_NUMBER: builtins.int
+    BLOOD_TYPE_FIELD_NUMBER: builtins.int
+    ROLES_FIELD_NUMBER: builtins.int
+    IS_VERIFIED_FIELD_NUMBER: builtins.int
+    IS_ACTIVE_FIELD_NUMBER: builtins.int
+    IS_BANNED_FIELD_NUMBER: builtins.int
     user_id: builtins.int
-    name: builtins.str
+    full_name: builtins.str
     email: builtins.str
-    phone: builtins.str
-    avatar_url: builtins.str
+    blood_type: builtins.str
+    is_verified: builtins.bool
+    is_active: builtins.bool
+    is_banned: builtins.bool
+    @property
+    def roles(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[global___UserRole.ValueType]: ...
     def __init__(
         self,
         *,
         user_id: builtins.int = ...,
-        name: builtins.str = ...,
+        full_name: builtins.str = ...,
         email: builtins.str = ...,
-        phone: builtins.str = ...,
-        avatar_url: builtins.str = ...,
+        blood_type: builtins.str = ...,
+        roles: collections.abc.Iterable[global___UserRole.ValueType] | None = ...,
+        is_verified: builtins.bool = ...,
+        is_active: builtins.bool = ...,
+        is_banned: builtins.bool = ...,
     ) -> None: ...
-    def ClearField(self, field_name: typing.Literal["avatar_url", b"avatar_url", "email", b"email", "name", b"name", "phone", b"phone", "user_id", b"user_id"]) -> None: ...
+    def ClearField(self, field_name: typing.Literal["blood_type", b"blood_type", "email", b"email", "full_name", b"full_name", "is_active", b"is_active", "is_banned", b"is_banned", "is_verified", b"is_verified", "roles", b"roles", "user_id", b"user_id"]) -> None: ...
 
 global___UpdateProfileRequest = UpdateProfileRequest
 
@@ -134,3 +219,56 @@ class UpdateProfileResponse(google.protobuf.message.Message):
     def ClearField(self, field_name: typing.Literal["message", b"message", "success", b"success"]) -> None: ...
 
 global___UpdateProfileResponse = UpdateProfileResponse
+
+@typing.final
+class UserProfile(google.protobuf.message.Message):
+    DESCRIPTOR: google.protobuf.descriptor.Descriptor
+
+    USER_ID_FIELD_NUMBER: builtins.int
+    FULL_NAME_FIELD_NUMBER: builtins.int
+    EMAIL_FIELD_NUMBER: builtins.int
+    BLOOD_TYPE_FIELD_NUMBER: builtins.int
+    IS_VERIFIED_FIELD_NUMBER: builtins.int
+    TOTAL_DONATIONS_FIELD_NUMBER: builtins.int
+    LAST_DONATION_AT_FIELD_NUMBER: builtins.int
+    ROLES_FIELD_NUMBER: builtins.int
+    IS_ACTIVE_FIELD_NUMBER: builtins.int
+    IS_BANNED_FIELD_NUMBER: builtins.int
+    CREATED_AT_FIELD_NUMBER: builtins.int
+    UPDATED_AT_FIELD_NUMBER: builtins.int
+    user_id: builtins.int
+    full_name: builtins.str
+    email: builtins.str
+    blood_type: builtins.str
+    is_verified: builtins.bool
+    total_donations: builtins.int
+    is_active: builtins.bool
+    is_banned: builtins.bool
+    @property
+    def last_donation_at(self) -> google.protobuf.timestamp_pb2.Timestamp: ...
+    @property
+    def roles(self) -> google.protobuf.internal.containers.RepeatedScalarFieldContainer[global___UserRole.ValueType]: ...
+    @property
+    def created_at(self) -> google.protobuf.timestamp_pb2.Timestamp: ...
+    @property
+    def updated_at(self) -> google.protobuf.timestamp_pb2.Timestamp: ...
+    def __init__(
+        self,
+        *,
+        user_id: builtins.int = ...,
+        full_name: builtins.str = ...,
+        email: builtins.str = ...,
+        blood_type: builtins.str = ...,
+        is_verified: builtins.bool = ...,
+        total_donations: builtins.int = ...,
+        last_donation_at: google.protobuf.timestamp_pb2.Timestamp | None = ...,
+        roles: collections.abc.Iterable[global___UserRole.ValueType] | None = ...,
+        is_active: builtins.bool = ...,
+        is_banned: builtins.bool = ...,
+        created_at: google.protobuf.timestamp_pb2.Timestamp | None = ...,
+        updated_at: google.protobuf.timestamp_pb2.Timestamp | None = ...,
+    ) -> None: ...
+    def HasField(self, field_name: typing.Literal["created_at", b"created_at", "last_donation_at", b"last_donation_at", "updated_at", b"updated_at"]) -> builtins.bool: ...
+    def ClearField(self, field_name: typing.Literal["blood_type", b"blood_type", "created_at", b"created_at", "email", b"email", "full_name", b"full_name", "is_active", b"is_active", "is_banned", b"is_banned", "is_verified", b"is_verified", "last_donation_at", b"last_donation_at", "roles", b"roles", "total_donations", b"total_donations", "updated_at", b"updated_at", "user_id", b"user_id"]) -> None: ...
+
+global___UserProfile = UserProfile

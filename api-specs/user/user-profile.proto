@@ -4,17 +4,37 @@ package user_profile;
 import "google/protobuf/timestamp.proto";
 
 service UserProfileService {
-  rpc GetProfile (GetProfileRequest) returns (GetProfileResponse);
+  rpc GetProfileById (GetProfileRequestById) returns (UserProfile);
+  rpc GetProfileByEmail (GetProfileRequestByEmail) returns (UserProfile);
   rpc UpdateProfile (UpdateProfileRequest) returns (UpdateProfileResponse);
+  rpc CreateProfile (CreateProfileRequest) returns (UserProfile);
+  rpc DeleteProfile (DeleteProfileRequest) returns (DeleteProfileResponse);
+}
+message DeleteProfileRequest {
+  int64 user_id = 1;
+}
+message DeleteProfileResponse {
+  bool success = 1;
+  string message = 2;
+}
+message GetProfileRequestByEmail {
+  string email = 1;
 }
 
-message GetProfileRequest {
+message CreateProfileRequest {
+  string full_name = 1;
+  string email = 2;
+  string phone = 3;
+  repeated UserRole roles = 4;
+}
+
+message GetProfileRequestById {
   int64 user_id = 1;
 }
 
 message GetProfileResponse {
   int64 user_id = 1;
-  string name = 2;
+  string full_name = 2;
   string email = 3;
   string phone = 4;
   string avatar_url = 5;
@@ -25,15 +45,33 @@ message GetProfileResponse {
 
 message UpdateProfileRequest {
   int64 user_id = 1;
-  string name = 2;
+  string full_name = 2;
   string email = 3;
-  string phone = 4;
-  string avatar_url = 5;
+  string blood_type = 4;
+  repeated UserRole roles = 5;
+  bool is_verified = 6;
+  bool is_active = 7;
+  bool is_banned = 8;
 }
 
 message UpdateProfileResponse {
   bool success = 1;
   string message = 2;
+}
+
+message UserProfile {
+  int64 user_id = 1;
+  string full_name = 2;
+  string email = 3;
+  string blood_type = 4;
+  bool is_verified = 5;
+  int32 total_donations = 6;
+  google.protobuf.Timestamp last_donation_at = 7;
+  repeated UserRole roles = 8;
+  bool is_active = 9;
+  bool is_banned = 10;
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp updated_at = 12;
 }
 
 enum UserRole {

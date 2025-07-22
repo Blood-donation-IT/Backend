@@ -34,22 +34,43 @@ class UserProfileServiceStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.GetProfile = channel.unary_unary(
-                '/user_profile.UserProfileService/GetProfile',
-                request_serializer=user_dot_user__profile__pb2.GetProfileRequest.SerializeToString,
-                response_deserializer=user_dot_user__profile__pb2.GetProfileResponse.FromString,
+        self.GetProfileById = channel.unary_unary(
+                '/user_profile.UserProfileService/GetProfileById',
+                request_serializer=user_dot_user__profile__pb2.GetProfileRequestById.SerializeToString,
+                response_deserializer=user_dot_user__profile__pb2.UserProfile.FromString,
+                _registered_method=True)
+        self.GetProfileByEmail = channel.unary_unary(
+                '/user_profile.UserProfileService/GetProfileByEmail',
+                request_serializer=user_dot_user__profile__pb2.GetProfileRequestByEmail.SerializeToString,
+                response_deserializer=user_dot_user__profile__pb2.UserProfile.FromString,
                 _registered_method=True)
         self.UpdateProfile = channel.unary_unary(
                 '/user_profile.UserProfileService/UpdateProfile',
                 request_serializer=user_dot_user__profile__pb2.UpdateProfileRequest.SerializeToString,
                 response_deserializer=user_dot_user__profile__pb2.UpdateProfileResponse.FromString,
                 _registered_method=True)
+        self.CreateProfile = channel.unary_unary(
+                '/user_profile.UserProfileService/CreateProfile',
+                request_serializer=user_dot_user__profile__pb2.CreateProfileRequest.SerializeToString,
+                response_deserializer=user_dot_user__profile__pb2.UserProfile.FromString,
+                _registered_method=True)
+        self.DeleteProfile = channel.unary_unary(
+                '/user_profile.UserProfileService/DeleteProfile',
+                request_serializer=user_dot_user__profile__pb2.DeleteProfileRequest.SerializeToString,
+                response_deserializer=user_dot_user__profile__pb2.DeleteProfileResponse.FromString,
+                _registered_method=True)
 
 
 class UserProfileServiceServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def GetProfile(self, request, context):
+    def GetProfileById(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetProfileByEmail(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -61,18 +82,45 @@ class UserProfileServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def CreateProfile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def DeleteProfile(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_UserProfileServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'GetProfile': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetProfile,
-                    request_deserializer=user_dot_user__profile__pb2.GetProfileRequest.FromString,
-                    response_serializer=user_dot_user__profile__pb2.GetProfileResponse.SerializeToString,
+            'GetProfileById': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetProfileById,
+                    request_deserializer=user_dot_user__profile__pb2.GetProfileRequestById.FromString,
+                    response_serializer=user_dot_user__profile__pb2.UserProfile.SerializeToString,
+            ),
+            'GetProfileByEmail': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetProfileByEmail,
+                    request_deserializer=user_dot_user__profile__pb2.GetProfileRequestByEmail.FromString,
+                    response_serializer=user_dot_user__profile__pb2.UserProfile.SerializeToString,
             ),
             'UpdateProfile': grpc.unary_unary_rpc_method_handler(
                     servicer.UpdateProfile,
                     request_deserializer=user_dot_user__profile__pb2.UpdateProfileRequest.FromString,
                     response_serializer=user_dot_user__profile__pb2.UpdateProfileResponse.SerializeToString,
+            ),
+            'CreateProfile': grpc.unary_unary_rpc_method_handler(
+                    servicer.CreateProfile,
+                    request_deserializer=user_dot_user__profile__pb2.CreateProfileRequest.FromString,
+                    response_serializer=user_dot_user__profile__pb2.UserProfile.SerializeToString,
+            ),
+            'DeleteProfile': grpc.unary_unary_rpc_method_handler(
+                    servicer.DeleteProfile,
+                    request_deserializer=user_dot_user__profile__pb2.DeleteProfileRequest.FromString,
+                    response_serializer=user_dot_user__profile__pb2.DeleteProfileResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -86,7 +134,7 @@ class UserProfileService(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def GetProfile(request,
+    def GetProfileById(request,
             target,
             options=(),
             channel_credentials=None,
@@ -99,9 +147,36 @@ class UserProfileService(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/user_profile.UserProfileService/GetProfile',
-            user_dot_user__profile__pb2.GetProfileRequest.SerializeToString,
-            user_dot_user__profile__pb2.GetProfileResponse.FromString,
+            '/user_profile.UserProfileService/GetProfileById',
+            user_dot_user__profile__pb2.GetProfileRequestById.SerializeToString,
+            user_dot_user__profile__pb2.UserProfile.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetProfileByEmail(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/user_profile.UserProfileService/GetProfileByEmail',
+            user_dot_user__profile__pb2.GetProfileRequestByEmail.SerializeToString,
+            user_dot_user__profile__pb2.UserProfile.FromString,
             options,
             channel_credentials,
             insecure,
@@ -129,6 +204,60 @@ class UserProfileService(object):
             '/user_profile.UserProfileService/UpdateProfile',
             user_dot_user__profile__pb2.UpdateProfileRequest.SerializeToString,
             user_dot_user__profile__pb2.UpdateProfileResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def CreateProfile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/user_profile.UserProfileService/CreateProfile',
+            user_dot_user__profile__pb2.CreateProfileRequest.SerializeToString,
+            user_dot_user__profile__pb2.UserProfile.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def DeleteProfile(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/user_profile.UserProfileService/DeleteProfile',
+            user_dot_user__profile__pb2.DeleteProfileRequest.SerializeToString,
+            user_dot_user__profile__pb2.DeleteProfileResponse.FromString,
             options,
             channel_credentials,
             insecure,
