@@ -8,6 +8,7 @@ services:
       - user-profile-db
     environment:
       - DATABASE_URL=postgresql+asyncpg://user:password@user-profile-db:5432/user_profile_db
+      - PYTHONPATH=/app/service/src
     ports:
       - "5001:50051"
     networks:

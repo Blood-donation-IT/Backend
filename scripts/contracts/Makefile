@@ -11,3 +11,7 @@ proto:
 		--python_out=$(PROTO_OUT) \
 		--grpc_python_out=$(PROTO_OUT) \
 		$(PROTO_SRC)/user/*.proto
+	
+	find $(PROTO_OUT)/user -name "*_pb2_grpc.py" -exec sed -i '' 's/^from user import/from . import/' {} \;
+# Fix imports in generated files
+# For files in contracts/src/contracts/user, change 'from user import' to 'from . import'
