@@ -1,11 +1,13 @@
-
 ROOT_DIR := $(shell git rev-parse --show-toplevel)
 PROTO_DIR := $(ROOT_DIR)/api-specs/user
 OUTPUT_DIR := $(ROOT_DIR)/services/user-profile/src/protos
+# PROTO_FILE := $(PROTO_DIR)/user-profile.proto
 PROTO_FILE := $(PROTO_DIR)/user-profile.proto
 
 proto:
-	@mkdir -p $(OUTPUT_DIR)
+	@mkdir -p $(OUTPUT_DIR)/user
+	@touch $(OUTPUT_DIR)/__init__.py
+	@touch $(OUTPUT_DIR)/user/__init__.py
 	@echo "Generating gRPC files from $(PROTO_FILE)..."
 	python -m grpc_tools.protoc \
 		-I=$(ROOT_DIR)/api-specs \
