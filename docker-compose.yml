@@ -1,11 +1,13 @@
 services:
   user-profile:
-    build: ./services/user-profile
+    build:
+      context: .
+      dockerfile: ./services/user-profile/Dockerfile
     container_name: user-profile
     depends_on:
       - user-profile-db
     environment:
-      - DATABASE_URL=postgresql://user:password@user-profile-db:5432/user_profile_db
+      - DATABASE_URL=postgresql+asyncpg://user:password@user-profile-db:5432/user_profile_db
     ports:
       - "5001:50051"
     networks:
