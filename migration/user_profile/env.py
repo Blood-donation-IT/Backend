@@ -23,7 +23,7 @@ if config.config_file_name is not None:
 
 target_metadata = Base.metadata
 
-DATABASE_URL: Optional[str] = os.getenv("DATABASE_URL")
+DATABASE_URL: Optional[str] = "postgresql+asyncpg://user:password@localhost:5433/user_profile_db"
 if not DATABASE_URL:
     raise ValueError("DATABASE_URL not found in (.env)")
 

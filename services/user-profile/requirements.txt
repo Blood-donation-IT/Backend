@@ -1,4 +1,5 @@
 alembic==1.16.5
+asyncpg==0.30.0
 grpcio==1.73.1
 grpcio-tools==1.73.1
 Mako==1.3.10

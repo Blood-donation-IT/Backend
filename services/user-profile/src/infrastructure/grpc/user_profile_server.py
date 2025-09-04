@@ -1,5 +1,6 @@
 import grpc
-from src.protos.user import user_profile_pb2_grpc, user_profile_pb2
+# from src.protos.user import user_profile_pb2_grpc, user_profile_pb2
+from contracts.user import user_profile_pb2_grpc, user_profile_pb2
 from src.application.use_cases.create_user import CreateUserUseCase
 from src.domain.entities.user import User
 from google.protobuf.timestamp_pb2 import Timestamp

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from entities.user import User
+from ..entities.user import User
 from typing import Optional
 import datetime
 class IUserRepository(ABC):

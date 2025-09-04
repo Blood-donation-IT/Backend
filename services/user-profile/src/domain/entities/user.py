@@ -5,6 +5,7 @@ class User:
     def __init__(self, id: int,
                  full_name: str,
                  email: str,
+                 phone: str,
                  blood_type: str = None,
                  is_verified: bool = False,
                  total_donations: int = 0,
@@ -18,6 +19,7 @@ class User:
         self.id:int = id
         self.full_name:str = full_name
         self.email:str = email
+        self.phone:str = phone
         self.blood_type:str = blood_type
         self.is_verified:bool = is_verified
         self.total_donations:int = total_donations

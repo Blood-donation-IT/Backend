@@ -1,6 +1,7 @@
 from src.domain.irepositories.i_user_repository import IUserRepository
 from src.domain.services.i_id_generator import IIDGenerator
 from src.domain.entities.user import User
+
 import datetime
 from typing import Optional
 class CreateUserUseCase:
@@ -11,6 +12,7 @@ class CreateUserUseCase:
     async def execute(self,
                 full_name:str,
                 email:str,
+                phone:str,
                 blood_type:Optional[str]=None,
                 is_verified:bool=False,
                 total_donations:int=0,
@@ -19,12 +21,13 @@ class CreateUserUseCase:
                 is_active: bool = True,
                 is_banned: bool = False,
                 created_at: Optional[datetime.datetime] = None,
-                updated_at: Optional[datetime.datetime] = None)->int:
+                updated_at: Optional[datetime.datetime] = None)->User:
         user_id:int = self.id_generator.generate()
         user:User = User(
             id=user_id,
             full_name=full_name,
             email=email,
+            phone=phone,
             blood_type=blood_type,
             is_verified=is_verified,
             total_donations=total_donations,
@@ -37,6 +40,6 @@ class CreateUserUseCase:
             
         )
         await self.user_repository.save(user)
-        return user_id
+        return user
     
         
