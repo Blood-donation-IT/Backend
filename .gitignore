@@ -106,3 +106,6 @@ __pypackages__/
 
 # Windows
 Thumbs.db
+
+#local tests
+local_tests
