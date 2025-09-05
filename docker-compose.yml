@@ -14,6 +14,11 @@ services:
     networks:
       - user-profile_net
       - gateway_net
+    healthcheck:
+      test: ["CMD", "grpc_health_probe", "-addr=:50051"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
 
   user-profile-db:
     image: postgres:15
@@ -27,6 +32,19 @@ services:
       - user-profile_net
     ports:
       - "5433:5432"
+
+  grpc-sandbox:
+    build:
+      context: .
+      dockerfile: ./services/grpc-sandbox/Dockerfile
+    container_name: grpc-sandbox
+    depends_on:
+       user-profile:
+         condition: service_healthy
+      
+    networks:
+      - gateway_net
+      - user-profile_net
 
 volumes:
   user-profile-data:
