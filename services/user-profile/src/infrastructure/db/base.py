@@ -17,7 +17,9 @@ Base:DeclarativeMeta = declarative_base()
 # Create an asynchronous database connection engine
 # engine = create_async_engine(DATABASE_URL, future=True)
 # TODO: fix env var
-engine: AsyncEngine = create_async_engine(__import__("os").getenv("DATABASE_URL"), future=True)
+DATABASE_URL=__import__("os").getenv("DATABASE_URL")
+print(f"DB URL: {DATABASE_URL}",file=__import__("sys").stderr)
+engine: AsyncEngine = create_async_engine(DATABASE_URL, future=True)
 
 # Create an asynchronous session for database operations
 async_session:sessionmaker[AsyncSession] = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
