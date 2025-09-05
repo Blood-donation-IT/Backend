@@ -7,7 +7,7 @@ services:
     depends_on:
       - user-profile-db
     environment:
-      - DATABASE_URL=postgresql+asyncpg://user:password@user_profile_db:5432/user_profile_db
+      - DATABASE_URL=postgresql+asyncpg://user:password@user_profile-db:5432/user_profile_db
       - PYTHONPATH=/app/service/src
     ports:
       - "5001:50051"
@@ -16,9 +16,9 @@ services:
       - gateway_net
     healthcheck:
       test: ["CMD", "grpc_health_probe", "-addr=:50051"]
-      interval: 5s
-      timeout: 3s
-      retries: 5
+      interval: 3s
+      timeout: 5s
+      retries: 30
     platform: linux/amd64
 
   user-profile-db:
