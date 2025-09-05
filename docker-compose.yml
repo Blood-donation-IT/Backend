@@ -19,6 +19,7 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
+    platform: linux/amd64
 
   user-profile-db:
     image: postgres:15
