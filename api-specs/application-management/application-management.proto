@@ -1,0 +1,59 @@
+syntax = "proto3";
+
+package src.protos.application-management;
+
+import "google/protobuf/timestamp.proto";
+
+service ApplicationManagementService {
+  rpc CreateApplication(CreateApplicationRequest) returns (Application);
+  rpc GetApplicationsByUser (GetApplicationRequest) returns (stream Application);
+  rpc UpdateApplication (UpdateApplicationRequest) returns (Application);
+  rpc CancelApplication (CancelApplicationRequest) returns (CancelResponse);
+  rpc DeleteApplication (DeleteApplicationRequest) returns (DeleteResponse);
+}
+
+message CreateApplicationRequest{
+    int64 user_id = 1;
+    string blood_type = 2;
+    google.protobuf.Timestamp application_time = 3;
+    string status = 4
+}
+
+message GetApplicationRequest{
+    int64 user_id = 1;
+}
+
+message UpdateApplicationRequest{
+    int64 application_id = 1;
+    google.protobuf.Timestamp application_time = 2;
+    string status = 3;
+}
+
+message CancelApplicationRequest{
+    int64 application_id = 1;
+}
+
+message DeleteApplicationRequest{
+    int64 application_id = 1;
+}
+
+message DeleteResponse{
+    bool success = 1;
+    string status = 2;
+}
+
+message CancelResponse{
+    bool success = 1;
+    string status = 2;
+}
+
+message Application{
+    int64 application_id = 1;
+    int64 user_id = 2;
+    string blood_type = 3;
+    google.protobuf.Timestamp application_time = 4;
+    string status = 5;
+    google.protobuf.Timestamp created_at = 6;
+    google.protobuf.Timestamp updated_at = 7;
+    bool is_canceled = 8;
+}
