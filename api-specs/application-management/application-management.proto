@@ -6,7 +6,7 @@ import "google/protobuf/timestamp.proto";
 
 service ApplicationManagementService {
   rpc CreateApplication(CreateApplicationRequest) returns (Application);
-  rpc GetApplicationsByUser (GetApplicationRequest) returns (stream Application);
+  rpc GetApplicationByUser (GetApplicationRequest) returns (stream Application);
   rpc UpdateApplication (UpdateApplicationRequest) returns (Application);
   rpc CancelApplication (CancelApplicationRequest) returns (CancelResponse);
   rpc DeleteApplication (DeleteApplicationRequest) returns (DeleteResponse);
