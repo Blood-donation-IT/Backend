@@ -16,7 +16,7 @@ message CreateApplicationRequest{
     int64 user_id = 1;
     string blood_type = 2;
     google.protobuf.Timestamp application_time = 3;
-    string status = 4
+    string status = 4;
 }
 
 message GetApplicationRequest{
@@ -26,7 +26,8 @@ message GetApplicationRequest{
 message UpdateApplicationRequest{
     int64 application_id = 1;
     google.protobuf.Timestamp application_time = 2;
-    string status = 3;
+    string message = 3;
+    string blood_type = 4;
 }
 
 message CancelApplicationRequest{
@@ -39,12 +40,12 @@ message DeleteApplicationRequest{
 
 message DeleteResponse{
     bool success = 1;
-    string status = 2;
+    string message = 2;
 }
 
 message CancelResponse{
     bool success = 1;
-    string status = 2;
+    string message = 2;
 }
 
 message Application{
