@@ -5,9 +5,9 @@ package src.protos.application_management;
 import "google/protobuf/timestamp.proto";
 
 service ApplicationManagementService {
-  rpc CreateApplication(CreateApplicationRequest) returns (Application);
+  rpc CreateApplication(CreateApplicationRequest) returns (ApplicationResponse);
   rpc GetApplicationByUser (GetApplicationRequest) returns (stream Application);
-  rpc UpdateApplication (UpdateApplicationRequest) returns (Application);
+  rpc UpdateApplication (UpdateApplicationRequest) returns (ApplicationResponse);
   rpc CancelApplication (ApplicationRequest) returns (ApplicationResponse);
   rpc DeleteApplication (ApplicationRequest) returns (ApplicationResponse);
 }
@@ -36,8 +36,9 @@ message ApplicationRequest {
 }
 
 message ApplicationResponse {
-    bool success = 1;
-    string message = 2;
+    int64 application_id = 1;
+    bool success = 2;
+    string message = 3;
 }
 
 message Application {
