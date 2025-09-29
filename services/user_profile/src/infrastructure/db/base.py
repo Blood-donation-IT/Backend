@@ -9,11 +9,12 @@ from sqlalchemy.orm import sessionmaker, declarative_base,DeclarativeMeta
 
 # from src.config import DATABASE_URL
 
-from infrastructure.db.models import *
+# from services.user_profile.src.infrastructure.db.models.user_orm import *
 
 logging.basicConfig(level=logging.DEBUG) 
 
 Base:DeclarativeMeta = declarative_base()
+
 # Create an asynchronous database connection engine
 # engine = create_async_engine(DATABASE_URL, future=True)
 # TODO: fix env var

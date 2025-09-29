@@ -2,7 +2,7 @@
 from uuid import uuid4
 from sqlalchemy import Column, String,BigInteger,Boolean,Integer,DateTime,func
 import datetime
-from infrastructure.db.base import Base
+from src.infrastructure.db.base import Base
 from sqlalchemy.dialects.postgresql import ARRAY
 
 class UserORM(Base):
