@@ -31,6 +31,8 @@ class User:
         self.updated_at:Optional[datetime.datetime] = updated_at
         
         
-        #??
+    @classmethod
+    def from_orm_dict(cls, data: dict):
+        return cls(**data)
 
    

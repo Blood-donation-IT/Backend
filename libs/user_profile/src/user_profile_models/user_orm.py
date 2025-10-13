@@ -1,9 +1,8 @@
 # infrastructure/db/models/user_orm.py
-from uuid import uuid4
 from sqlalchemy import Column, String,BigInteger,Boolean,Integer,DateTime,func
 from user_profile_models.base import Base
 from sqlalchemy.dialects.postgresql import ARRAY
-
+from typing import Any
 class UserORM(Base):
     __tablename__ = "users_"
 
@@ -21,25 +20,25 @@ class UserORM(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
-    def to_entity(self)->"User":
+    def to_dict(self)->dict:
         # from domain.entities.user import User
-        return "User"(
-            id=self.id,
-            full_name=self.full_name,
-            email=self.email,
-            phone=self.phone,
-            blood_type=self.blood_type,
-            is_verified=self.is_verified,
-            total_donations=self.total_donations,
-            last_donation_at=self.last_donation_at,
-            roles=self.roles,
-            is_active=self.is_active,
-            is_banned=self.is_banned,
-            created_at=self.created_at,
-            updated_at=self.updated_at,
-        )
+        return{
+            "id": self.id,
+            "full_name": self.full_name,
+            "email":self.email,
+            "phone":self.phone,
+            "blood_type":self.blood_type,
+            "is_verified":self.is_verified,
+            "total_donations":self.total_donations,
+            "last_donation_at":self.last_donation_at,
+            "roles":self.roles,
+            "is_active":self.is_active,
+            "is_banned":self.is_banned,
+            "created_at":self.created_at,
+            "updated_at":self.updated_at,
+        }
     @classmethod
-    def from_entity(cls, user: "User") -> "UserORM":
+    def from_entity(cls, user: Any) -> "UserORM":
         return cls(
             id=user.id,
             full_name=user.full_name,
