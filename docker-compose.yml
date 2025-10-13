@@ -30,7 +30,8 @@ services:
   
   user-profile-migrations:
     build:
-      context: ./services/user_profile_migrations
+      context: .
+      dockerfile: ./services/user_profile_migrations/Dockerfile
     depends_on:
       - user-profile-db
     environment:
