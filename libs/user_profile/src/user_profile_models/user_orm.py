@@ -19,7 +19,7 @@ class UserORM(Base):
     is_banned = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
-    
+    #TODO: replace dict with DTO dataclas
     def to_dict(self)->dict:
         # from domain.entities.user import User
         return{
