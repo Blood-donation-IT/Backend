@@ -18,8 +18,8 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-from src.infrastructure.db.base import Base  # noqa
-import src.infrastructure.db.models.user_orm  # noqa: F401
+from user_profile_models.base import Base  # noqa
+from user_profile_models.user_orm import UserORM  # noqa: F401
 target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,

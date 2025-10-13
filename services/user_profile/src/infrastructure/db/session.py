@@ -20,7 +20,8 @@ async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession
 async def on_startup() -> None:
     try:
         async with engine.begin() as connection:
-            from infrastructure.db.base import Base
+            # from infrastructure.db.base import Base
+            from user_profile_models.base import Base
             await connection.run_sync(Base.metadata.create_all)
         logging.info("Successful DB connection")
     except Exception as e:
