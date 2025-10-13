@@ -9,5 +9,6 @@ RUN pip install  -e ./libs/user_profile
 
 
 # ENV PYTHONPATH=/app/src:/app/libs/user-profile-models/src
-
-ENTRYPOINT ["alembic", "upgrade", "head"]
+#ENV DATABASE_URL=postgresql+psycopg2://user:password@user-profile-db:5432/user_profile_db
+#RUN echo "DATABASE_URL in container: $DATABASE_URL"
+ENTRYPOINT ["alembic", "-c", "service/alembic.ini", "upgrade", "head"]

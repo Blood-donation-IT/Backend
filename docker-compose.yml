@@ -35,7 +35,7 @@ services:
     depends_on:
       - user-profile-db
     environment:
-      - DATABASE_URL=postgresql+asyncpg://user:password@user-profile-db:5432/user_profile_db
+      - DATABASE_URL=postgresql+psycopg2://user:password@user-profile-db:5432/user_profile_db
     networks:
       - user-profile_net
 
