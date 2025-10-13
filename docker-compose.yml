@@ -2,7 +2,7 @@ services:
   user-profile:
     build:
       context: .
-      dockerfile: ./services/user-profile/Dockerfile
+      dockerfile: ./services/user_profile/Dockerfile
     container_name: user-profile
     depends_on:
       - user-profile-db
@@ -27,6 +27,16 @@ services:
       - user-profile_net
     ports:
       - "5433:5432"
+  
+  user-profile-migrations:
+    build:
+      context: ./services/user_profile_migrations
+    depends_on:
+      - user-profile-db
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://user:password@user-profile-db:5432/user_profile_db
+    networks:
+      - user-profile_net
 
 volumes:
   user-profile-data:

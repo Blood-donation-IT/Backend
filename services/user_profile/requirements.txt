@@ -13,3 +13,4 @@ SQLAlchemy==2.0.41
 types-protobuf==6.30.2.20250703
 typing_extensions==4.14.1
 -e ./contracts
+-e ../libs/user-profile-models
