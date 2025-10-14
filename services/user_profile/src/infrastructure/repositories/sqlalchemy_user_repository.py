@@ -3,7 +3,7 @@ import datetime
 from sqlalchemy import any_, select
 from src.domain.irepositories.i_user_repository import IUserRepository
 from typing import Optional, List
-from src.infrastructure.db.models.user_orm import UserORM
+from user_profile_models.user_orm import UserORM
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.domain.entities.user import User
 from sqlalchemy.exc import NoResultFound
@@ -13,14 +13,14 @@ class SQlAlchemyUserRepository(IUserRepository):
         self._session: AsyncSession = session
     async def get_user_by_id(self, user_id:int) -> Optional[User]:
         orm_user: UserORM = await self._session.get(UserORM, user_id)
-        return orm_user.to_entity() if orm_user else None
+        return User.from_orm_dict(orm_user.to_dict()) if orm_user else None
     
     async def get_user_by_email(self, email: str) -> Optional[User]:
         orm_user: UserORM = await self._session.execute(
             UserORM.select().where(UserORM.email == email)
         )
         orm_user = orm_user.scalar_one_or_none()
-        return orm_user.to_entity() if orm_user else None
+        return User.from_orm_dict(orm_user.to_dict()) if orm_user else None
     
     async def save(self, user: User) -> None:
         orm_user: UserORM = UserORM.from_entity(user)
@@ -39,7 +39,7 @@ class SQlAlchemyUserRepository(IUserRepository):
             select(UserORM).where(UserORM.is_active == True, "donor" == any_(UserORM.roles)).limit(limit)
         )
         orm_users = result.scalars().all()
-        return [u.to_entity() for u in orm_users]
+        return [User.from_orm_dict(u.to_dict()) for u in orm_users]
     
     async def get_last_donation_date(self, user_id: int) -> Optional[datetime.datetime]:
         orm_user = await self._session.get(UserORM, user_id)
