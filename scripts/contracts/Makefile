@@ -1,6 +1,7 @@
 ROOT_DIR := $(shell git rev-parse --show-toplevel)
 PROTO_SRC := $(ROOT_DIR)/api-specs
 PROTO_OUT := $(ROOT_DIR)/contracts/src/contracts
+VENV_BIN := $(shell dirname $(shell which python))
 
 proto:
 	mkdir -p $(PROTO_OUT)/user
@@ -11,6 +12,7 @@ proto:
 		--python_out=$(PROTO_OUT) \
 		--grpc_python_out=$(PROTO_OUT) \
 		$(PROTO_SRC)/user/*.proto
+	python -m mypy_protobuf.main --proto-path=$(PROTO_SRC) --python_out=$(PROTO_OUT) --mypy_out=$(PROTO_OUT) $(PROTO_SRC)/user/*.proto
 	
 	find $(PROTO_OUT)/user -name "*_pb2_grpc.py" -exec sed -i '' 's/^from user import/from . import/' {} \;
 # Fix imports in generated files

@@ -3,9 +3,9 @@
 import grpc
 import warnings
 
-from . import user_profile_pb2 as user_dot_user__profile__pb2
+from user import user_profile_pb2 as user_dot_user__profile__pb2
 
-GRPC_GENERATED_VERSION = '1.73.1'
+GRPC_GENERATED_VERSION = '1.74.0'
 GRPC_VERSION = grpc.__version__
 _version_not_supported = False
 

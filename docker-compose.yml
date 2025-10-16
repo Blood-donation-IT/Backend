@@ -14,11 +14,6 @@ services:
     networks:
       - user-profile_net
       - gateway_net
-    healthcheck:
-      test: ["CMD", "grpc_health_probe", "-addr=:50051"]
-      interval: 3s
-      timeout: 5s
-      retries: 30
     platform: linux/amd64
 
   user-profile-db:
@@ -49,11 +44,11 @@ services:
   grpc-sandbox:
     build:
       context: .
-      dockerfile: ./services/grpc-sandbox/Dockerfile
+      dockerfile: ./services/grpc_sandbox/Dockerfile
     container_name: grpc-sandbox
-    depends_on:
-       user-profile:
-         condition: service_healthy
+    # depends_on:
+    #    - user-profile
+         
       
     networks:
       - gateway_net

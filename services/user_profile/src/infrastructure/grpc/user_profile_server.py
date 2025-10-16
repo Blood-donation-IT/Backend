@@ -29,11 +29,11 @@ class UserProfileService(user_profile_pb2_grpc.UserProfileServiceServicer):
             blood_type=user.blood_type,
             is_verified=user.is_verified,
             total_donations=user.total_donations,
-            last_donation_at=ts.FromDatetime(user.last_donation_at),
+            last_donation_at=ts.FromDatetime(user.last_donation_at) if user.last_donation_at else None,
             roles=user.roles,
             is_banned=user.is_banned,
-            updated_at=ts.FromDatetime(user.updated_at),
+            updated_at=ts.FromDatetime(user.updated_at) if user.updated_at else None,
             is_active=user.is_active,
-            created_at=ts.FromDatetime(user.created_at)
+            created_at=ts.FromDatetime(user.created_at) if user.created_at else None,
             
         )
