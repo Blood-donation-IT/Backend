@@ -16,7 +16,7 @@ class SQLAlchemyApplicationRepository(IApplicationRepository):
         orm_app: ApplicationORM = await self._session.get(ApplicationORM, application_id)
         return orm_app.to_entity() if orm_app else None
 
-    async def get_by_user(self, user_id: int) -> List[Application]:
+    async def get_by_id(self, user_id: int) -> List[Application]:
         result = await self._session.execute(
             select(ApplicationORM).where(ApplicationORM.user_id == user_id)
         )

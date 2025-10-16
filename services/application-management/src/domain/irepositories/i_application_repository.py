@@ -9,7 +9,7 @@ class IApplicationRepository(ABC):
         pass
 
     @abstractmethod
-    async def get_by_user(self, user_id: int) -> List[Application]:
+    async def get_by_id(self, user_id: int) -> List[Application]:
         pass
 
     @abstractmethod
