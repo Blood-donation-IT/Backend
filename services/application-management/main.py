@@ -9,6 +9,7 @@ from src.infrastructure.repositories.factory import get_application_repo
 from contracts.application_management import application_management_pb2_grpc
 from src.application.use_cases.create_application import CreateApplicationUseCase
 from src.application.use_cases.update_application import UpdateApplicationUseCase
+from src.application.use_cases.get_application import GetApplicationUseCase
 
 async def serve() -> None:
     server = grpc.aio.server()
@@ -16,10 +17,12 @@ async def serve() -> None:
         id_gen = SnowflakeIDGenerator(instance=2)  
         create_use_case = CreateApplicationUseCase(repository=repo, id_generator=id_gen)
         update_use_case = UpdateApplicationUseCase(repository=repo)
+        get_use_case = GetApplicationUseCase(repository=repo)
 
         application_management_service = ApplicationManagementService(
             create_use_case=create_use_case,
             update_use_case=update_use_case,
+            get_use_case=get_use_case
         )
 
         application_management_pb2_grpc.add_ApplicationManagementServiceServicer_to_server(application_management_service, server)
