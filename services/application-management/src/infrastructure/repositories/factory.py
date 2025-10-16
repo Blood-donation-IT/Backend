@@ -1,6 +1,6 @@
 from contextlib import asynccontextmanager
 from src.infrastructure.db.base import get_session
-from src.infrastructure.repositories.sqlalchemy_user_repository import SQlAlchemyUserRepository
+from src.infrastructure.repositories.sqlalchemy_application_repository import SQlAlchemyUserRepository
 
 @asynccontextmanager
 async def get_user_repo():
