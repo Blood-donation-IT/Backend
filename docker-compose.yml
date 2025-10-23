@@ -64,3 +64,4 @@ volumes:
 networks:
   user-profile_net:
   gateway_net:
+  application_management_net:
