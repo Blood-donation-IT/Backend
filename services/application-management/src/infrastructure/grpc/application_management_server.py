@@ -1,5 +1,5 @@
 import grpc
-from contracts.application_management import application_management_pb2_grpc, application_management_pb2
+from contracts.application_management import application_management_pb2, application_management_pb2_grpc
 from src.application.use_cases.create_application import CreateApplicationUseCase
 from src.application.use_cases.update_application import UpdateApplicationUseCase
 from src.application.use_cases.get_application import GetApplicationUseCase
