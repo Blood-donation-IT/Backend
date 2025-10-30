@@ -15,6 +15,7 @@ services:
       - user-profile_net
       - gateway_net
 
+
   user-profile-db:
     image: postgres:15
     environment:
@@ -28,9 +29,39 @@ services:
     ports:
       - "5433:5432"
 
+  application_management:
+    build:
+      context: .
+      dockerfile: ./services/application-management/Dockerfile
+    container_name: application-management
+    depends_on:
+      - application-management-db
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://user:password@application-management-db:5432/application_management_db
+      - PYTHONPATH=/app/service/src
+    ports:
+      - "5002:50052"  
+    networks:
+      - application_management_net
+      - gateway_net
+
+  application-management-db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: application_management_db
+    volumes:
+      - user-profile-data:/var/lib/postgresql/data
+    networks:
+      - application_management_net
+    ports:
+      - "5434:5435"
+
 volumes:
   user-profile-data:
 
 networks:
   user-profile_net:
   gateway_net:
+  application_management_net:
