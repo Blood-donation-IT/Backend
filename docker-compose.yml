@@ -30,16 +30,16 @@ services:
     ports:
       - "5433:5432"
   
-  user-profile-migrations:
-    build:
-      context: .
-      dockerfile: ./services/user_profile_migrations/Dockerfile
-    depends_on:
-      - user-profile-db
-    environment:
-      - DATABASE_URL=postgresql+psycopg2://user:password@user-profile-db:5432/user_profile_db
-    networks:
-      - user-profile_net
+  # user-profile-migrations:
+  #   build:
+  #     context: .
+  #     dockerfile: ./services/user_profile_migrations/Dockerfile
+  #   depends_on:
+  #     - user-profile-db
+  #   environment:
+  #     - DATABASE_URL=postgresql+psycopg2://user:password@user-profile-db:5432/user_profile_db
+  #   networks:
+  #     - user-profile_net
 
 
   grpc-sandbox:
