@@ -1,19 +1,6 @@
-ROOT_DIR := $(shell git rev-parse --show-toplevel)
-PROTO_SRC := $(ROOT_DIR)/api-specs
-PROTO_OUT := $(ROOT_DIR)/contracts/src/contracts
-VENV_BIN := $(shell dirname $(shell which python))
+SHELL := /bin/bash
+ROOT_DIR := $(shell git rev-parse --show-toplevel 2>/dev/null || echo .)
 
 proto:
-	mkdir -p $(PROTO_OUT)/user
-	touch $(PROTO_OUT)/__init__.py
-	touch $(PROTO_OUT)/user/__init__.py
-	python -m grpc_tools.protoc \
-		-I=$(PROTO_SRC) \
-		--python_out=$(PROTO_OUT) \
-		--grpc_python_out=$(PROTO_OUT) \
-		$(PROTO_SRC)/user/*.proto
-	python -m mypy_protobuf.main --proto-path=$(PROTO_SRC) --python_out=$(PROTO_OUT) --mypy_out=$(PROTO_OUT) $(PROTO_SRC)/user/*.proto
-	
-	find $(PROTO_OUT)/user -name "*_pb2_grpc.py" -exec sed -i '' 's/^from user import/from . import/' {} \;
-# Fix imports in generated files
-# For files in contracts/src/contracts/user, change 'from user import' to 'from . import'
+	@echo "🚀 Running protobuf generator..."
+	@python $(ROOT_DIR)/scripts/contracts/services/user_profile/generate_proto.py $(MYPY)
