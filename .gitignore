@@ -109,3 +109,5 @@ Thumbs.db
 
 #local tests
 local_tests
+
+.proto_wheels/

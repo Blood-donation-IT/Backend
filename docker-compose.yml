@@ -2,7 +2,7 @@ services:
   user-profile:
     build:
       context: .
-      dockerfile: ./services/user-profile/Dockerfile
+      dockerfile: ./services/user_profile/Dockerfile
     container_name: user-profile
     depends_on:
       - user-profile-db
@@ -14,6 +14,7 @@ services:
     networks:
       - user-profile_net
       - gateway_net
+    platform: linux/amd64
 
 
   user-profile-db:
@@ -28,6 +29,31 @@ services:
       - user-profile_net
     ports:
       - "5433:5432"
+  
+  user-profile-migrations:
+    build:
+      context: .
+      dockerfile: ./services/user_profile_migrations/Dockerfile
+    depends_on:
+      - user-profile-db
+    environment:
+      - DATABASE_URL=postgresql+psycopg2://user:password@user-profile-db:5432/user_profile_db
+    networks:
+      - user-profile_net
+
+
+  grpc-sandbox:
+    build:
+      context: .
+      dockerfile: ./services/grpc_sandbox/Dockerfile
+    container_name: grpc-sandbox
+    # depends_on:
+    #    - user-profile
+         
+      
+    networks:
+      - gateway_net
+      - user-profile_net
 
   application_management:
     build:
