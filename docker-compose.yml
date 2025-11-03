@@ -9,6 +9,8 @@ services:
     environment:
       - DATABASE_URL=postgresql+asyncpg://user:password@user-profile-db:5432/user_profile_db
       - PYTHONPATH=/app/service/src
+      - REPOSITORY_TYPE=postgresql
+      - ID_GENERATOR_TYPE=snowflake
     ports:
       - "5001:50051"
     networks:
