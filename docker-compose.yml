@@ -16,6 +16,7 @@ services:
     networks:
       - user-profile_net
       - gateway_net
+      - kafka_net
     platform: linux/amd64
 
 
@@ -29,6 +30,7 @@ services:
       - user-profile-data:/var/lib/postgresql/data
     networks:
       - user-profile_net
+     
     ports:
       - "5433:5432"
   
@@ -72,6 +74,7 @@ services:
     networks:
       - application_management_net
       - gateway_net
+      - kafka_net
 
   application-management-db:
     image: postgres:15
@@ -101,6 +104,12 @@ services:
       - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT , PLAINTEXT:PLAINTEXT
 
       - CLUSTER_ID=blood-donation.cluster.1
+        #dev
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+    networks:
+      - kafka_net
+      - gateway_net
 
 volumes:
   user-profile-data:
@@ -109,3 +118,4 @@ networks:
   user-profile_net:
   gateway_net:
   application_management_net:
+  kafka_net:

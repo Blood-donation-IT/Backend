@@ -1,6 +1,11 @@
 from logging.config import fileConfig
-import os
+import sys, os
 
+# Получаем абсолютный путь до корня проекта (где лежит libs/)
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../../../.."))
+LIBS_PATH = os.path.join(BASE_DIR, "libs/user_profile/src")
+
+sys.path.append(LIBS_PATH)
 from sqlalchemy import create_engine, pool
 from alembic import context
 
@@ -16,7 +21,7 @@ if config.config_file_name is not None:
 
 def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode."""
-    database_url = os.getenv("DATABASE_URL")
+    database_url = os.getenv("DATABASE_URL","postgresql+psycopg2://user:password@localhost:5433/user_profile_db")
     if not database_url:
         raise RuntimeError("DATABASE_URL is not set in environment!")
     context.configure(
@@ -32,7 +37,7 @@ def run_migrations_offline() -> None:
 
 def run_migrations_online() -> None:
     """Run migrations in 'online' mode."""
-    database_url = os.getenv("DATABASE_URL")
+    database_url = os.getenv("DATABASE_URL","postgresql+psycopg2://user:password@localhost:5433/user_profile_db")
     if not database_url:
         raise RuntimeError("DATABASE_URL is not set in environment!")
 
