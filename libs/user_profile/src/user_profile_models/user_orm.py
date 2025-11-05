@@ -1,5 +1,5 @@
 # infrastructure/db/models/user_orm.py
-from sqlalchemy import Column, String,BigInteger,Boolean,Integer,DateTime,func
+from sqlalchemy import Column, String,BigInteger,Boolean,Integer,DateTime, UniqueConstraint,func
 from user_profile_models.base import Base
 from sqlalchemy.dialects.postgresql import ARRAY
 from typing import Any
@@ -19,6 +19,10 @@ class UserORM(Base):
     is_banned = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    
+    __table_args__ = (
+        UniqueConstraint("id", "email", "phone", name="uix_users_identity"),
+    )
     #TODO: replace dict with DTO dataclas
     def to_dict(self)->dict:
         # from domain.entities.user import User
