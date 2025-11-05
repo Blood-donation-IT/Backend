@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
-from pydantic import BaseModel
 
-class DomainEvent(BaseModel):
-    pass
+from src.domain.events.base import DomainEvent
 
 class IEventPublisher(ABC):
     @abstractmethod
