@@ -34,5 +34,22 @@ class User:
     @classmethod
     def from_orm_dict(cls, data: dict):
         return cls(**data)
+    @classmethod
+    def to_dict(cls, user: 'User') -> dict:
+        return {
+            "id": user.id,
+            "full_name": user.full_name,
+            "email": user.email,
+            "phone": user.phone,
+            "blood_type": user.blood_type,
+            "is_verified": user.is_verified,
+            "total_donations": user.total_donations,
+            "last_donation_at": user.last_donation_at,
+            "roles": user.roles,
+            "is_active": user.is_active,
+            "is_banned": user.is_banned,
+            "created_at": user.created_at,
+            "updated_at": user.updated_at
+        }
 
    

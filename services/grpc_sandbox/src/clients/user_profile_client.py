@@ -7,12 +7,17 @@ class UserProfileClient:
         self.target = f"{host}:{port}"
 
     async def create_profile(self, full_name, email, phone):
-        async with grpc.aio.insecure_channel(self.target) as channel:
-            stub = user_profile_pb2_grpc.UserProfileServiceStub(channel)
-            req = user_profile_pb2.CreateProfileRequest(
-                full_name=full_name,
-                email=email,
-                phone=phone
-            )
-            resp = await stub.CreateProfile(req)
-            return resp
+        try:
+            async with grpc.aio.insecure_channel(self.target) as channel:
+                stub = user_profile_pb2_grpc.UserProfileServiceStub(channel)
+                req = user_profile_pb2.CreateProfileRequest(
+                    full_name=full_name,
+                    email=email,
+                    phone=phone
+                )
+                resp = await stub.CreateProfile(req)
+                return resp
+        except Exception as e:
+            print(f"gRPC call failed: skipping - {e}")
+            
+            

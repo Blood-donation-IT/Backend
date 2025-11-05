@@ -7,6 +7,7 @@ from user_profile_models.user_orm import UserORM
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.domain.entities.user import User
 from sqlalchemy.exc import NoResultFound
+from sqlalchemy.dialects.postgresql import insert
 
 class SQlAlchemyUserRepository(IUserRepository):
     def __init__(self, session: AsyncSession):
@@ -23,11 +24,15 @@ class SQlAlchemyUserRepository(IUserRepository):
         return User.from_orm_dict(orm_user.to_dict()) if orm_user else None
     
     async def save(self, user: User) -> None:
-        orm_user: UserORM = UserORM.from_entity(user)
-        self._session.add(orm_user)
-        await self._session.commit()
+        stmt=insert(UserORM).values(**user.to_dict(user=user)).on_conflict_do_nothing(index_elements=['id', 'email','phone'])
+        try:
+            await self._session.execute(stmt)
+            await self._session.commit()
+        except Exception as e:
+            await self._session.rollback()
+            print(f"[SAVE ERROR] SKIPPING",file=__import__("sys").stderr)
         return None
-    
+    #::7391944743011225600 7391945174911291392
     async def delete(self, user_id: int) -> None:
         orm_user: UserORM = await self._session.get(UserORM, user_id)
         if orm_user:

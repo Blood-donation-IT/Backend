@@ -47,7 +47,7 @@ class CreateUserUseCase:
         event:UserRegisteredEvent = UserRegisteredEvent(
             user_id=user.id,
             email=user.email,
-            blood_type=user.blood_type
+            blood_type=user.blood_type if user.blood_type else "NOT_SPECIFIED"
         )
         await self.event_publisher.publish(topic="user_registered",event=event)    
         return user
