@@ -1,14 +1,18 @@
 from src.domain.irepositories.i_user_repository import IUserRepository
 from src.domain.services.i_id_generator import IIDGenerator
 from src.domain.entities.user import User
+from src.domain.services.i_event_publisher import IEventPublisher
+from src.domain.events.user_registered import UserRegisteredEvent
 
 import datetime
 from typing import Optional
 class CreateUserUseCase:
     def __init__(self, repository: IUserRepository,
-                 id_generator: IIDGenerator):
+                 id_generator: IIDGenerator,
+                 event_publisher: IEventPublisher):
         self.user_repository:IUserRepository = repository
         self.id_generator:IIDGenerator = id_generator
+        self.event_publisher:IEventPublisher = event_publisher
     async def execute(self,
                 full_name:str,
                 email:str,
@@ -40,6 +44,12 @@ class CreateUserUseCase:
             
         )
         await self.user_repository.save(user)
+        event:UserRegisteredEvent = UserRegisteredEvent(
+            user_id=user.id,
+            email=user.email,
+            blood_type=user.blood_type
+        )
+        await self.event_publisher.publish(topic="user_registered",event=event)    
         return user
     
         

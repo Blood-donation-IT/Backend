@@ -35,7 +35,8 @@ async def main()->None:
     
     container.config.repository_type.from_env("REPOSITORY_TYPE", "postgresql")
     container.config.id_generator_type.from_env("ID_GENERATOR_TYPE", "snowflake")
-    
+    container.config.event_publisher_type.from_env("EVENT_PUBLISHER_TYPE", "kafka")
+
     container.wire(modules=[__name__])
     
     await container.init_resources()  
