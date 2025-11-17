@@ -29,7 +29,7 @@ services:
     ports:
       - "5433:5432"
 
-  application_management:
+  application-management:
     build:
       context: .
       dockerfile: ./services/application-management/Dockerfile
@@ -54,7 +54,7 @@ services:
     volumes:
       - user-profile-data:/var/lib/postgresql/data
     networks:
-      - application_management_net
+      - application-management_net
     ports:
       - "5434:5435"
 
