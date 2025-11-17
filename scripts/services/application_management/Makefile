@@ -4,11 +4,11 @@ OUTPUT_DIR := $(ROOT_DIR)/services/application-management/src/protos
 PROTO_FILE := $(PROTO_DIR)/application-management.proto
 
 proto:
-	@mkdir -p $(OUTPUT_DIR)/application-management
+	@mkdir -p $(OUTPUT_DIR)/application_management
 	@touch $(OUTPUT_DIR)/__init__.py
-	@touch $(OUTPUT_DIR)/application-management/__init__.py
+	@touch $(OUTPUT_DIR)/application_management/__init__.py
 	@echo "Generating gRPC files from $(PROTO_FILE)..."
-	python -m grpc_tools.protoc \
+	python3 -m grpc_tools.protoc \
 		-I=$(ROOT_DIR)/api-specs \
 		--python_out=$(OUTPUT_DIR) \
 		--grpc_python_out=$(OUTPUT_DIR) \
