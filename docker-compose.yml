@@ -86,6 +86,46 @@ services:
     ports:
       - "5434:5435"
 
+  authorization:
+    build:
+      context: .
+      dockerfile: ./services/authorization/Dockerfile
+    container_name: authorization
+    depends_on:
+      - authorization-db
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://user:password@application-management-db:5432/authorization_db
+      - PYTHONPATH=/app/service/src
+    ports:
+      - "5003:50053"  
+    networks:
+      - authorization_net
+      - gateway_net
+
+  authorization-db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: authorization_db
+    volumes:
+      - user-profile-data:/var/lib/postgresql/data
+    networks:
+      - authorization_net
+    ports:
+      - "5434:5435"
+
+  # authorization-migrations:
+  #   build:
+  #     context: .
+  #     dockerfile: ./services/authorization_migrations/Dockerfile
+  #   depends_on:
+  #     - authorization-db
+  #   environment:
+  #     - DATABASE_URL=postgresql+psycopg2://user:password@authorization-db:5432/authorization_db
+  #   networks:
+  #     - authorization_net
+  
 volumes:
   user-profile-data:
 
