@@ -1,10 +1,10 @@
 from contextlib import asynccontextmanager
 from src.infrastructure.db.base import get_session
-from services.authorization.src.infrastructure.repositories.sqlalchemy_authorization_repository import SQlAlchemyUserRepository
+from src.infrastructure.repositories.sqlalchemy_authorization_repository import SQLAlchemyAuthorizationRepository
 
 @asynccontextmanager
-async def get_user_repo():
-    """async fabric for user repository"""
+async def get_authorization_repo():
+    """async fabric for authorization repository"""
     async with get_session() as session:
-        repo = SQlAlchemyUserRepository(session=session)
+        repo = SQLAlchemyAuthorizationRepository(session=session)
         yield repo
