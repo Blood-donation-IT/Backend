@@ -1,35 +1,43 @@
 import asyncio
 import grpc
+import sys
 
-from src.infrastructure.grpc.application_management_server import ApplicationManagementService
-from src.infrastructure.id_generator.snowflake_generator import SnowflakeIDGenerator
-from src.infrastructure.repositories.sqlalchemy_application_repository import SQlAlchemyUserRepository
-from src.infrastructure.id_generator.snowflake_generator import SnowflakeIDGenerator
-from src.infrastructure.repositories.factory import get_application_repo
+from src.container import Container
 from contracts.application_management import application_management_pb2_grpc
-from src.application.use_cases.create_application import CreateApplicationUseCase
-from src.application.use_cases.update_application import UpdateApplicationUseCase
-from src.application.use_cases.get_application import GetApplicationUseCase
 
-async def serve() -> None:
+async def serve(container: Container) -> None:
     server = grpc.aio.server()
-    async with get_application_repo() as repo:
-        id_gen = SnowflakeIDGenerator(instance=2)  
-        create_use_case = CreateApplicationUseCase(repository=repo, id_generator=id_gen)
-        update_use_case = UpdateApplicationUseCase(repository=repo)
-        get_use_case = GetApplicationUseCase(repository=repo)
+    application_management_service_instance = await container.application_management_service()
+    
+    application_management_pb2_grpc.add_ApplicationManagementServiceServicer_to_server(
+        application_management_service_instance,
+        server
+    )
+    
+    server.add_insecure_port("[::]:50052")
+    await server.start()
+    print("Async gRPC server started on port 50052 (with DI Container)", file=sys.stderr)
+    await server.wait_for_termination()
 
-        application_management_service = ApplicationManagementService(
-            create_use_case=create_use_case,
-            update_use_case=update_use_case,
-            get_use_case=get_use_case
-        )
-
-        application_management_pb2_grpc.add_ApplicationManagementServiceServicer_to_server(application_management_service, server)
-        server.add_insecure_port("[::]:50052")  
-        print("Async gRPC server started on port 50052")
-        await server.start()
-        await server.wait_for_termination()
+async def main() -> None:
+    container = Container()
+    
+    container.config.repository_type.from_env("REPOSITORY_TYPE", "postgresql")
+    container.config.id_generator_type.from_env("ID_GENERATOR_TYPE", "snowflake")
+    
+    container.wire(modules=[__name__])
+    
+    await container.init_resources()
+    try:
+        await serve(container)
+    except KeyboardInterrupt:
+        print("Shutting down gRPC server", file=sys.stderr)
+    finally:
+        await container.shutdown_resources()
+        print("Container resources shut down gracefully")
 
 if __name__ == "__main__":
-    asyncio.run(serve())
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("Server stopped by user", file=sys.stderr)
