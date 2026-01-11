@@ -15,6 +15,7 @@ class User:
                  is_banned: bool = False,
                  created_at: Optional[datetime.datetime] = None,
                  updated_at: Optional[datetime.datetime] = None,
+                 password_hash: Optional[str] = None
                  ):
         self.id:int = id
         self.full_name:str = full_name
@@ -29,6 +30,7 @@ class User:
         self.is_banned:bool = is_banned
         self.created_at:Optional[datetime.datetime] = created_at
         self.updated_at:Optional[datetime.datetime] = updated_at
+        self.password_hash:Optional[str] = password_hash
         
         
     @classmethod

@@ -18,6 +18,22 @@ services:
       - gateway_net
     platform: linux/amd64
 
+  api-gateway:
+    build:
+      context: .
+      dockerfile: ./services/api_gateway/Dockerfile
+    container_name: api-gateway
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_NAME=BloodDonorGateway
+      - USER_SERVICE_HOST=user-profile
+      - USER_SERVICE_PORT=50051
+      - SECRET_KEY=blood-don
+    depends_on:
+      - user-profile
+    networks:
+      - gateway_net
 
   user-profile-db:
     image: postgres:15

@@ -59,6 +59,11 @@ class UserProfileServiceStub(object):
                 request_serializer=user_dot_user__profile__pb2.DeleteProfileRequest.SerializeToString,
                 response_deserializer=user_dot_user__profile__pb2.DeleteProfileResponse.FromString,
                 _registered_method=True)
+        self.GetUserAuthData = channel.unary_unary(
+                '/src.protos.user.UserProfileService/GetUserAuthData',
+                request_serializer=user_dot_user__profile__pb2.GetUserAuthRequest.SerializeToString,
+                response_deserializer=user_dot_user__profile__pb2.UserAuthData.FromString,
+                _registered_method=True)
 
 
 class UserProfileServiceServicer(object):
@@ -94,6 +99,12 @@ class UserProfileServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetUserAuthData(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_UserProfileServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -121,6 +132,11 @@ def add_UserProfileServiceServicer_to_server(servicer, server):
                     servicer.DeleteProfile,
                     request_deserializer=user_dot_user__profile__pb2.DeleteProfileRequest.FromString,
                     response_serializer=user_dot_user__profile__pb2.DeleteProfileResponse.SerializeToString,
+            ),
+            'GetUserAuthData': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetUserAuthData,
+                    request_deserializer=user_dot_user__profile__pb2.GetUserAuthRequest.FromString,
+                    response_serializer=user_dot_user__profile__pb2.UserAuthData.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -258,6 +274,33 @@ class UserProfileService(object):
             '/src.protos.user.UserProfileService/DeleteProfile',
             user_dot_user__profile__pb2.DeleteProfileRequest.SerializeToString,
             user_dot_user__profile__pb2.DeleteProfileResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetUserAuthData(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/src.protos.user.UserProfileService/GetUserAuthData',
+            user_dot_user__profile__pb2.GetUserAuthRequest.SerializeToString,
+            user_dot_user__profile__pb2.UserAuthData.FromString,
             options,
             channel_credentials,
             insecure,
