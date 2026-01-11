@@ -67,6 +67,8 @@ services:
     environment:
       - DATABASE_URL=postgresql+asyncpg://user:password@application-management-db:5432/application_management_db
       - PYTHONPATH=/app/service/src
+      - REPOSITORY_TYPE=postgresql
+      - ID_GENERATOR_TYPE=snowflake
     ports:
       - "5002:50052"  
     networks:
@@ -80,11 +82,11 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: application_management_db
     volumes:
-      - user-profile-data:/var/lib/postgresql/data
+      - application-management-data:/var/lib/postgresql/data
     networks:
       - application_management_net
     ports:
-      - "5434:5435"
+      - "5434:5432"
 
   authorization:
     build:
@@ -94,8 +96,10 @@ services:
     depends_on:
       - authorization-db
     environment:
-      - DATABASE_URL=postgresql+asyncpg://user:password@application-management-db:5432/authorization_db
+      - DATABASE_URL=postgresql+asyncpg://user:password@authorization-db:5432/authorization_db
       - PYTHONPATH=/app/service/src
+      - REPOSITORY_TYPE=postgresql
+      - ID_GENERATOR_TYPE=snowflake
     ports:
       - "5003:50053"  
     networks:
@@ -109,11 +113,11 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: authorization_db
     volumes:
-      - user-profile-data:/var/lib/postgresql/data
+      - authorization-data:/var/lib/postgresql/data
     networks:
       - authorization_net
     ports:
-      - "5434:5435"
+      - "5435:5432"
 
   # authorization-migrations:
   #   build:
@@ -128,8 +132,11 @@ services:
   
 volumes:
   user-profile-data:
+  application-management-data:
+  authorization-data:
 
 networks:
   user-profile_net:
   gateway_net:
   application_management_net:
+  authorization_net:
