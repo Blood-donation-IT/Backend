@@ -82,16 +82,61 @@ services:
       POSTGRES_PASSWORD: password
       POSTGRES_DB: application_management_db
     volumes:
-      - user-profile-data:/var/lib/postgresql/data
+      - application-management-data:/var/lib/postgresql/data
     networks:
       - application_management_net
     ports:
-      - "5434:5435"
+      - "5434:5432"
 
+  authorization:
+    build:
+      context: .
+      dockerfile: ./services/authorization/Dockerfile
+    container_name: authorization
+    depends_on:
+      - authorization-db
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://user:password@authorization-db:5432/authorization_db
+      - PYTHONPATH=/app/service/src
+      - REPOSITORY_TYPE=postgresql
+      - ID_GENERATOR_TYPE=snowflake
+    ports:
+      - "5003:50053"  
+    networks:
+      - authorization_net
+      - gateway_net
+
+  authorization-db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: authorization_db
+    volumes:
+      - authorization-data:/var/lib/postgresql/data
+    networks:
+      - authorization_net
+    ports:
+      - "5435:5432"
+
+  # authorization-migrations:
+  #   build:
+  #     context: .
+  #     dockerfile: ./services/authorization_migrations/Dockerfile
+  #   depends_on:
+  #     - authorization-db
+  #   environment:
+  #     - DATABASE_URL=postgresql+psycopg2://user:password@authorization-db:5432/authorization_db
+  #   networks:
+  #     - authorization_net
+  
 volumes:
   user-profile-data:
+  application-management-data:
+  authorization-data:
 
 networks:
   user-profile_net:
   gateway_net:
   application_management_net:
+  authorization_net:
