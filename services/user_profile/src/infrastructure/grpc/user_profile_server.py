@@ -30,7 +30,8 @@ class UserProfileService(user_profile_pb2_grpc.UserProfileServiceServicer):
         user:User = await self.create_user_profile_use_case.execute(
             full_name=request.full_name,
             email=request.email,
-            phone=request.phone,
+            phone=request.phone  or None,
+            password_hash=request.password_hash,
         )
         ts =Timestamp()
         return user_profile_pb2.UserProfile(
@@ -45,6 +46,7 @@ class UserProfileService(user_profile_pb2_grpc.UserProfileServiceServicer):
             is_banned=user.is_banned,
             updated_at=ts.FromDatetime(user.updated_at) if user.updated_at else None,
             is_active=user.is_active,
-            created_at=ts.FromDatetime(user.created_at) if user.created_at else None,
+            created_at=ts.FromDatetime(user.created_at) if user.created_at else None
+            
             
         )

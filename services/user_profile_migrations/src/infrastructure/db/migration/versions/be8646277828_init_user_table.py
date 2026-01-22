@@ -24,6 +24,7 @@ def upgrade() -> None:
     op.create_table('users_',
     sa.Column('id', sa.BigInteger(), autoincrement=False, nullable=False),
     sa.Column('email', sa.String(), nullable=False),
+    sa.Column('password_hash', sa.String(), nullable=False),
     sa.Column('full_name', sa.String(), nullable=False),
     sa.Column('phone', sa.String(), nullable=True),
     sa.Column('blood_type', sa.String(), nullable=True),

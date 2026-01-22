@@ -21,6 +21,7 @@ class CreateUserUseCase:
                 is_active: bool = True,
                 is_banned: bool = False,
                 created_at: Optional[datetime.datetime] = None,
+                password_hash: Optional[str] = None,
                 updated_at: Optional[datetime.datetime] = None)->User:
         user_id:int = self.id_generator.generate()
         user:User = User(
@@ -36,7 +37,8 @@ class CreateUserUseCase:
             is_active=is_active,
             is_banned=is_banned,
             created_at=created_at,
-            updated_at=updated_at 
+            updated_at=updated_at,
+            password_hash=password_hash, 
             
         )
         await self.user_repository.save(user)
