@@ -3,10 +3,15 @@ import jwt
 import datetime
 from typing import Optional, Dict
 
-JWT_SECRET = os.getenv("JWT_SECRET")
 JWT_ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 REFRESH_TOKEN_EXPIRE_DAYS = 7
+
+def _get_jwt_secret() -> str:
+    secret = os.getenv("JWT_SECRET", "secret-key-for-testing")
+    if not secret:
+        raise ValueError("JWT_SECRET environment variable is not set")
+    return secret
 
 class JWTService:
     @staticmethod
@@ -17,7 +22,7 @@ class JWTService:
         else:
             expire = datetime.datetime.utcnow() + datetime.timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         to_encode.update({"exp": expire, "type": "access"})
-        encoded_jwt = jwt.encode(to_encode, JWT_SECRET, algorithm=JWT_ALGORITHM)
+        encoded_jwt = jwt.encode(to_encode, _get_jwt_secret(), algorithm=JWT_ALGORITHM)
         return encoded_jwt
 
     @staticmethod
@@ -25,13 +30,13 @@ class JWTService:
         to_encode = data.copy()
         expire = datetime.datetime.utcnow() + datetime.timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
         to_encode.update({"exp": expire, "type": "refresh"})
-        encoded_jwt = jwt.encode(to_encode, JWT_SECRET, algorithm=JWT_ALGORITHM)
+        encoded_jwt = jwt.encode(to_encode, _get_jwt_secret(), algorithm=JWT_ALGORITHM)
         return encoded_jwt
 
     @staticmethod
     def verify_token(token: str) -> Optional[Dict]:
         try:
-            payload = jwt.decode(token, JWT_SECRET, algorithms=[JWT_ALGORITHM])
+            payload = jwt.decode(token, _get_jwt_secret(), algorithms=[JWT_ALGORITHM])
             return payload
         except jwt.ExpiredSignatureError:
             return None
