@@ -100,7 +100,7 @@ services:
     volumes:
       - application-management-data:/var/lib/postgresql/data
     networks:
-      - application-management_net
+      - application_management_net
     ports:
       - "5434:5432"
 
