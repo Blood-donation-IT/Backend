@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from ..entities.application import Application
-from typing import Optional, List
+from typing import Optional, List, AsyncGenerator
 import datetime
 
 class IApplicationRepository(ABC):
@@ -9,7 +9,7 @@ class IApplicationRepository(ABC):
         pass
 
     @abstractmethod
-    async def get_by_id(self, user_id: int) -> List[Application]:
+    async def find_by_user_id(self, user_id: int) -> AsyncGenerator[Application, None]:
         pass
 
     @abstractmethod

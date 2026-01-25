@@ -1,9 +1,10 @@
 import datetime
+from typing import AsyncGenerator
 
 from sqlalchemy import select
 from src.domain.irepositories.i_application_repository import IApplicationRepository
-from typing import Optional, List
-from src.infrastructure.db.models.application_orm import ApplicationORM
+from typing import Optional
+from application_management_models.application_orm import ApplicationORM
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.domain.entities.application import Application
 from sqlalchemy.exc import NoResultFound
@@ -16,12 +17,13 @@ class SQLAlchemyApplicationRepository(IApplicationRepository):
         orm_app: ApplicationORM = await self._session.get(ApplicationORM, application_id)
         return orm_app.to_entity() if orm_app else None
 
-    async def get_by_id(self, user_id: int) -> List[Application]:
+    async def find_by_user_id(self, user_id: int) -> AsyncGenerator[Application, None]:
         result = await self._session.execute(
             select(ApplicationORM).where(ApplicationORM.user_id == user_id)
         )
         orm_apps = result.scalars().all()
-        return [app.to_entity() for app in orm_apps]
+        for app in orm_apps:
+            yield app.to_entity()
 
     async def save(self, application: Application) -> None:
         orm_app: ApplicationORM = ApplicationORM.from_entity(application)
@@ -36,6 +38,8 @@ class SQLAlchemyApplicationRepository(IApplicationRepository):
         orm_app.user_id = application.user_id
         orm_app.blood_type = application.blood_type
         orm_app.application_time = application.application_time
+        orm_app.application_day = application.application_day
+        orm_app.location_id = application.location_id
         orm_app.status = application.status
         orm_app.description = application.description
         await self._session.commit()

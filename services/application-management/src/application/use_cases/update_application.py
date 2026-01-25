@@ -26,7 +26,7 @@ class UpdateApplicationUseCase:
         if blood_type:
             application.blood_type = blood_type
         
-        application.updated_at = Optional[datetime.datetime] 
+        application.updated_at = datetime.datetime.utcnow() 
         
         await self.repository.update(application)
         return application
