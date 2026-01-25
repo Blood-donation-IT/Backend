@@ -9,16 +9,17 @@ service ApplicationManagementService {
   rpc GetApplicationByUser (GetApplicationRequest) returns (stream Application);
   rpc UpdateApplication (UpdateApplicationRequest) returns (ApplicationResponse);
   rpc CancelApplication (ApplicationRequest) returns (ApplicationResponse);
-  rpc DeleteApplication (ApplicationRequest) returns (ApplicationResponse);
 }
 
 message CreateApplicationRequest {
     int64 user_id = 1;
     string blood_type = 2;
     google.protobuf.Timestamp application_time = 3;
-    string description = 4;
-    string status = 5;
+    google.protobuf.Timestamp application_day = 4;
+    string location_id = 5;
+    string status = 7;
 }
+
 
 message GetApplicationRequest {
     int64 user_id = 1;
@@ -27,7 +28,6 @@ message GetApplicationRequest {
 message UpdateApplicationRequest {
     int64 application_id = 1;
     google.protobuf.Timestamp application_time = 2;
-    string description = 3;
     string blood_type = 4;
 }
 
@@ -46,8 +46,9 @@ message Application {
     int64 user_id = 2;
     string blood_type = 3;
     google.protobuf.Timestamp application_time = 4;
-    string status = 5;
-    string description = 6;
-    google.protobuf.Timestamp created_at = 7;
-    google.protobuf.Timestamp updated_at = 8;
+    google.protobuf.Timestamp application_day = 5;
+    string location_id = 6;
+    string status = 7;
+    google.protobuf.Timestamp created_at = 8;
+    google.protobuf.Timestamp updated_at = 9;
 }
