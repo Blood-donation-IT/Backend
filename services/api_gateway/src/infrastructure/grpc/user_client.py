@@ -28,18 +28,17 @@ class UserGrpcClient:
                 print(f"GRPC Error in get_profile: {e}")
                 raise e
 
-    # --- ВОТ ЭТОГО НЕ ХВАТАЛО ---
-    async def create_user(self, email: str, full_name: str, password_hash: str, phone: str = None) -> UserProfileResponse:
+    async def create_user(self, user_id: int, email: str, full_name: str, password_hash: str = "", phone: str = None) -> UserProfileResponse:
         async with grpc.aio.insecure_channel(self.target) as channel:
             stub = user_profile_pb2_grpc.UserProfileServiceStub(channel)
             
-            # Собираем запрос для gRPC
-            # ВАЖНО: Убедись, что в .proto ты добавил поле password_hash!
+            # Передаємо user_id з authorization для синхронізації
             request = user_profile_pb2.CreateProfileRequest(
-                email=email,
+                user_id=user_id,  # Використовуємо user_id з authorization
                 full_name=full_name,
-                password_hash=password_hash, # <-- Мы передаем хэш
-                phone=phone or ""
+                email=email,
+                phone=phone or "",
+                password_hash=password_hash  # Опціонально, зберігається тільки в authorization
             )
             
             try:

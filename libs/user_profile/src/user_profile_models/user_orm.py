@@ -19,7 +19,7 @@ class UserORM(Base):
     is_banned = Column(Boolean, default=False, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
-    password_hash = Column(String, nullable=False)
+    password_hash = Column(String, nullable=True) 
     #TODO: replace dict with DTO dataclas
     def to_dict(self)->dict:
         # from domain.entities.user import User
@@ -37,6 +37,7 @@ class UserORM(Base):
             "is_banned":self.is_banned,
             "created_at":self.created_at,
             "updated_at":self.updated_at,
+            "password_hash":self.password_hash,  # Додано для сумісності
         }
     @classmethod
     def from_entity(cls, user: Any) -> "UserORM":
