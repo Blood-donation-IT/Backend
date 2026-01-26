@@ -16,16 +16,21 @@ class SQlAlchemyUserRepository(IUserRepository):
         return User.from_orm_dict(orm_user.to_dict()) if orm_user else None
     
     async def get_user_by_email(self, email: str) -> Optional[User]:
-        orm_user: UserORM = await self._session.execute(
-            UserORM.select().where(UserORM.email == email)
+        result = await self._session.execute(
+            select(UserORM).where(UserORM.email == email)
         )
-        orm_user = orm_user.scalar_one_or_none()
+        orm_user = result.scalar_one_or_none()
         return User.from_orm_dict(orm_user.to_dict()) if orm_user else None
     
     async def save(self, user: User) -> None:
-        orm_user: UserORM = UserORM.from_entity(user)
-        self._session.add(orm_user)
-        await self._session.commit()
+        try:
+            orm_user: UserORM = UserORM.from_entity(user)
+            self._session.add(orm_user)
+            await self._session.flush()
+            await self._session.commit()
+        except Exception as e:
+            await self._session.rollback()
+            raise e
         return None
     
     async def delete(self, user_id: int) -> None:

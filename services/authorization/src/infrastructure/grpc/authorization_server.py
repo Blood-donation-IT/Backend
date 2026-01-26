@@ -13,14 +13,17 @@ class AuthorizationService(authorization_pb2_grpc.AuthorizationServiceServicer):
 
     async def Register(self, request, context: grpc.aio.ServicerContext):
         try:
-            if not request.email or not request.password or not request.name:
-                raise ValueError("Email, password, and name are required")
+            if not request.email or not request.password or not request.name or not request.confirm_password:
+                raise ValueError("Email, password, confirm_password, and name are required")
+            
+            if request.password != request.confirm_password:
+                raise ValueError("Password and confirm_password do not match")
 
             user = await self.register_use_case.execute(
                 email=request.email,
                 password=request.password,
                 name=request.name,
-                birth_date=request.birth_date if request.HasField("birth_date") else None
+                birth_date=None
             )
             
             return authorization_pb2.RegisterResponse(
@@ -30,8 +33,8 @@ class AuthorizationService(authorization_pb2_grpc.AuthorizationServiceServicer):
                 email=user.email
             )
         except ValueError as e:
-            await context.set_details(str(e))
-            await context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
             return authorization_pb2.RegisterResponse(
                 success=False,
                 message=str(e),
@@ -39,8 +42,8 @@ class AuthorizationService(authorization_pb2_grpc.AuthorizationServiceServicer):
                 email=""
             )
         except Exception as e:
-            await context.set_details(str(e))
-            await context.set_code(grpc.StatusCode.INTERNAL)
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INTERNAL)
             return authorization_pb2.RegisterResponse(
                 success=False,
                 message=f"Internal server error: {str(e)}",
@@ -71,8 +74,8 @@ class AuthorizationService(authorization_pb2_grpc.AuthorizationServiceServicer):
                 expires_at=ts
             )
         except ValueError as e:
-            await context.set_details(str(e))
-            await context.set_code(grpc.StatusCode.UNAUTHENTICATED)
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.UNAUTHENTICATED)
             return authorization_pb2.LoginResponse(
                 success=False,
                 message=str(e),
@@ -82,8 +85,8 @@ class AuthorizationService(authorization_pb2_grpc.AuthorizationServiceServicer):
                 email=""
             )
         except Exception as e:
-            await context.set_details(str(e))
-            await context.set_code(grpc.StatusCode.INTERNAL)
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INTERNAL)
             return authorization_pb2.LoginResponse(
                 success=False,
                 message=f"Internal server error: {str(e)}",
@@ -113,8 +116,8 @@ class AuthorizationService(authorization_pb2_grpc.AuthorizationServiceServicer):
                 expires_at=ts
             )
         except ValueError as e:
-            await context.set_details(str(e))
-            await context.set_code(grpc.StatusCode.UNAUTHENTICATED)
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.UNAUTHENTICATED)
             return authorization_pb2.RefreshTokenResponse(
                 success=False,
                 message=str(e),
@@ -122,8 +125,8 @@ class AuthorizationService(authorization_pb2_grpc.AuthorizationServiceServicer):
                 refresh_token=""
             )
         except Exception as e:
-            await context.set_details(str(e))
-            await context.set_code(grpc.StatusCode.INTERNAL)
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INTERNAL)
             return authorization_pb2.RefreshTokenResponse(
                 success=False,
                 message=f"Internal server error: {str(e)}",
