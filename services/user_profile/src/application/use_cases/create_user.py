@@ -12,7 +12,7 @@ class CreateUserUseCase:
     async def execute(self,
                 full_name:str,
                 email:str,
-                phone:str,
+                phone:Optional[str]=None,
                 blood_type:Optional[str]=None,
                 is_verified:bool=False,
                 total_donations:int=0,
@@ -24,9 +24,20 @@ class CreateUserUseCase:
                 password_hash: Optional[str] = None,
                 updated_at: Optional[datetime.datetime] = None,
                 user_id: Optional[int] = None)->User:
-    
+        
+        existing_by_email = await self.user_repository.get_user_by_email(email)
+        if existing_by_email:
+            if user_id and existing_by_email.id == user_id:
+                return existing_by_email
+            raise ValueError(f"User with email {email} already exists")
+        
         if user_id is None:
             user_id = self.id_generator.generate()
+        else:
+            existing_by_id = await self.user_repository.get_user_by_id(user_id)
+            if existing_by_id:
+                return existing_by_id
+        
         user:User = User(
             id=user_id,
             full_name=full_name,
@@ -41,8 +52,7 @@ class CreateUserUseCase:
             is_banned=is_banned,
             created_at=created_at,
             updated_at=updated_at,
-            password_hash=password_hash, 
-            
+            password_hash=password_hash if password_hash is not None else "",
         )
         await self.user_repository.save(user)
         return user

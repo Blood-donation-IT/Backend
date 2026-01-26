@@ -113,15 +113,11 @@ class ApplicationManagementService(application_management_pb2_grpc.ApplicationMa
 
     async def CancelApplication(self, request, context: grpc.aio.ServicerContext):
         try:
-            if not self.repository:
-                raise ValueError("Repository not available")
             
-            application = await self.repository.get_by_id(request.application_id)
-            if not application:
-                raise ValueError(f"Application with id {request.application_id} not found")
-            
-            application.status = "cancelled"
-            await self.repository.update(application)
+            application = await self.update_use_case.execute(
+                application_id=request.application_id,
+                status="cancelled"
+            )
             
             return application_management_pb2.ApplicationResponse(
                 application_id=application.id,

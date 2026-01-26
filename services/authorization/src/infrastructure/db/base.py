@@ -19,6 +19,16 @@ engine = create_async_engine(DATABASE_URL, future=True)
 async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession)
 
 
+async def on_startup() -> None:
+    try:
+        async with engine.begin() as connection:
+            from authorization_models.base import Base
+            await connection.run_sync(Base.metadata.create_all)
+        logging.info("Successful DB connection and tables created")
+    except Exception as e:
+        logging.error(f"Error with DB connecting: {e}")
+
+
 @asynccontextmanager
 async def get_session() -> AsyncGenerator[AsyncSession, None]:
     async with async_session() as session:

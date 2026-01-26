@@ -28,6 +28,10 @@ async def main() -> None:
     container.wire(modules=[__name__])
     
     await container.init_resources()
+    
+    from src.infrastructure.db.base import on_startup
+    await on_startup()
+    
     try:
         await serve(container)
     except KeyboardInterrupt:

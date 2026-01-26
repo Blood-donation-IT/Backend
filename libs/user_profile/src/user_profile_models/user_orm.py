@@ -53,5 +53,5 @@ class UserORM(Base):
             roles=user.roles,
             is_active=user.is_active,
             is_banned=user.is_banned,
-            password_hash=user.password_hash,
+            password_hash=user.password_hash if user.password_hash is not None else "",
         )
