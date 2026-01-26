@@ -22,8 +22,11 @@ class CreateUserUseCase:
                 is_banned: bool = False,
                 created_at: Optional[datetime.datetime] = None,
                 password_hash: Optional[str] = None,
-                updated_at: Optional[datetime.datetime] = None)->User:
-        user_id:int = self.id_generator.generate()
+                updated_at: Optional[datetime.datetime] = None,
+                user_id: Optional[int] = None)->User:
+    
+        if user_id is None:
+            user_id = self.id_generator.generate()
         user:User = User(
             id=user_id,
             full_name=full_name,

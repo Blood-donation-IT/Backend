@@ -38,7 +38,7 @@ class UserGrpcClient:
                 full_name=full_name,
                 email=email,
                 phone=phone or "",
-                password_hash=password_hash  # Опціонально, зберігається тільки в authorization
+                password_hash=password_hash  
             )
             
             try:

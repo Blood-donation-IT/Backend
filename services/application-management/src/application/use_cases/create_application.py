@@ -21,6 +21,11 @@ class CreateApplicationUseCase:
                       description: Optional[str] = None,
                       created_at: Optional[datetime.datetime] = None,
                       updated_at: Optional[datetime.datetime] = None) -> Application:
+        # перевірка чи вже є активна заявка для цього user_id
+        async for existing_app in self.application_repository.find_by_user_id(user_id):
+            if existing_app.status in ["pending", "approved", "scheduled"]:
+                raise ValueError(f"User {user_id} already has an active application (id: {existing_app.id}, status: {existing_app.status})")
+        
         application_id: int = self.id_generator.generate()
         
         application: Application = Application(

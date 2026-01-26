@@ -33,10 +33,7 @@ app.add_middleware(
 
 app.add_api_route("/", lambda: {"message": "Welcome to the Blood Donation System API Gateway!"}, tags=["Root"])
 app.include_router(auth.router, prefix="/api/v1")
-# app.include_router(users.router, prefix="/api/v1", tags=["Users"])
-
-# from src.api.v1 import applications
-# app.include_router(applications.router, prefix="/api/v1/applications", tags=["Applications"])
+app.include_router(users.router, prefix="/api/v1", tags=["Users"])
 
 app.include_router(donations.router, prefix="/api/v1")
 

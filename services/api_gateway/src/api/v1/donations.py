@@ -7,20 +7,13 @@ from src.schemas.donations import (
     CancelApplicationResponse
 )
 from src.infrastructure.grpc.application_client import ApplicationGrpcClient
-from src.config import settings
+from src.api.dependencies import get_application_grpc_client
 
 router = APIRouter(tags=["Donations"])
 
 
-def get_application_client() -> ApplicationGrpcClient:
-    return ApplicationGrpcClient(
-        host=settings.APPLICATION_MANAGEMENT_SERVICE_HOST,
-        port=settings.APPLICATION_MANAGEMENT_SERVICE_PORT
-    )
-
-
 @router.get("/donations/get_applications", response_model=GetApplicationsResponse)
-async def get_applications(user_id: int, client: ApplicationGrpcClient = Depends(get_application_client)):
+async def get_applications(user_id: int, client: ApplicationGrpcClient = Depends(get_application_grpc_client)):
     try:
         applications_data = await client.get_applications_by_user(user_id)
         applications = [
@@ -34,7 +27,7 @@ async def get_applications(user_id: int, client: ApplicationGrpcClient = Depends
 @router.post("/donations/create_application", response_model=CreateApplicationResponse)
 async def create_application(
     request: CreateApplicationRequest,
-    client: ApplicationGrpcClient = Depends(get_application_client)
+    client: ApplicationGrpcClient = Depends(get_application_grpc_client)
 ):
     try:
         result = await client.create_application(request)
@@ -46,7 +39,7 @@ async def create_application(
 @router.post("/donations/{application_id}/cancel", response_model=CancelApplicationResponse)
 async def cancel_application(
     application_id: int,
-    client: ApplicationGrpcClient = Depends(get_application_client)
+    client: ApplicationGrpcClient = Depends(get_application_grpc_client)
 ):
     try:
         result = await client.cancel_application(application_id)
