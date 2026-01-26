@@ -141,6 +141,29 @@ services:
     ports:
       - "5435:5432"
 
+  admin-dashboard:
+    build:
+      context: .
+      dockerfile: ./services/admin-dashboard/Dockerfile
+    container_name: admin-dashboard
+    depends_on:
+      - authorization-db
+      - user-profile-db
+      - application-management-db
+    environment:
+      - SECRET_KEY=admin-dashboard-secret-key
+      - AUTHORIZATION_DATABASE_URL=postgresql://user:password@authorization-db:5432/authorization_db
+      - USER_PROFILE_DATABASE_URL=postgresql://user:password@user-profile-db:5432/user_profile_db
+      - APPLICATION_MANAGEMENT_DATABASE_URL=postgresql://user:password@application-management-db:5432/application_management_db
+      - PYTHONPATH=/app/service/src:/app/libs
+    ports:
+      - "5000:5000"
+    networks:
+      - authorization_net
+      - user-profile_net
+      - application_management_net
+    platform: linux/amd64
+
   # authorization-migrations:
   #   build:
   #     context: .
