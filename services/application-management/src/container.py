@@ -62,6 +62,7 @@ class Container(containers.DeclarativeContainer):
         ApplicationManagementService,
         create_use_case=create_application_use_case,
         update_use_case=update_application_use_case,
-        get_use_case=get_application_use_case
+        get_use_case=get_application_use_case,
+        repository=repository
     )
 

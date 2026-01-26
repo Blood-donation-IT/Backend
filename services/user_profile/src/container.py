@@ -5,6 +5,7 @@ from src.domain.services.i_id_generator import IIDGenerator
 from src.infrastructure.repositories.sqlalchemy_user_repository import SQlAlchemyUserRepository
 from src.domain.irepositories.i_user_repository import IUserRepository
 from src.application.use_cases.create_user import CreateUserUseCase
+from src.application.use_cases.get_user_by_id import GetUserByIdUseCase
 from src.infrastructure.grpc.user_profile_server import UserProfileService
 class Container(containers.DeclarativeContainer):
     
@@ -42,8 +43,14 @@ class Container(containers.DeclarativeContainer):
         id_generator=id_generator
     )
     
+    get_user_by_id_uc = providers.Factory(
+        GetUserByIdUseCase,
+        repository=repository
+    )
+    
     user_profile_service = providers.Factory(
         UserProfileService,
-        create_user_profile_use_case=create_user_uc
+        create_user_profile_use_case=create_user_uc,
+        get_user_by_id_use_case=get_user_by_id_uc
     )
         

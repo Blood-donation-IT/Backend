@@ -12,10 +12,11 @@ class UpdateApplicationUseCase:
     async def execute(self, 
                      application_id: int,
                      application_time: Optional[datetime.datetime] = None,
-                     description: str = None,
-                     blood_type: str = None) -> Application:
+                     description: Optional[str] = None,
+                     blood_type: Optional[str] = None,
+                     status: Optional[str] = None) -> Application:
         
-        application = await self.repository.find_by_id(application_id)
+        application = await self.repository.get_by_id(application_id)
         if not application:
             raise ValueError(f"Application with id {application_id} not found")
         
@@ -25,8 +26,10 @@ class UpdateApplicationUseCase:
             application.description = description
         if blood_type:
             application.blood_type = blood_type
+        if status:
+            application.status = status
         
-        application.updated_at = Optional[datetime.datetime] 
+        application.updated_at = datetime.datetime.utcnow() 
         
         await self.repository.update(application)
         return application

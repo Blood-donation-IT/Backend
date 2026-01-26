@@ -28,8 +28,8 @@ message LoginResponse {
 message RegisterRequest {
   string name = 1;
   string email = 2;
-  google.protobuf.Timestamp birth_date = 3;
-  string password = 4;
+  string password = 3;
+  string confirm_password = 4;
 }
 
 message RegisterResponse {

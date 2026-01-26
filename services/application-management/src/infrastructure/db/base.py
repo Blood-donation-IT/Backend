@@ -8,7 +8,7 @@ from sqlalchemy.orm import sessionmaker
 
 logging.basicConfig(level=logging.DEBUG)
 
-from authorization_models.base import Base
+from application_management_models.base import Base
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 if not DATABASE_URL:
@@ -22,7 +22,7 @@ async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession
 async def on_startup() -> None:
     try:
         async with engine.begin() as connection:
-            from authorization_models.base import Base
+            from application_management_models.base import Base
             await connection.run_sync(Base.metadata.create_all)
         logging.info("Successful DB connection and tables created")
     except Exception as e:
@@ -36,7 +36,3 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
             yield session
         finally:
             await session.close()
-
-
-
-

@@ -32,10 +32,18 @@ def fix_import_in_grpc_file(grpc_file_path):
         return
     with open(grpc_file_path, "r", encoding="utf-8") as f:
         content = f.read()
-    new_content = content.replace(
-        "from application_management import application_management_pb2 as application_management_dot_application_management__pb2",
-        "from . import application_management_pb2 as application_management_dot_application_management__pb2"
-    )
+    
+    replacements = [
+        ("from application_management import application_management_pb2 as application_management_dot_application_management__pb2",
+         "from . import application_management_pb2 as application_management_dot_application_management__pb2"),
+        ("from application_management import application_management_pb2 as application__management_dot_application__management__pb2",
+         "from . import application_management_pb2 as application__management_dot_application__management__pb2"),
+    ]
+    
+    new_content = content
+    for old, new in replacements:
+        new_content = new_content.replace(old, new)
+    
     if new_content != content:
         with open(grpc_file_path, "w", encoding="utf-8") as f:
             f.write(new_content)

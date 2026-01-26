@@ -23,32 +23,48 @@ class UserGrpcClient:
             
             try:
                 proto_user = await stub.GetProfileById(request)
+                if proto_user.user_id == 0:
+                    raise grpc.RpcError(
+                        code=grpc.StatusCode.NOT_FOUND,
+                        details=f"User profile with id {user_id} not found"
+                    )
+    
+                if proto_user.user_id != user_id:
+                    raise grpc.RpcError(
+                        code=grpc.StatusCode.NOT_FOUND,
+                        details=f"User profile id mismatch: expected {user_id}, got {proto_user.user_id}"
+                    )
                 return self._map_proto_to_pydantic(proto_user)
             except grpc.RpcError as e:
-                print(f"GRPC Error in get_profile: {e}")
                 raise e
 
-    # --- ВОТ ЭТОГО НЕ ХВАТАЛО ---
-    async def create_user(self, email: str, full_name: str, password_hash: str, phone: str = None) -> UserProfileResponse:
+    async def create_user(self, user_id: int, email: str, full_name: str, password_hash: str = "", phone: str = None) -> UserProfileResponse:
         async with grpc.aio.insecure_channel(self.target) as channel:
             stub = user_profile_pb2_grpc.UserProfileServiceStub(channel)
             
-            # Собираем запрос для gRPC
-            # ВАЖНО: Убедись, что в .proto ты добавил поле password_hash!
+            # Передаємо user_id з authorization для синхронізації
             request = user_profile_pb2.CreateProfileRequest(
-                email=email,
+                user_id=user_id,  # Використовуємо user_id з authorization
                 full_name=full_name,
-                password_hash=password_hash, # <-- Мы передаем хэш
-                phone=phone or ""
+                email=email,
+                phone=phone or "",
+                password_hash=password_hash  
             )
             
             try:
-                # Вызываем метод CreateProfile (как в .proto файле)
                 proto_user = await stub.CreateProfile(request)
+                if proto_user.user_id == 0:
+                    raise grpc.RpcError(
+                        code=grpc.StatusCode.INTERNAL,
+                        details="Profile creation failed: returned empty profile"
+                    )
                 return self._map_proto_to_pydantic(proto_user)
             except grpc.RpcError as e:
-                print(f"GRPC Error in create_user: {e}")
-                # Тут можно добавить проверку e.code() == grpc.StatusCode.ALREADY_EXISTS
+                if e.code() == grpc.StatusCode.ALREADY_EXISTS:
+                    try:
+                        return await self.get_profile_by_id(user_id)
+                    except:
+                        raise Exception(f"Profile already exists but cannot be retrieved: {e.details()}")
                 raise Exception(f"Failed to create user: {e.details()}")
 
     async def get_auth_data_by_email(self, email: str) -> Optional[UserAuthData]:

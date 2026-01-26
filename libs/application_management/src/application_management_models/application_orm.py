@@ -1,9 +1,10 @@
 from uuid import uuid4
-from sqlalchemy import Column, String,BigInteger,Boolean,Integer,DateTime,func
+from sqlalchemy import Column, String, BigInteger, Boolean, Integer, DateTime, func
 import datetime
-from infrastructure.db.base import Base
+from application_management_models.base import Base
 from google.protobuf.timestamp_pb2 import Timestamp
 from sqlalchemy.dialects.postgresql import ARRAY
+from typing import Optional
 
 
 class ApplicationORM(Base):
@@ -13,6 +14,8 @@ class ApplicationORM(Base):
     user_id = Column(BigInteger, nullable=False) 
     blood_type = Column(String, nullable=False)  
     application_time = Column(DateTime(timezone=True), nullable=False)
+    application_day = Column(DateTime(timezone=True), nullable=True)
+    location_id = Column(String, nullable=True)
     status = Column(String, nullable=False, default="pending")
     description = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -25,6 +28,8 @@ class ApplicationORM(Base):
             user_id=self.user_id,
             blood_type=self.blood_type,
             application_time=self.application_time,
+            application_day=self.application_day,
+            location_id=self.location_id,
             status=self.status,
             description=self.description,
             created_at=self.created_at,
@@ -38,6 +43,8 @@ class ApplicationORM(Base):
             user_id=application.user_id,
             blood_type=application.blood_type,
             application_time=application.application_time,
+            application_day=application.application_day,
+            location_id=application.location_id,
             status=application.status,
             description=application.description
         )

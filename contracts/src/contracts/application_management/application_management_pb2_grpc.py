@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-from application_management import application_management_pb2 as application__management_dot_application__management__pb2
+from . import application_management_pb2 as application__management_dot_application__management__pb2
 
 GRPC_GENERATED_VERSION = '1.76.0'
 GRPC_VERSION = grpc.__version__
@@ -54,11 +54,6 @@ class ApplicationManagementServiceStub(object):
                 request_serializer=application__management_dot_application__management__pb2.ApplicationRequest.SerializeToString,
                 response_deserializer=application__management_dot_application__management__pb2.ApplicationResponse.FromString,
                 _registered_method=True)
-        self.DeleteApplication = channel.unary_unary(
-                '/src.protos.application_management.ApplicationManagementService/DeleteApplication',
-                request_serializer=application__management_dot_application__management__pb2.ApplicationRequest.SerializeToString,
-                response_deserializer=application__management_dot_application__management__pb2.ApplicationResponse.FromString,
-                _registered_method=True)
 
 
 class ApplicationManagementServiceServicer(object):
@@ -88,12 +83,6 @@ class ApplicationManagementServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def DeleteApplication(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
 
 def add_ApplicationManagementServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -114,11 +103,6 @@ def add_ApplicationManagementServiceServicer_to_server(servicer, server):
             ),
             'CancelApplication': grpc.unary_unary_rpc_method_handler(
                     servicer.CancelApplication,
-                    request_deserializer=application__management_dot_application__management__pb2.ApplicationRequest.FromString,
-                    response_serializer=application__management_dot_application__management__pb2.ApplicationResponse.SerializeToString,
-            ),
-            'DeleteApplication': grpc.unary_unary_rpc_method_handler(
-                    servicer.DeleteApplication,
                     request_deserializer=application__management_dot_application__management__pb2.ApplicationRequest.FromString,
                     response_serializer=application__management_dot_application__management__pb2.ApplicationResponse.SerializeToString,
             ),
@@ -229,33 +213,6 @@ class ApplicationManagementService(object):
             request,
             target,
             '/src.protos.application_management.ApplicationManagementService/CancelApplication',
-            application__management_dot_application__management__pb2.ApplicationRequest.SerializeToString,
-            application__management_dot_application__management__pb2.ApplicationResponse.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def DeleteApplication(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/src.protos.application_management.ApplicationManagementService/DeleteApplication',
             application__management_dot_application__management__pb2.ApplicationRequest.SerializeToString,
             application__management_dot_application__management__pb2.ApplicationResponse.FromString,
             options,

@@ -29,9 +29,15 @@ services:
       - APP_NAME=BloodDonorGateway
       - USER_SERVICE_HOST=user-profile
       - USER_SERVICE_PORT=50051
+      - APPLICATION_MANAGEMENT_SERVICE_HOST=application-management
+      - APPLICATION_MANAGEMENT_SERVICE_PORT=50052
+      - AUTHORIZATION_SERVICE_HOST=authorization
+      - AUTHORIZATION_SERVICE_PORT=50053
       - SECRET_KEY=blood-don
     depends_on:
       - user-profile
+      - application-management
+      - authorization
     networks:
       - gateway_net
 

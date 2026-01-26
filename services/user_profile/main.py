@@ -31,6 +31,9 @@ async def serve(container: Container)->None:
     await server.wait_for_termination()
 
 async def main()->None:
+    from src.infrastructure.db.session import on_startup
+    await on_startup()
+    
     container:Container = Container()
     
     container.config.repository_type.from_env("REPOSITORY_TYPE", "postgresql")
