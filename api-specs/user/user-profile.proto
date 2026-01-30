@@ -60,12 +60,8 @@ message GetProfileResponse {
 message UpdateProfileRequest {
   int64 user_id = 1;
   string full_name = 2;
-  string email = 3;
-  string blood_type = 4;
-  repeated UserRole roles = 5;
-  bool is_verified = 6;
-  bool is_active = 7;
-  bool is_banned = 8;
+  string blood_type = 3;
+  string avatar_url = 4;
 }
 
 message UpdateProfileResponse {
@@ -86,6 +82,7 @@ message UserProfile {
   bool is_banned = 10;
   google.protobuf.Timestamp created_at = 11;
   google.protobuf.Timestamp updated_at = 12;
+  string avatar_url = 13;
 }
 
 enum UserRole {

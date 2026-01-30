@@ -32,7 +32,28 @@ class SQlAlchemyUserRepository(IUserRepository):
             await self._session.rollback()
             raise e
         return None
-    
+
+    async def update(self, user: User) -> None:
+        try:
+            orm_user: UserORM = await self._session.get(UserORM, user.id)
+            if not orm_user:
+                raise ValueError(f"User with id {user.id} not found")
+            orm_user.full_name = user.full_name
+            orm_user.email = user.email
+            orm_user.phone = user.phone
+            orm_user.blood_type = user.blood_type
+            orm_user.is_verified = user.is_verified
+            orm_user.is_active = user.is_active
+            orm_user.is_banned = user.is_banned
+            orm_user.roles = user.roles or ["donor"]
+            if user.password_hash is not None:
+                orm_user.password_hash = user.password_hash
+            orm_user.avatar_url = getattr(user, "avatar_url", None)
+            await self._session.commit()
+        except Exception as e:
+            await self._session.rollback()
+            raise e
+
     async def delete(self, user_id: int) -> None:
         orm_user: UserORM = await self._session.get(UserORM, user_id)
         if orm_user:
