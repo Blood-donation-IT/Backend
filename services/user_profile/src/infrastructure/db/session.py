@@ -23,7 +23,7 @@ async def on_startup() -> None:
         async with engine.begin() as connection:
             from user_profile_models.base import Base
             await connection.run_sync(Base.metadata.create_all)
-            await connection.execute(text("ALTER TABLE users_ ADD COLUMN IF NOT EXISTS avatar_url VARCHAR"))
+            await connection.execute(text)
         logging.info("Successful DB connection")
     except Exception as e:
         logging.error(f"Error with DB connecting: {e}")

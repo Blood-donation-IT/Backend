@@ -7,8 +7,7 @@ class RefreshTokenUseCase:
     def __init__(self, repository: IAuthorizationRepository):
         self.repository: IAuthorizationRepository = repository
 
-    async def execute(self, refresh_token: str) -> Tuple[str, str, datetime.datetime]:
-
+    async def execute(self, refresh_token: str) -> Tuple[str, str, datetime.datetime, int, str]:
         payload = JWTService.verify_token(refresh_token)
         if not payload:
             raise ValueError("Invalid or expired refresh token")
@@ -34,7 +33,7 @@ class RefreshTokenUseCase:
         if not expires_at:
             expires_at = datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
 
-        return (new_access_token, new_refresh_token, expires_at)
+        return (new_access_token, new_refresh_token, expires_at, user.id, user.email)
 
 
 

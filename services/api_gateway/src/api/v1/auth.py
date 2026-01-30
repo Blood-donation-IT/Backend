@@ -99,7 +99,6 @@ async def login(
     auth_client: AuthorizationGrpcClient = Depends(get_authorization_grpc_client),
     user_client: UserGrpcClient = Depends(get_user_grpc_client),
 ):
-    """Login with email and password (application/json)."""
     try:
         result = await auth_client.login(
             email=body.email,
@@ -130,22 +129,37 @@ async def login(
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.post("/auth/refresh", response_model=TokenResponse, responses={200: {"description": "OK"}})
+@router.post(
+    "/auth/refresh",
+    response_model=TokenResponse,
+    responses={
+        200: {"description": "OK"},
+        400: {"description": "Bad Request"},
+        401: {"description": "Invalid or expired refresh token"},
+    },
+)
 async def refresh_token(
     body: RefreshTokenRequest,
     grpc_client: AuthorizationGrpcClient = Depends(get_authorization_grpc_client)
 ):
     try:
         result = await grpc_client.refresh_token(body.refresh_token)
-
-        
         if not result["success"]:
-            raise HTTPException(status_code=400, detail=result["message"])
-        
+            msg = result.get("message", "")
+            if "invalid" in msg.lower() or "expired" in msg.lower() or "refresh" in msg.lower():
+                raise HTTPException(status_code=401, detail=msg)
+            raise HTTPException(status_code=400, detail=msg)
         return {
             "access_token": result["access_token"],
             "refresh_token": result["refresh_token"],
-            "token_type": "bearer"
+            "token_type": "bearer",
+            "user_id": result.get("user_id"),
+            "email": result.get("email") or None,
         }
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        err = str(e)
+        if "invalid" in err.lower() or "expired" in err.lower() or "refresh" in err.lower():
+            raise HTTPException(status_code=401, detail=err)
+        raise HTTPException(status_code=400, detail=err)
