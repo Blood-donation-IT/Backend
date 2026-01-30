@@ -26,18 +26,19 @@ class CreateUserUseCase:
                 user_id: Optional[int] = None,
                 avatar_url: Optional[str] = None)->User:
         
+        if user_id is not None and user_id > 0:
+            existing_by_id = await self.user_repository.get_user_by_id(user_id)
+            if existing_by_id:
+                return existing_by_id
+
         existing_by_email = await self.user_repository.get_user_by_email(email)
         if existing_by_email:
             if user_id and existing_by_email.id == user_id:
                 return existing_by_email
             raise ValueError(f"User with email {email} already exists")
-        
+
         if user_id is None:
             user_id = self.id_generator.generate()
-        else:
-            existing_by_id = await self.user_repository.get_user_by_id(user_id)
-            if existing_by_id:
-                return existing_by_id
         
         user:User = User(
             id=user_id,

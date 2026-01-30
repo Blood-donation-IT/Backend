@@ -11,11 +11,20 @@ from sqlalchemy.exc import NoResultFound
 class SQlAlchemyUserRepository(IUserRepository):
     def __init__(self, session: AsyncSession):
         self._session: AsyncSession = session
+
+    async def _ensure_clean_transaction(self) -> None:
+        try:
+            await self._session.rollback()
+        except Exception:
+            pass
+
     async def get_user_by_id(self, user_id:int) -> Optional[User]:
+        await self._ensure_clean_transaction()
         orm_user: UserORM = await self._session.get(UserORM, user_id)
         return User.from_orm_dict(orm_user.to_dict()) if orm_user else None
     
     async def get_user_by_email(self, email: str) -> Optional[User]:
+        await self._ensure_clean_transaction()
         result = await self._session.execute(
             select(UserORM).where(UserORM.email == email)
         )
@@ -23,6 +32,7 @@ class SQlAlchemyUserRepository(IUserRepository):
         return User.from_orm_dict(orm_user.to_dict()) if orm_user else None
     
     async def save(self, user: User) -> None:
+        await self._ensure_clean_transaction()
         try:
             orm_user: UserORM = UserORM.from_entity(user)
             self._session.add(orm_user)
@@ -34,6 +44,7 @@ class SQlAlchemyUserRepository(IUserRepository):
         return None
 
     async def update(self, user: User) -> None:
+        await self._ensure_clean_transaction()
         try:
             orm_user: UserORM = await self._session.get(UserORM, user.id)
             if not orm_user:
@@ -55,12 +66,14 @@ class SQlAlchemyUserRepository(IUserRepository):
             raise e
 
     async def delete(self, user_id: int) -> None:
+        await self._ensure_clean_transaction()
         orm_user: UserORM = await self._session.get(UserORM, user_id)
         if orm_user:
             await self._session.delete(orm_user)
             await self._session.commit()
         return None
     async def list_active_donors(self, limit: int = 100) -> List[User]:
+        await self._ensure_clean_transaction()
         result = await self._session.execute(
             select(UserORM).where(UserORM.is_active == True, "donor" == any_(UserORM.roles)).limit(limit)
         )
@@ -68,5 +81,6 @@ class SQlAlchemyUserRepository(IUserRepository):
         return [User.from_orm_dict(u.to_dict()) for u in orm_users]
     
     async def get_last_donation_date(self, user_id: int) -> Optional[datetime.datetime]:
+        await self._ensure_clean_transaction()
         orm_user = await self._session.get(UserORM, user_id)
         return orm_user.last_donation_at if orm_user and orm_user.last_donation_at else None

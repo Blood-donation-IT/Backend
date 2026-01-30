@@ -4,7 +4,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from src.config import settings
-
 from src.api.v1 import auth, users, donations
 
 @asynccontextmanager
@@ -21,6 +20,7 @@ app = FastAPI(
     description="Gateway service for Blood Donation System",
     version="1.0.0",
     lifespan=lifespan,
+    swagger_ui_parameters={"persistAuthorization": True},
 )
 
 app.add_middleware(

@@ -3,6 +3,7 @@ import logging
 from typing import AsyncGenerator
 from contextlib import asynccontextmanager
 
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
@@ -20,9 +21,9 @@ async_session = sessionmaker(engine, expire_on_commit=False, class_=AsyncSession
 async def on_startup() -> None:
     try:
         async with engine.begin() as connection:
-            # from infrastructure.db.base import Base
             from user_profile_models.base import Base
             await connection.run_sync(Base.metadata.create_all)
+            await connection.execute(text("ALTER TABLE users_ ADD COLUMN IF NOT EXISTS avatar_url VARCHAR"))
         logging.info("Successful DB connection")
     except Exception as e:
         logging.error(f"Error with DB connecting: {e}")
