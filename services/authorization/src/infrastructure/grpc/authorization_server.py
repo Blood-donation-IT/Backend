@@ -101,7 +101,7 @@ class AuthorizationService(authorization_pb2_grpc.AuthorizationServiceServicer):
             if not request.refresh_token:
                 raise ValueError("Refresh token is required")
 
-            access_token, refresh_token, expires_at = await self.refresh_token_use_case.execute(
+            access_token, refresh_token, expires_at, user_id, email = await self.refresh_token_use_case.execute(
                 refresh_token=request.refresh_token
             )
 
@@ -113,7 +113,9 @@ class AuthorizationService(authorization_pb2_grpc.AuthorizationServiceServicer):
                 message="Token refreshed successfully",
                 access_token=access_token,
                 refresh_token=refresh_token,
-                expires_at=ts
+                expires_at=ts,
+                user_id=user_id,
+                email=email or ""
             )
         except ValueError as e:
             context.set_details(str(e))
@@ -122,7 +124,9 @@ class AuthorizationService(authorization_pb2_grpc.AuthorizationServiceServicer):
                 success=False,
                 message=str(e),
                 access_token="",
-                refresh_token=""
+                refresh_token="",
+                user_id=0,
+                email=""
             )
         except Exception as e:
             context.set_details(str(e))
@@ -131,7 +135,9 @@ class AuthorizationService(authorization_pb2_grpc.AuthorizationServiceServicer):
                 success=False,
                 message=f"Internal server error: {str(e)}",
                 access_token="",
-                refresh_token=""
+                refresh_token="",
+                user_id=0,
+                email=""
             )
 
 

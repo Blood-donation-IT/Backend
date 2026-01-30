@@ -1,13 +1,12 @@
 from fastapi import APIRouter, HTTPException, Depends
-from fastapi.security import OAuth2PasswordRequestForm
-from src.schemas.auth import TokenResponse, LoginRequest, RegisterRequest, RegisterResponse, RefreshTokenRequest 
+from src.schemas.auth import TokenResponse, LoginRequest, RegisterRequest, RegisterResponse, RefreshTokenRequest
 from src.infrastructure.grpc.authorization_client import AuthorizationGrpcClient
 from src.infrastructure.grpc.user_client import UserGrpcClient
 from src.api.dependencies import get_authorization_grpc_client, get_user_grpc_client
 
-router = APIRouter(tags=["Auth"])
+router = APIRouter(tags=["Auth"], responses={200: {"description": "OK"}})
 
-@router.post("/auth/register", response_model=RegisterResponse)
+@router.post("/auth/register", response_model=RegisterResponse, responses={200: {"description": "Registered or already exists"}})
 async def register(
     body: RegisterRequest,
     auth_client: AuthorizationGrpcClient = Depends(get_authorization_grpc_client),
@@ -51,26 +50,20 @@ async def register(
             raise
         except Exception as profile_error:
             error_msg = str(profile_error)
+            if "avatar_url" in error_msg or "UndefinedColumn" in error_msg:
+                raise HTTPException(status_code=503, detail="User profile DB is being updated. Restart user-profile service and retry")
             if "already exists" in error_msg.lower() or "duplicate" in error_msg.lower() or "ALREADY_EXISTS" in error_msg:
                 try:
                     existing_profile = await user_client.get_profile_by_id(user_id)
-                    if existing_profile.id != user_id:
-                        raise HTTPException(
-                            status_code=500,
-                            detail=f"Existing profile has different user_id: expected {user_id}, got {existing_profile.id}"
-                        )
+                    if existing_profile.id == user_id:
+                        login_result = await auth_client.login(email=body.email, password=body.password)
+                        if login_result.get("success"):
+                            return {"user_id": user_id, "email": body.email, "access_token": login_result["access_token"], "refresh_token": login_result["refresh_token"], "token_type": "bearer"}
                 except HTTPException:
                     raise
-                except Exception as get_error:
-                    raise HTTPException(
-                        status_code=500,
-                        detail=f"Profile exists but cannot be retrieved: {str(get_error)}"
-                    )
-            else:
-                raise HTTPException(
-                    status_code=500,
-                    detail=f"Failed to create user profile (user_id={user_id}): {error_msg}"
-                )
+                except Exception:
+                    pass
+            raise HTTPException(status_code=500, detail=f"Failed to create user profile (user_id={user_id}): {error_msg}")
         
         login_result = await auth_client.login(
             email=body.email,
@@ -87,14 +80,24 @@ async def register(
             "refresh_token": login_result["refresh_token"],
             "token_type": "bearer"
         }
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"User already exists or error {str(e)}")
+        err = str(e)
+        if "already exists" in err.lower():
+            try:
+                login_result = await auth_client.login(email=body.email, password=body.password)
+                if login_result.get("success"):
+                    return {"user_id": login_result.get("user_id"), "email": body.email, "access_token": login_result["access_token"], "refresh_token": login_result["refresh_token"], "token_type": "bearer"}
+            except Exception:
+                pass
+        raise HTTPException(status_code=400, detail=err)
 
-@router.post("/auth/login", response_model=TokenResponse)
+@router.post("/auth/login", response_model=TokenResponse, responses={200: {"description": "OK"}})
 async def login(
     body: LoginRequest,
     auth_client: AuthorizationGrpcClient = Depends(get_authorization_grpc_client),
-    user_client: UserGrpcClient = Depends(get_user_grpc_client)
+    user_client: UserGrpcClient = Depends(get_user_grpc_client),
 ):
     try:
         result = await auth_client.login(
@@ -119,27 +122,44 @@ async def login(
             "access_token": result["access_token"],
             "refresh_token": result["refresh_token"],
             "token_type": "bearer",
-            "user_id": user_id
+            "user_id": user_id,
         }
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-@router.post("/auth/refresh", response_model=TokenResponse)
+@router.post(
+    "/auth/refresh",
+    response_model=TokenResponse,
+    responses={
+        200: {"description": "OK"},
+        400: {"description": "Bad Request"},
+        401: {"description": "Invalid or expired refresh token"},
+    },
+)
 async def refresh_token(
     body: RefreshTokenRequest,
     grpc_client: AuthorizationGrpcClient = Depends(get_authorization_grpc_client)
 ):
     try:
         result = await grpc_client.refresh_token(body.refresh_token)
-
-        
         if not result["success"]:
-            raise HTTPException(status_code=400, detail=result["message"])
-        
+            msg = result.get("message", "")
+            if "invalid" in msg.lower() or "expired" in msg.lower() or "refresh" in msg.lower():
+                raise HTTPException(status_code=401, detail=msg)
+            raise HTTPException(status_code=400, detail=msg)
         return {
             "access_token": result["access_token"],
             "refresh_token": result["refresh_token"],
-            "token_type": "bearer"
+            "token_type": "bearer",
+            "user_id": result.get("user_id"),
+            "email": result.get("email") or None,
         }
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+        err = str(e)
+        if "invalid" in err.lower() or "expired" in err.lower() or "refresh" in err.lower():
+            raise HTTPException(status_code=401, detail=err)
+        raise HTTPException(status_code=400, detail=err)

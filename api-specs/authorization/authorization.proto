@@ -49,5 +49,7 @@ message RefreshTokenResponse {
   string access_token = 3;
   string refresh_token = 4;
   google.protobuf.Timestamp expires_at = 5;
+  int64 user_id = 6;
+  string email = 7;
 }
 

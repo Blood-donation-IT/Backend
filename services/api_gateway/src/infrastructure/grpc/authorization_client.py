@@ -77,7 +77,9 @@ class AuthorizationGrpcClient:
                     "message": response.message,
                     "access_token": response.access_token,
                     "refresh_token": response.refresh_token,
-                    "expires_at": expires_at
+                    "expires_at": expires_at,
+                    "user_id": response.user_id,
+                    "email": response.email or "",
                 }
             except grpc.RpcError as e:
                 raise Exception(f"gRPC Error in refresh_token: {e.details()}")

@@ -14,7 +14,8 @@ class Settings(BaseSettings):
     AUTHORIZATION_SERVICE_PORT: int = 50053
     
     SECRET_KEY: str = "blood-don"
-    
+    JWT_SECRET: str = "secret-key-for-testing"  # Має збігатися з authorization (JWT_SECRET)
+
     class Config:
         env_file = ".env"
 

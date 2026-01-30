@@ -15,13 +15,15 @@ class User:
                  is_banned: bool = False,
                  created_at: Optional[datetime.datetime] = None,
                  updated_at: Optional[datetime.datetime] = None,
-                 password_hash: Optional[str] = None
+                 password_hash: Optional[str] = None,
+                 avatar_url: Optional[str] = None
                  ):
         self.id:int = id
         self.full_name:str = full_name
         self.email:str = email
         self.phone:Optional[str] = phone
         self.blood_type:str = blood_type
+        self.avatar_url: Optional[str] = avatar_url
         self.is_verified:bool = is_verified
         self.total_donations:int = total_donations
         self.last_donation_at:Optional[datetime.datetime] = last_donation_at

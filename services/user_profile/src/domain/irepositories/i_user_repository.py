@@ -12,6 +12,11 @@ class IUserRepository(ABC):
     @abstractmethod
     async def save(self, user: User) -> None:
         pass
+
+    @abstractmethod
+    async def update(self, user: User) -> None:
+        pass
+
     @abstractmethod
     async def delete(self, user_id: int) -> None:
         pass

@@ -15,15 +15,20 @@ class UserProfileResponse(BaseModel):
     email: str
     phone: Optional[str] = None
     
-    blood_type: str           
+    blood_type: str
     total_donations: int
     last_donation_at: Optional[datetime] = None
-    
+    avatar: Optional[str] = None
     # lives_saved_count: int = 0 
-    # avatar: Optional[str] = None 
-    
+
     roles: list[UserRole] = []
     is_active: bool
     is_verified: bool
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class EditProfileRequest(BaseModel):
+    full_name: Optional[str] = None
+    blood_type: Optional[str] = None
+    avatar: Optional[str] = None
