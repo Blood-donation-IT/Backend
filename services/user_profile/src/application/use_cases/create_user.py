@@ -23,7 +23,8 @@ class CreateUserUseCase:
                 created_at: Optional[datetime.datetime] = None,
                 password_hash: Optional[str] = None,
                 updated_at: Optional[datetime.datetime] = None,
-                user_id: Optional[int] = None)->User:
+                user_id: Optional[int] = None,
+                avatar_url: Optional[str] = None)->User:
         
         existing_by_email = await self.user_repository.get_user_by_email(email)
         if existing_by_email:
@@ -53,6 +54,7 @@ class CreateUserUseCase:
             created_at=created_at,
             updated_at=updated_at,
             password_hash=password_hash if password_hash is not None else "",
+            avatar_url=avatar_url,
         )
         await self.user_repository.save(user)
         return user
