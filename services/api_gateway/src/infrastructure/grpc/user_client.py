@@ -67,6 +67,30 @@ class UserGrpcClient:
                         raise Exception(f"Profile already exists but cannot be retrieved: {e.details()}")
                 raise Exception(f"Failed to create user: {e.details()}")
 
+    async def update_profile(
+        self,
+        user_id: int,
+        full_name: Optional[str] = None,
+        blood_type: Optional[str] = None,
+        avatar_url: Optional[str] = None,
+    ) -> UserProfileResponse:
+        async with grpc.aio.insecure_channel(self.target) as channel:
+            stub = user_profile_pb2_grpc.UserProfileServiceStub(channel)
+            request = user_profile_pb2.UpdateProfileRequest(user_id=user_id)
+            if full_name is not None:
+                request.full_name = full_name
+            if blood_type is not None:
+                request.blood_type = blood_type
+            if avatar_url is not None:
+                request.avatar_url = avatar_url
+            try:
+                response = await stub.UpdateProfile(request)
+                if not response.success:
+                    raise Exception(response.message or "Update failed")
+                return await self.get_profile_by_id(user_id)
+            except grpc.RpcError as e:
+                raise Exception(f"Failed to update profile: {e.details()}")
+
     async def get_auth_data_by_email(self, email: str) -> Optional[UserAuthData]:
         """Получает ID, хэш пароля и роли для проверки входа"""
         async with grpc.aio.insecure_channel(self.target) as channel:
@@ -97,10 +121,11 @@ class UserGrpcClient:
             id=proto_user.user_id,
             full_name=proto_user.full_name,
             email=proto_user.email,
-            phone=None, 
-            blood_type=proto_user.blood_type,
+            phone=None,
+            blood_type=proto_user.blood_type or "",
             total_donations=proto_user.total_donations,
             last_donation_at=last_donation_dt,
+            avatar=getattr(proto_user, "avatar_url", None) or None,
             lives_saved_count=lives_saved,
             roles=roles_mapped,
             is_active=proto_user.is_active,
