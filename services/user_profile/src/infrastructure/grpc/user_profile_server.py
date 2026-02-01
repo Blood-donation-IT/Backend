@@ -41,6 +41,7 @@ def _user_to_proto(user: User, ts: Timestamp) -> "user_profile_pb2.UserProfile":
         donor_status=getattr(user, "donor_status", None) or "",
         has_donor_book=getattr(user, "has_donor_book", False),
         test_is_done=getattr(user, "test_is_done", False),
+        birth_date=ts.FromDatetime(user.birth_date) if getattr(user, "birth_date", None) else None,
     )
 
 class UserProfileService(user_profile_pb2_grpc.UserProfileServiceServicer):

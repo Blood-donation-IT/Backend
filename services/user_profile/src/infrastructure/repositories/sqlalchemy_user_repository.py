@@ -64,6 +64,7 @@ class SQlAlchemyUserRepository(IUserRepository):
             orm_user.donor_status = getattr(user, "donor_status", None)
             orm_user.has_donor_book = getattr(user, "has_donor_book", False) or False
             orm_user.test_is_done = getattr(user, "test_is_done", False) or False
+            orm_user.birth_date = getattr(user, "birth_date", None)
             await self._session.commit()
         except Exception as e:
             await self._session.rollback()

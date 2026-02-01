@@ -10,7 +10,6 @@ class AuthorizationORM(Base):
     email = Column(String, unique=True, nullable=False, index=True)
     password_hash = Column(String, nullable=False)
     name = Column(String, nullable=False)
-    birth_date = Column(DateTime(timezone=True), nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
@@ -21,7 +20,6 @@ class AuthorizationORM(Base):
             email=self.email,
             password_hash=self.password_hash,
             name=self.name,
-            birth_date=self.birth_date,
             created_at=self.created_at,
             updated_at=self.updated_at
         )
@@ -33,7 +31,6 @@ class AuthorizationORM(Base):
             email=user.email,
             password_hash=user.password_hash,
             name=user.name,
-            birth_date=user.birth_date
         )
 
 

@@ -43,7 +43,6 @@ class SQLAlchemyAuthorizationRepository(IAuthorizationRepository):
             orm_user.email = user.email
             orm_user.password_hash = user.password_hash
             orm_user.name = user.name
-            orm_user.birth_date = user.birth_date
             await self._session.commit()
         except Exception as e:
             await self._session.rollback()

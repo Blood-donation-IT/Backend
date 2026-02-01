@@ -21,6 +21,7 @@ class User:
                  donor_status: Optional[str] = None,
                  has_donor_book: bool = False,
                  test_is_done: bool = False,
+                 birth_date: Optional[datetime.datetime] = None,
                  ):
         self.id: int = id
         self.full_name: str = full_name
@@ -41,8 +42,8 @@ class User:
         self.donor_status: Optional[str] = donor_status
         self.has_donor_book: bool = has_donor_book
         self.test_is_done: bool = test_is_done
-        
-        
+        self.birth_date: Optional[datetime.datetime] = birth_date
+
     @classmethod
     def from_orm_dict(cls, data: dict):
         return cls(**data)

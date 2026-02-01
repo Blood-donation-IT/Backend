@@ -26,6 +26,7 @@ class UserProfileResponse(BaseModel):
     donor_status: str
     has_donor_book: bool
     test_is_done: bool
+    birth_date: Optional[date] = None
     roles: list[UserRole] = []
     is_active: bool
     is_banned: bool

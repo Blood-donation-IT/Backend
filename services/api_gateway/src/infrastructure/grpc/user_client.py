@@ -4,6 +4,18 @@ from google.protobuf.timestamp_pb2 import Timestamp
 from contracts.user import user_profile_pb2, user_profile_pb2_grpc
 from src.schemas.user import UserProfileResponse, UserRole
 from typing import Optional
+from datetime import date
+
+
+def _birth_date_from_proto(proto_user) -> Optional[date]:
+    ts = getattr(proto_user, "birth_date", None)
+    if not ts or not getattr(ts, "seconds", 0):
+        return None
+    try:
+        dt = ts.ToDatetime()
+        return dt.date() if dt else None
+    except Exception:
+        return None
 
 class UserAuthData:
     """Вспомогательный класс для данных аутентификации (чтобы не тащить Proto наружу)"""
@@ -135,6 +147,7 @@ class UserGrpcClient:
             donor_status=getattr(proto_user, "donor_status", None) or "",
             has_donor_book=getattr(proto_user, "has_donor_book", False),
             test_is_done=getattr(proto_user, "test_is_done", False),
+            birth_date=_birth_date_from_proto(proto_user),
             roles=roles_mapped,
             is_active=proto_user.is_active,
             is_banned=proto_user.is_banned,

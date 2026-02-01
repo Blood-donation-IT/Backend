@@ -25,6 +25,7 @@ class UserORM(Base):
     donor_status = Column(String, nullable=True)
     has_donor_book = Column(Boolean, default=False, nullable=False)
     test_is_done = Column(Boolean, default=False, nullable=False)
+    birth_date = Column(DateTime(timezone=True), nullable=True)
 
     def to_dict(self) -> dict:
         return {
@@ -47,6 +48,7 @@ class UserORM(Base):
             "donor_status": getattr(self, "donor_status", None),
             "has_donor_book": getattr(self, "has_donor_book", False) or False,
             "test_is_done": getattr(self, "test_is_done", False) or False,
+            "birth_date": getattr(self, "birth_date", None),
         }
 
     @classmethod
@@ -69,4 +71,5 @@ class UserORM(Base):
             donor_status=getattr(user, "donor_status", None),
             has_donor_book=getattr(user, "has_donor_book", False) or False,
             test_is_done=getattr(user, "test_is_done", False) or False,
+            birth_date=getattr(user, "birth_date", None),
         )

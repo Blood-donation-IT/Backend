@@ -23,7 +23,6 @@ class AuthorizationService(authorization_pb2_grpc.AuthorizationServiceServicer):
                 email=request.email,
                 password=request.password,
                 name=request.name,
-                birth_date=None
             )
             
             return authorization_pb2.RegisterResponse(
