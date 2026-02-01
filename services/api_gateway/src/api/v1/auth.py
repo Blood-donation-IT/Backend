@@ -154,7 +154,6 @@ async def refresh_token(
             "refresh_token": result["refresh_token"],
             "token_type": "bearer",
             "user_id": result.get("user_id"),
-            "email": result.get("email") or None,
         }
     except HTTPException:
         raise
