@@ -52,7 +52,7 @@ class AuthorizationView(ModelView):
     can_delete = True
     can_view_details = True
     page_size = 50
-    column_list = ['id', 'email', 'name', 'birth_date', 'created_at', 'updated_at']
+    column_list = ['id', 'email', 'name','created_at', 'updated_at']
     column_searchable_list = ['email', 'name']
     column_filters = ['created_at', 'updated_at']
     column_labels = {
@@ -60,7 +60,6 @@ class AuthorizationView(ModelView):
         'email': 'Email',
         'name': 'Name',
         'password_hash': 'Password Hash',
-        'birth_date': 'Birth Date',
         'created_at': 'Created At',
         'updated_at': 'Updated At'
     }
@@ -72,14 +71,15 @@ class UserProfileView(ModelView):
     can_delete = True
     can_view_details = True
     page_size = 50
-    column_list = ['id', 'email', 'full_name', 'phone', 'blood_type', 'is_verified', 'is_active', 'is_banned', 'total_donations', 'created_at']
-    column_searchable_list = ['email', 'full_name', 'phone']
+    column_list = ['id', 'email', 'name', 'phone', 'birth_date', 'blood_type', 'is_verified', 'is_active', 'is_banned', 'total_donations', 'created_at']
+    column_searchable_list = ['email', 'name', 'phone']
     column_filters = ['is_verified', 'is_active', 'is_banned', 'blood_type', 'created_at']
     column_labels = {
         'id': 'ID',
         'email': 'Email',
-        'full_name': 'Full Name',
+        'name': 'Name',
         'phone': 'Phone',
+        'birth_date': 'Birth Date',
         'blood_type': 'Blood Type',
         'is_verified': 'Verified',
         'is_active': 'Active',

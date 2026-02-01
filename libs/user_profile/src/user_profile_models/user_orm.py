@@ -8,7 +8,7 @@ class UserORM(Base):
 
     id = Column(BigInteger, primary_key=True, autoincrement=False)
     email = Column(String, unique=True, nullable=False)
-    full_name = Column(String, nullable=False)
+    name = Column(String, nullable=False)
     phone = Column(String, unique=True, nullable=True)
     blood_type = Column(String, nullable=True)
     is_verified = Column(Boolean, default=False, nullable=False)
@@ -30,7 +30,7 @@ class UserORM(Base):
     def to_dict(self) -> dict:
         return {
             "id": self.id,
-            "full_name": self.full_name,
+            "name": self.name,
             "email": self.email,
             "phone": self.phone,
             "blood_type": self.blood_type,
@@ -55,7 +55,7 @@ class UserORM(Base):
     def from_entity(cls, user: Any) -> "UserORM":
         return cls(
             id=user.id,
-            full_name=user.full_name,
+            name=user.full_name,
             email=user.email,
             phone=user.phone,
             blood_type=user.blood_type,

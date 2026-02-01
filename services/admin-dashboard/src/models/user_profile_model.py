@@ -31,4 +31,4 @@ class UserORM(Base):
     birth_date = Column(DateTime(timezone=True), nullable=True)
 
     def __repr__(self):
-        return f'<UserORM(id={self.id}, email={self.email}, full_name={self.full_name})>'
+        return f'<UserORM(id={self.id}, email={self.email}, name={self.name})>'

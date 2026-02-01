@@ -49,7 +49,7 @@ class SQlAlchemyUserRepository(IUserRepository):
             orm_user: UserORM = await self._session.get(UserORM, user.id)
             if not orm_user:
                 raise ValueError(f"User with id {user.id} not found")
-            orm_user.full_name = user.full_name
+            orm_user.name = user.name
             orm_user.email = user.email
             orm_user.phone = user.phone
             orm_user.blood_type = user.blood_type
