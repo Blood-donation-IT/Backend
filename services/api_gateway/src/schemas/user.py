@@ -1,7 +1,10 @@
-from datetime import datetime
-from typing import Optional
+from datetime import date, datetime
+from typing import Optional, Literal
 from enum import Enum
 from pydantic import BaseModel, ConfigDict
+
+BloodType = Literal["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-", "N/A"]
+
 
 class UserRole(str, Enum):
     UNKNOWN = "UNKNOWN"
@@ -9,20 +12,23 @@ class UserRole(str, Enum):
     DOCTOR = "DOCTOR"
     ADMIN = "ADMIN"
 
+
 class UserProfileResponse(BaseModel):
-    id: int                   
-    full_name: str
+    id: int
+    name: str
     email: str
     phone: Optional[str] = None
-    
-    blood_type: str
-    total_donations: int
-    last_donation_at: Optional[datetime] = None
     avatar: Optional[str] = None
-    # lives_saved_count: int = 0 
-
+    last_donation: Optional[date] = None
+    total_donations: int
+    blood_type: str
+    lives_saved_count: int
+    donor_status: str
+    has_donor_book: bool
+    test_is_done: bool
     roles: list[UserRole] = []
     is_active: bool
+    is_banned: bool
     is_verified: bool
 
     model_config = ConfigDict(from_attributes=True)

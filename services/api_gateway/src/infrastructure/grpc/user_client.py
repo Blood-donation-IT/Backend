@@ -111,23 +111,32 @@ class UserGrpcClient:
 
     def _map_proto_to_pydantic(self, proto_user) -> UserProfileResponse:
         last_donation_dt = None
-        if proto_user.last_donation_at.seconds > 0:
+        if proto_user.last_donation_at and proto_user.last_donation_at.seconds > 0:
             last_donation_dt = proto_user.last_donation_at.ToDatetime()
+        last_donation_date = last_donation_dt.date() if last_donation_dt else None
 
         roles_mapped = [UserRole(user_profile_pb2.UserRole.Name(r)) for r in proto_user.roles]
-        lives_saved = proto_user.total_donations * 3
+        lives_saved = getattr(proto_user, "lives_saved_count", None)
+        if lives_saved is None:
+            lives_saved = proto_user.total_donations * 3
+
+        name = getattr(proto_user, "name", None) or getattr(proto_user, "full_name", None) or ""
 
         return UserProfileResponse(
             id=proto_user.user_id,
-            full_name=proto_user.full_name,
-            email=proto_user.email,
-            phone=None,
-            blood_type=proto_user.blood_type or "",
-            total_donations=proto_user.total_donations,
-            last_donation_at=last_donation_dt,
+            name=name,
+            email=proto_user.email or "",
+            phone=getattr(proto_user, "phone", None) or None,
             avatar=getattr(proto_user, "avatar_url", None) or None,
+            last_donation=last_donation_date,
+            total_donations=proto_user.total_donations,
+            blood_type=proto_user.blood_type or "N/A",
             lives_saved_count=lives_saved,
+            donor_status=getattr(proto_user, "donor_status", None) or "",
+            has_donor_book=getattr(proto_user, "has_donor_book", False),
+            test_is_done=getattr(proto_user, "test_is_done", False),
             roles=roles_mapped,
             is_active=proto_user.is_active,
+            is_banned=proto_user.is_banned,
             is_verified=proto_user.is_verified,
         )
