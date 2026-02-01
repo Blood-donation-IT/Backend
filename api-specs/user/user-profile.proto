@@ -71,7 +71,7 @@ message UpdateProfileResponse {
 
 message UserProfile {
   int64 user_id = 1;
-  string full_name = 2;
+  string name = 2;
   string email = 3;
   string blood_type = 4;
   bool is_verified = 5;
@@ -83,6 +83,11 @@ message UserProfile {
   google.protobuf.Timestamp created_at = 11;
   google.protobuf.Timestamp updated_at = 12;
   string avatar_url = 13;
+  string phone = 14;
+  int32 lives_saved_count = 15;
+  string donor_status = 16;
+  bool has_donor_book = 17;
+  bool test_is_done = 18;
 }
 
 enum UserRole {

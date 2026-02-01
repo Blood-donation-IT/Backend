@@ -17,6 +17,32 @@ ROLE_MAP = {
 def map_roles_to_enum(roles):
     return [ROLE_MAP.get(role.upper(), user_profile_pb2.UserRole.UNKNOWN) for role in roles]
 
+
+def _user_to_proto(user: User, ts: Timestamp) -> "user_profile_pb2.UserProfile":
+    lives = getattr(user, "lives_saved_count", None)
+    if lives is None:
+        lives = (user.total_donations or 0) * 3
+    return user_profile_pb2.UserProfile(
+        user_id=user.id,
+        name=user.full_name,
+        email=user.email,
+        phone=user.phone or "",
+        blood_type=user.blood_type or "",
+        is_verified=user.is_verified,
+        total_donations=user.total_donations,
+        last_donation_at=ts.FromDatetime(user.last_donation_at) if user.last_donation_at else None,
+        roles=map_roles_to_enum(user.roles),
+        is_banned=user.is_banned,
+        updated_at=ts.FromDatetime(user.updated_at) if user.updated_at else None,
+        is_active=user.is_active,
+        created_at=ts.FromDatetime(user.created_at) if user.created_at else None,
+        avatar_url=getattr(user, "avatar_url", None) or "",
+        lives_saved_count=lives,
+        donor_status=getattr(user, "donor_status", None) or "",
+        has_donor_book=getattr(user, "has_donor_book", False),
+        test_is_done=getattr(user, "test_is_done", False),
+    )
+
 class UserProfileService(user_profile_pb2_grpc.UserProfileServiceServicer):
     def __init__(self,
                  create_user_profile_use_case: CreateUserUseCase,
@@ -41,22 +67,8 @@ class UserProfileService(user_profile_pb2_grpc.UserProfileServiceServicer):
                 user_id=user_id
             )
             
-            ts =Timestamp()
-            return user_profile_pb2.UserProfile(
-                user_id=user.id,
-                full_name=user.full_name,
-                email=user.email,
-                blood_type=user.blood_type or "",
-                is_verified=user.is_verified,
-                total_donations=user.total_donations,
-                last_donation_at=ts.FromDatetime(user.last_donation_at) if user.last_donation_at else None,
-                roles=map_roles_to_enum(user.roles),
-                is_banned=user.is_banned,
-                updated_at=ts.FromDatetime(user.updated_at) if user.updated_at else None,
-                is_active=user.is_active,
-                created_at=ts.FromDatetime(user.created_at) if user.created_at else None,
-                avatar_url=getattr(user, "avatar_url", None) or "",
-            )
+            ts = Timestamp()
+            return _user_to_proto(user, ts)
         except ValueError as e:
             error_msg = str(e)
             if "already exists" in error_msg.lower():
@@ -64,21 +76,7 @@ class UserProfileService(user_profile_pb2_grpc.UserProfileServiceServicer):
                     try:
                         existing_user = await self.get_user_by_id_use_case.execute(request.user_id)
                         ts = Timestamp()
-                        return user_profile_pb2.UserProfile(
-                            user_id=existing_user.id,
-                            full_name=existing_user.full_name,
-                            email=existing_user.email,
-                            blood_type=existing_user.blood_type or "",
-                            is_verified=existing_user.is_verified,
-                            total_donations=existing_user.total_donations,
-                            last_donation_at=ts.FromDatetime(existing_user.last_donation_at) if existing_user.last_donation_at else None,
-                            roles=map_roles_to_enum(existing_user.roles),
-                            is_banned=existing_user.is_banned,
-                            updated_at=ts.FromDatetime(existing_user.updated_at) if existing_user.updated_at else None,
-                            is_active=existing_user.is_active,
-                            created_at=ts.FromDatetime(existing_user.created_at) if existing_user.created_at else None,
-                            avatar_url=getattr(existing_user, "avatar_url", None) or "",
-                        )
+                        return _user_to_proto(existing_user, ts)
                     except Exception:
                         pass
             context.set_details(error_msg)
@@ -124,21 +122,7 @@ class UserProfileService(user_profile_pb2_grpc.UserProfileServiceServicer):
         try:
             user: User = await self.get_user_by_id_use_case.execute(request.user_id)
             ts = Timestamp()
-            return user_profile_pb2.UserProfile(
-                user_id=user.id,
-                full_name=user.full_name,
-                email=user.email,
-                blood_type=user.blood_type or "",
-                is_verified=user.is_verified,
-                total_donations=user.total_donations,
-                last_donation_at=ts.FromDatetime(user.last_donation_at) if user.last_donation_at else None,
-                roles=map_roles_to_enum(user.roles),
-                is_banned=user.is_banned,
-                updated_at=ts.FromDatetime(user.updated_at) if user.updated_at else None,
-                is_active=user.is_active,
-                created_at=ts.FromDatetime(user.created_at) if user.created_at else None,
-                avatar_url=getattr(user, "avatar_url", None) or "",
-            )
+            return _user_to_proto(user, ts)
         except ValueError as e:
             context.set_details(str(e))
             context.set_code(grpc.StatusCode.NOT_FOUND)
