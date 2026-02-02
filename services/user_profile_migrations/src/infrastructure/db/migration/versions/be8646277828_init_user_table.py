@@ -24,7 +24,7 @@ def upgrade() -> None:
             id BIGINT NOT NULL,
             email VARCHAR NOT NULL,
             password_hash VARCHAR NOT NULL,
-            full_name VARCHAR NOT NULL,
+            name VARCHAR NOT NULL,
             phone VARCHAR,
             blood_type VARCHAR,
             is_verified BOOLEAN NOT NULL,

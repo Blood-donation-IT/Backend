@@ -41,11 +41,15 @@ async def create_application(
     response_model=CancelApplicationResponse,
 )
 async def cancel_application(
-    application_id: int,
+    application_id: str,
     client: ApplicationGrpcClient = Depends(get_application_grpc_client)
 ):
     try:
-        result = await client.cancel_application(application_id)
+        aid = int(application_id)
+    except ValueError:
+        raise HTTPException(status_code=400, detail="Invalid application_id")
+    try:
+        result = await client.cancel_application(aid)
         return CancelApplicationResponse(**result)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

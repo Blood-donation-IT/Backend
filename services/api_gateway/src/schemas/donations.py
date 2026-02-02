@@ -1,6 +1,10 @@
 from typing import Optional, List
 from datetime import datetime
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_serializer
+
+
+def _serialize_application_id(v: int) -> str:
+    return str(v)
 
 
 class CreateApplicationRequest(BaseModel):
@@ -23,6 +27,10 @@ class ApplicationResponse(BaseModel):
     created_at: Optional[datetime]
     updated_at: Optional[datetime]
 
+    @field_serializer("application_id")
+    def _ser_app_id(self, v: int) -> str:
+        return _serialize_application_id(v)
+
 
 class GetApplicationsResponse(BaseModel):
     applications: List[ApplicationResponse]
@@ -37,8 +45,16 @@ class CancelApplicationResponse(BaseModel):
     success: bool
     message: str
 
+    @field_serializer("application_id")
+    def _ser_app_id(self, v: int) -> str:
+        return _serialize_application_id(v)
+
 
 class CreateApplicationResponse(BaseModel):
     application_id: int
     success: bool
     message: str
+
+    @field_serializer("application_id")
+    def _ser_app_id(self, v: int) -> str:
+        return _serialize_application_id(v)
