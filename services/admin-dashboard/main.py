@@ -71,13 +71,13 @@ class UserProfileView(ModelView):
     can_delete = True
     can_view_details = True
     page_size = 50
-    column_list = ['id', 'email', 'full_name', 'phone', 'birth_date', 'blood_type', 'is_verified', 'is_active', 'is_banned', 'total_donations', 'created_at']
-    column_searchable_list = ['email', 'full_name', 'phone']
+    column_list = ['id', 'email', 'name', 'phone', 'birth_date', 'blood_type', 'is_verified', 'is_active', 'is_banned', 'total_donations', 'created_at']
+    column_searchable_list = ['email', 'name', 'phone']
     column_filters = ['is_verified', 'is_active', 'is_banned', 'blood_type', 'created_at']
     column_labels = {
         'id': 'ID',
         'email': 'Email',
-        'full_name': 'Name',
+        'name': 'Name',
         'phone': 'Phone',
         'birth_date': 'Birth Date',
         'blood_type': 'Blood Type',
