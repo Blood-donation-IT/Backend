@@ -11,7 +11,7 @@ class UserORM(Base):
 
     id = Column(BigInteger, primary_key=True, autoincrement=False)
     email = Column(String, unique=True, nullable=False)
-    name = Column(String, nullable=False)
+    full_name = Column(String, nullable=False)
     phone = Column(String, unique=True, nullable=True)
     blood_type = Column(String, nullable=True)
     is_verified = Column(Boolean, default=False, nullable=False)
@@ -31,4 +31,4 @@ class UserORM(Base):
     birth_date = Column(DateTime(timezone=True), nullable=True)
 
     def __repr__(self):
-        return f'<UserORM(id={self.id}, email={self.email}, name={self.name})>'
+        return f'<UserORM(id={self.id}, email={self.email}, full_name={self.full_name})>'

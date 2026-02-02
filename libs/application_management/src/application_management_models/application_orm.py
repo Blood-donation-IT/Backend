@@ -1,9 +1,5 @@
-from uuid import uuid4
-from sqlalchemy import Column, String, BigInteger, Boolean, Integer, DateTime, func
-import datetime
+from sqlalchemy import Column, String, BigInteger, DateTime, func
 from application_management_models.base import Base
-from google.protobuf.timestamp_pb2 import Timestamp
-from sqlalchemy.dialects.postgresql import ARRAY
 from typing import Optional
 
 

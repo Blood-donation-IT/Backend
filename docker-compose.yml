@@ -5,7 +5,10 @@ services:
       dockerfile: ./services/user_profile/Dockerfile
     container_name: user-profile
     depends_on:
-      - user-profile-db
+      user-profile-db:
+        condition: service_healthy
+      user-profile-migrations:
+        condition: service_completed_successfully
     environment:
       - DATABASE_URL=postgresql+asyncpg://user:password@user-profile-db:5432/user_profile_db
       - PYTHONPATH=/app/service/src
@@ -53,17 +56,24 @@ services:
       - user-profile_net
     ports:
       - "5433:5432"
-  
-  # user-profile-migrations:
-  #   build:
-  #     context: .
-  #     dockerfile: ./services/user_profile_migrations/Dockerfile
-  #   depends_on:
-  #     - user-profile-db
-  #   environment:
-  #     - DATABASE_URL=postgresql+psycopg2://user:password@user-profile-db:5432/user_profile_db
-  #   networks:
-  #     - user-profile_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d user_profile_db"]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+
+  user-profile-migrations:
+    build:
+      context: .
+      dockerfile: ./services/user_profile_migrations/Dockerfile
+    depends_on:
+      user-profile-db:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql+psycopg2://user:password@user-profile-db:5432/user_profile_db
+    networks:
+      - user-profile_net
+    restart: "no"
 
 
   grpc-sandbox:
@@ -85,7 +95,10 @@ services:
       dockerfile: ./services/application-management/Dockerfile
     container_name: application-management
     depends_on:
-      - application-management-db
+      application-management-db:
+        condition: service_healthy
+      application-management-migrations:
+        condition: service_completed_successfully
     environment:
       - DATABASE_URL=postgresql+asyncpg://user:password@application-management-db:5432/application_management_db
       - PYTHONPATH=/app/service/src
@@ -109,6 +122,24 @@ services:
       - application_management_net
     ports:
       - "5434:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d application_management_db"]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+
+  application-management-migrations:
+    build:
+      context: .
+      dockerfile: ./services/application_management_migrations/Dockerfile
+    depends_on:
+      application-management-db:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql+psycopg2://user:password@application-management-db:5432/application_management_db
+    networks:
+      - application_management_net
+    restart: "no"
 
   authorization:
     build:
@@ -116,7 +147,10 @@ services:
       dockerfile: ./services/authorization/Dockerfile
     container_name: authorization
     depends_on:
-      - authorization-db
+      authorization-db:
+        condition: service_healthy
+      authorization-migrations:
+        condition: service_completed_successfully
     environment:
       - DATABASE_URL=postgresql+asyncpg://user:password@authorization-db:5432/authorization_db
       - PYTHONPATH=/app/service/src
@@ -140,6 +174,24 @@ services:
       - authorization_net
     ports:
       - "5435:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d authorization_db"]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+
+  authorization-migrations:
+    build:
+      context: .
+      dockerfile: ./services/authorization_migrations/Dockerfile
+    depends_on:
+      authorization-db:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql+psycopg2://user:password@authorization-db:5432/authorization_db
+    networks:
+      - authorization_net
+    restart: "no"
 
   admin-dashboard:
     build:
@@ -164,17 +216,6 @@ services:
       - application_management_net
     platform: linux/amd64
 
-  # authorization-migrations:
-  #   build:
-  #     context: .
-  #     dockerfile: ./services/authorization_migrations/Dockerfile
-  #   depends_on:
-  #     - authorization-db
-  #   environment:
-  #     - DATABASE_URL=postgresql+psycopg2://user:password@authorization-db:5432/authorization_db
-  #   networks:
-  #     - authorization_net
-  
 volumes:
   user-profile-data:
   application-management-data:
