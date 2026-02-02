@@ -24,7 +24,7 @@ def _user_to_proto(user: User, ts: Timestamp) -> "user_profile_pb2.UserProfile":
         lives = (user.total_donations or 0) * 3
     return user_profile_pb2.UserProfile(
         user_id=user.id,
-        name=user.full_name,
+        name=user.name,
         email=user.email,
         phone=user.phone or "",
         blood_type=user.blood_type or "",
@@ -60,8 +60,8 @@ class UserProfileService(user_profile_pb2_grpc.UserProfileServiceServicer):
         try:
             user_id = request.user_id if request.user_id > 0 else None
             
-            user:User = await self.create_user_profile_use_case.execute(
-                full_name=request.full_name,
+            user: User = await self.create_user_profile_use_case.execute(
+                name=request.name or "",
                 email=request.email,
                 phone=request.phone or None,
                 password_hash=request.password_hash if request.password_hash else "",
@@ -97,12 +97,12 @@ class UserProfileService(user_profile_pb2_grpc.UserProfileServiceServicer):
                 context.set_details("user_id is required")
                 context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
                 return user_profile_pb2.UpdateProfileResponse(success=False, message="user_id is required")
-            full_name = request.full_name if request.full_name else None
+            name = request.name if request.name else None
             blood_type = request.blood_type if request.blood_type else None
             avatar_url = request.avatar_url if request.avatar_url else None
             await self.update_user_use_case.execute(
                 user_id=request.user_id,
-                full_name=full_name,
+                name=name,
                 blood_type=blood_type,
                 avatar_url=avatar_url,
             )

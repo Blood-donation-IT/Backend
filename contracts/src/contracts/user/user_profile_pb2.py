@@ -25,15 +25,15 @@ _sym_db = _symbol_database.Default()
 from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17user/user-profile.proto\x12\x0fsrc.protos.user\x1a\x1fgoogle/protobuf/timestamp.proto\"#\n\x12GetUserAuthRequest\x12\r\n\x05\x65mail\x18\x01 \x01(\t\"`\n\x0cUserAuthData\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12\x15\n\rpassword_hash\x18\x02 \x01(\t\x12(\n\x05roles\x18\x03 \x03(\x0e\x32\x19.src.protos.user.UserRole\"\'\n\x14\x44\x65leteProfileRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\"9\n\x15\x44\x65leteProfileResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\")\n\x18GetProfileRequestByEmail\x12\r\n\x05\x65mail\x18\x01 \x01(\t\"\x99\x01\n\x14\x43reateProfileRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12\x11\n\tfull_name\x18\x02 \x01(\t\x12\r\n\x05\x65mail\x18\x03 \x01(\t\x12\r\n\x05phone\x18\x04 \x01(\t\x12\x15\n\rpassword_hash\x18\x05 \x01(\t\x12(\n\x05roles\x18\x06 \x03(\x0e\x32\x19.src.protos.user.UserRole\"(\n\x15GetProfileRequestById\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\"\xdb\x01\n\x12GetProfileResponse\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12\x11\n\tfull_name\x18\x02 \x01(\t\x12\r\n\x05\x65mail\x18\x03 \x01(\t\x12\r\n\x05phone\x18\x04 \x01(\t\x12\x12\n\navatar_url\x18\x05 \x01(\t\x12\x13\n\x0bis_verified\x18\x06 \x01(\x08\x12\x31\n\rregistered_at\x18\x07 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\'\n\x04role\x18\x08 \x01(\x0e\x32\x19.src.protos.user.UserRole\"b\n\x14UpdateProfileRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12\x11\n\tfull_name\x18\x02 \x01(\t\x12\x12\n\nblood_type\x18\x03 \x01(\t\x12\x12\n\navatar_url\x18\x04 \x01(\t\"9\n\x15UpdateProfileResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x95\x04\n\x0bUserProfile\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\r\n\x05\x65mail\x18\x03 \x01(\t\x12\x12\n\nblood_type\x18\x04 \x01(\t\x12\x13\n\x0bis_verified\x18\x05 \x01(\x08\x12\x17\n\x0ftotal_donations\x18\x06 \x01(\x05\x12\x34\n\x10last_donation_at\x18\x07 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12(\n\x05roles\x18\x08 \x03(\x0e\x32\x19.src.protos.user.UserRole\x12\x11\n\tis_active\x18\t \x01(\x08\x12\x11\n\tis_banned\x18\n \x01(\x08\x12.\n\ncreated_at\x18\x0b \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12.\n\nupdated_at\x18\x0c \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x12\n\navatar_url\x18\r \x01(\t\x12\r\n\x05phone\x18\x0e \x01(\t\x12\x19\n\x11lives_saved_count\x18\x0f \x01(\x05\x12\x14\n\x0c\x64onor_status\x18\x10 \x01(\t\x12\x16\n\x0ehas_donor_book\x18\x11 \x01(\x08\x12\x14\n\x0ctest_is_done\x18\x12 \x01(\x08\x12.\n\nbirth_date\x18\x13 \x01(\x0b\x32\x1a.google.protobuf.Timestamp*9\n\x08UserRole\x12\x0b\n\x07UNKNOWN\x10\x00\x12\t\n\x05\x44ONOR\x10\x01\x12\n\n\x06\x44OCTOR\x10\x02\x12\t\n\x05\x41\x44MIN\x10\x03\x32\xb7\x04\n\x12UserProfileService\x12V\n\x0eGetProfileById\x12&.src.protos.user.GetProfileRequestById\x1a\x1c.src.protos.user.UserProfile\x12\\\n\x11GetProfileByEmail\x12).src.protos.user.GetProfileRequestByEmail\x1a\x1c.src.protos.user.UserProfile\x12^\n\rUpdateProfile\x12%.src.protos.user.UpdateProfileRequest\x1a&.src.protos.user.UpdateProfileResponse\x12T\n\rCreateProfile\x12%.src.protos.user.CreateProfileRequest\x1a\x1c.src.protos.user.UserProfile\x12^\n\rDeleteProfile\x12%.src.protos.user.DeleteProfileRequest\x1a&.src.protos.user.DeleteProfileResponse\x12U\n\x0fGetUserAuthData\x12#.src.protos.user.GetUserAuthRequest\x1a\x1d.src.protos.user.UserAuthDatab\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x17user/user-profile.proto\x12\x0fsrc.protos.user\x1a\x1fgoogle/protobuf/timestamp.proto\"#\n\x12GetUserAuthRequest\x12\r\n\x05\x65mail\x18\x01 \x01(\t\"`\n\x0cUserAuthData\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12\x15\n\rpassword_hash\x18\x02 \x01(\t\x12(\n\x05roles\x18\x03 \x03(\x0e\x32\x19.src.protos.user.UserRole\"\'\n\x14\x44\x65leteProfileRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\"9\n\x15\x44\x65leteProfileResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\")\n\x18GetProfileRequestByEmail\x12\r\n\x05\x65mail\x18\x01 \x01(\t\"\x94\x01\n\x14\x43reateProfileRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\r\n\x05\x65mail\x18\x03 \x01(\t\x12\r\n\x05phone\x18\x04 \x01(\t\x12\x15\n\rpassword_hash\x18\x05 \x01(\t\x12(\n\x05roles\x18\x06 \x03(\x0e\x32\x19.src.protos.user.UserRole\"(\n\x15GetProfileRequestById\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\"\xd6\x01\n\x12GetProfileResponse\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\r\n\x05\x65mail\x18\x03 \x01(\t\x12\r\n\x05phone\x18\x04 \x01(\t\x12\x12\n\navatar_url\x18\x05 \x01(\t\x12\x13\n\x0bis_verified\x18\x06 \x01(\x08\x12\x31\n\rregistered_at\x18\x07 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\'\n\x04role\x18\x08 \x01(\x0e\x32\x19.src.protos.user.UserRole\"]\n\x14UpdateProfileRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\x12\n\nblood_type\x18\x03 \x01(\t\x12\x12\n\navatar_url\x18\x04 \x01(\t\"9\n\x15UpdateProfileResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x95\x04\n\x0bUserProfile\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12\x0c\n\x04name\x18\x02 \x01(\t\x12\r\n\x05\x65mail\x18\x03 \x01(\t\x12\x12\n\nblood_type\x18\x04 \x01(\t\x12\x13\n\x0bis_verified\x18\x05 \x01(\x08\x12\x17\n\x0ftotal_donations\x18\x06 \x01(\x05\x12\x34\n\x10last_donation_at\x18\x07 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12(\n\x05roles\x18\x08 \x03(\x0e\x32\x19.src.protos.user.UserRole\x12\x11\n\tis_active\x18\t \x01(\x08\x12\x11\n\tis_banned\x18\n \x01(\x08\x12.\n\ncreated_at\x18\x0b \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12.\n\nupdated_at\x18\x0c \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x12\n\navatar_url\x18\r \x01(\t\x12\r\n\x05phone\x18\x0e \x01(\t\x12\x19\n\x11lives_saved_count\x18\x0f \x01(\x05\x12\x14\n\x0c\x64onor_status\x18\x10 \x01(\t\x12\x16\n\x0ehas_donor_book\x18\x11 \x01(\x08\x12\x14\n\x0ctest_is_done\x18\x12 \x01(\x08\x12.\n\nbirth_date\x18\x13 \x01(\x0b\x32\x1a.google.protobuf.Timestamp*9\n\x08UserRole\x12\x0b\n\x07UNKNOWN\x10\x00\x12\t\n\x05\x44ONOR\x10\x01\x12\n\n\x06\x44OCTOR\x10\x02\x12\t\n\x05\x41\x44MIN\x10\x03\x32\xb7\x04\n\x12UserProfileService\x12V\n\x0eGetProfileById\x12&.src.protos.user.GetProfileRequestById\x1a\x1c.src.protos.user.UserProfile\x12\\\n\x11GetProfileByEmail\x12).src.protos.user.GetProfileRequestByEmail\x1a\x1c.src.protos.user.UserProfile\x12^\n\rUpdateProfile\x12%.src.protos.user.UpdateProfileRequest\x1a&.src.protos.user.UpdateProfileResponse\x12T\n\rCreateProfile\x12%.src.protos.user.CreateProfileRequest\x1a\x1c.src.protos.user.UserProfile\x12^\n\rDeleteProfile\x12%.src.protos.user.DeleteProfileRequest\x1a&.src.protos.user.DeleteProfileResponse\x12U\n\x0fGetUserAuthData\x12#.src.protos.user.GetUserAuthRequest\x1a\x1d.src.protos.user.UserAuthDatab\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'user.user_profile_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_USERROLE']._serialized_start=1470
-  _globals['_USERROLE']._serialized_end=1527
+  _globals['_USERROLE']._serialized_start=1455
+  _globals['_USERROLE']._serialized_end=1512
   _globals['_GETUSERAUTHREQUEST']._serialized_start=77
   _globals['_GETUSERAUTHREQUEST']._serialized_end=112
   _globals['_USERAUTHDATA']._serialized_start=114
@@ -45,17 +45,17 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_GETPROFILEREQUESTBYEMAIL']._serialized_start=312
   _globals['_GETPROFILEREQUESTBYEMAIL']._serialized_end=353
   _globals['_CREATEPROFILEREQUEST']._serialized_start=356
-  _globals['_CREATEPROFILEREQUEST']._serialized_end=509
-  _globals['_GETPROFILEREQUESTBYID']._serialized_start=511
-  _globals['_GETPROFILEREQUESTBYID']._serialized_end=551
-  _globals['_GETPROFILERESPONSE']._serialized_start=554
-  _globals['_GETPROFILERESPONSE']._serialized_end=773
-  _globals['_UPDATEPROFILEREQUEST']._serialized_start=775
-  _globals['_UPDATEPROFILEREQUEST']._serialized_end=873
-  _globals['_UPDATEPROFILERESPONSE']._serialized_start=875
-  _globals['_UPDATEPROFILERESPONSE']._serialized_end=932
-  _globals['_USERPROFILE']._serialized_start=935
-  _globals['_USERPROFILE']._serialized_end=1468
-  _globals['_USERPROFILESERVICE']._serialized_start=1530
-  _globals['_USERPROFILESERVICE']._serialized_end=2097
+  _globals['_CREATEPROFILEREQUEST']._serialized_end=504
+  _globals['_GETPROFILEREQUESTBYID']._serialized_start=506
+  _globals['_GETPROFILEREQUESTBYID']._serialized_end=546
+  _globals['_GETPROFILERESPONSE']._serialized_start=549
+  _globals['_GETPROFILERESPONSE']._serialized_end=763
+  _globals['_UPDATEPROFILEREQUEST']._serialized_start=765
+  _globals['_UPDATEPROFILEREQUEST']._serialized_end=858
+  _globals['_UPDATEPROFILERESPONSE']._serialized_start=860
+  _globals['_UPDATEPROFILERESPONSE']._serialized_end=917
+  _globals['_USERPROFILE']._serialized_start=920
+  _globals['_USERPROFILE']._serialized_end=1453
+  _globals['_USERPROFILESERVICE']._serialized_start=1515
+  _globals['_USERPROFILESERVICE']._serialized_end=2082
 # @@protoc_insertion_point(module_scope)

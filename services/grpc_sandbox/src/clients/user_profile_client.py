@@ -6,11 +6,11 @@ class UserProfileClient:
     def __init__(self, host="user-profile", port=50051):
         self.target = f"{host}:{port}"
 
-    async def create_profile(self, full_name, email, phone):
+    async def create_profile(self, name, email, phone):
         async with grpc.aio.insecure_channel(self.target) as channel:
             stub = user_profile_pb2_grpc.UserProfileServiceStub(channel)
             req = user_profile_pb2.CreateProfileRequest(
-                full_name=full_name,
+                name=name,
                 email=email,
                 phone=phone
             )

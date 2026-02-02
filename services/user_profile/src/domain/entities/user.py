@@ -3,7 +3,7 @@ from typing import Optional
 
 class User:
     def __init__(self, id: int,
-                 full_name: str,
+                 name: str,
                  email: str,
                  phone: Optional[str] = None,
                  blood_type: Optional[str] = None,
@@ -24,7 +24,7 @@ class User:
                  birth_date: Optional[datetime.datetime] = None,
                  ):
         self.id: int = id
-        self.full_name: str = full_name
+        self.name: str = name
         self.email: str = email
         self.phone: Optional[str] = phone
         self.blood_type: Optional[str] = blood_type
@@ -46,6 +46,6 @@ class User:
 
     @classmethod
     def from_orm_dict(cls, data: dict):
-        return cls(**data)
+        return cls(**dict(data))
 
    

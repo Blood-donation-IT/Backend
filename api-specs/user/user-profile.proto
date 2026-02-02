@@ -35,7 +35,7 @@ message GetProfileRequestByEmail {
 
 message CreateProfileRequest {
   int64 user_id = 1; 
-  string full_name = 2;
+  string name = 2;
   string email = 3;
   string phone = 4;
   string password_hash = 5;
@@ -48,7 +48,7 @@ message GetProfileRequestById {
 
 message GetProfileResponse {
   int64 user_id = 1;
-  string full_name = 2;
+  string name = 2;
   string email = 3;
   string phone = 4;
   string avatar_url = 5;
@@ -59,7 +59,7 @@ message GetProfileResponse {
 
 message UpdateProfileRequest {
   int64 user_id = 1;
-  string full_name = 2;
+  string name = 2;
   string blood_type = 3;
   string avatar_url = 4;
 }

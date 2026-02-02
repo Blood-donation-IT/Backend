@@ -36,6 +36,6 @@ class UserProfileResponse(BaseModel):
 
 
 class EditProfileRequest(BaseModel):
-    full_name: Optional[str] = None
+    name: Optional[str] = None
     blood_type: Optional[str] = None
     avatar: Optional[str] = None

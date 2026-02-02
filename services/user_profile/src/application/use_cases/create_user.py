@@ -10,8 +10,8 @@ class CreateUserUseCase:
         self.user_repository:IUserRepository = repository
         self.id_generator:IIDGenerator = id_generator
     async def execute(self,
-                full_name:str,
-                email:str,
+                name: str,
+                email: str,
                 phone:Optional[str]=None,
                 blood_type:Optional[str]=None,
                 is_verified:bool=False,
@@ -40,9 +40,9 @@ class CreateUserUseCase:
         if user_id is None:
             user_id = self.id_generator.generate()
         
-        user:User = User(
+        user: User = User(
             id=user_id,
-            full_name=full_name,
+            name=name,
             email=email,
             phone=phone,
             blood_type=blood_type,

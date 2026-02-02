@@ -27,10 +27,10 @@ async def register(
         
         try:
             profile_result = await user_client.create_user(
-                user_id=user_id,  
+                user_id=user_id,
                 email=body.email,
-                full_name=body.name,
-                password_hash="", 
+                name=body.name,
+                password_hash="",
                 phone=None
             )
         

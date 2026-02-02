@@ -50,17 +50,15 @@ class UserGrpcClient:
             except grpc.RpcError as e:
                 raise e
 
-    async def create_user(self, user_id: int, email: str, full_name: str, password_hash: str = "", phone: str = None) -> UserProfileResponse:
+    async def create_user(self, user_id: int, email: str, name: str, password_hash: str = "", phone: str = None) -> UserProfileResponse:
         async with grpc.aio.insecure_channel(self.target) as channel:
             stub = user_profile_pb2_grpc.UserProfileServiceStub(channel)
-            
-            # Передаємо user_id з authorization для синхронізації
             request = user_profile_pb2.CreateProfileRequest(
-                user_id=user_id,  # Використовуємо user_id з authorization
-                full_name=full_name,
+                user_id=user_id,
+                name=name,
                 email=email,
                 phone=phone or "",
-                password_hash=password_hash  
+                password_hash=password_hash
             )
             
             try:
@@ -82,15 +80,15 @@ class UserGrpcClient:
     async def update_profile(
         self,
         user_id: int,
-        full_name: Optional[str] = None,
+        name: Optional[str] = None,
         blood_type: Optional[str] = None,
         avatar_url: Optional[str] = None,
     ) -> UserProfileResponse:
         async with grpc.aio.insecure_channel(self.target) as channel:
             stub = user_profile_pb2_grpc.UserProfileServiceStub(channel)
             request = user_profile_pb2.UpdateProfileRequest(user_id=user_id)
-            if full_name is not None:
-                request.full_name = full_name
+            if name is not None:
+                request.name = name
             if blood_type is not None:
                 request.blood_type = blood_type
             if avatar_url is not None:
@@ -132,7 +130,7 @@ class UserGrpcClient:
         if lives_saved is None:
             lives_saved = proto_user.total_donations * 3
 
-        name = getattr(proto_user, "name", None) or getattr(proto_user, "full_name", None) or ""
+        name = getattr(proto_user, "name", None) or ""
 
         return UserProfileResponse(
             id=proto_user.user_id,

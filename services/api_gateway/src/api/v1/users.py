@@ -29,7 +29,7 @@ async def edit_profile(
     try:
         profile = await client.update_profile(
             user_id=user_id,
-            full_name=body.full_name,
+            name=body.name,
             blood_type=body.blood_type,
             avatar_url=body.avatar,
         )

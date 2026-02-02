@@ -10,15 +10,15 @@ class UpdateUserUseCase:
     async def execute(
         self,
         user_id: int,
-        full_name: Optional[str] = None,
+        name: Optional[str] = None,
         blood_type: Optional[str] = None,
         avatar_url: Optional[str] = None,
     ) -> User:
         user = await self.repository.get_user_by_id(user_id)
         if not user:
             raise ValueError(f"User with id {user_id} not found")
-        if full_name is not None:
-            user.full_name = full_name
+        if name is not None:
+            user.name = name
         if blood_type is not None:
             user.blood_type = blood_type
         if avatar_url is not None:
