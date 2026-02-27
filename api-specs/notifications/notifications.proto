@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package src.protos.notifications;
+
+import "google/protobuf/timestamp.proto";
+
+
+service NotificationsService {
+  rpc GetNotifications (GetNotificationsRequest) returns (GetNotificationsResponse);
+  rpc MarkAsRead (MarkAsReadRequest) returns (MarkAsReadResponse);
+  rpc CreateNotification (CreateNotificationRequest) returns (CreateNotificationResponse);
+}
+
+enum NotificationType {
+  NOTIFICATION_TYPE_UNKNOWN = 0;
+  DONATION_REMINDER = 1;   
+  DONATION_UPDATE = 2;     
+  ACCOUNT_UPDATE = 3;      
+  SYSTEM_MESSAGE = 4;
+}
+
+message Notification {
+  int64 notification_id = 1;
+  int64 user_id = 2;
+  string title = 3;         
+  string message = 4;        
+  google.protobuf.Timestamp created_at = 5;
+  bool is_read = 6;
+  NotificationType type = 7;
+}
+
+message GetNotificationsRequest {
+  int64 user_id = 1;
+  bool only_unread = 2;       
+  int32 limit = 3;           
+  int32 offset = 4;
+}
+
+message GetNotificationsResponse {
+  repeated Notification notifications = 1;
+}
+
+message MarkAsReadRequest {
+  repeated int64 notification_ids = 1;  
+}
+
+message MarkAsReadResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message CreateNotificationRequest {
+  int64 user_id = 1;
+  string title = 2;          
+  string message = 3;
+  NotificationType type = 4;
+}
+
+message CreateNotificationResponse {
+  int64 notification_id = 1;
+  bool success = 2;
+  string message = 3;
+}
