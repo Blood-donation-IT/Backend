@@ -13,20 +13,15 @@ class ApplicationGrpcClient:
     async def create_application(self, request: CreateApplicationRequest) -> dict:
         async with grpc.aio.insecure_channel(self.target) as channel:
             stub = application_management_pb2_grpc.ApplicationManagementServiceStub(channel)
-            
-            ts_time = Timestamp()
-            ts_time.FromDatetime(request.application_time)
-            
-            ts_day = None
-            if request.application_day:
-                ts_day = Timestamp()
-                ts_day.FromDatetime(request.application_day)
-            
+
+            ts_day = Timestamp()
+            ts_day.FromDatetime(request.application_day)
+
             grpc_request = application_management_pb2.CreateApplicationRequest(
                 user_id=request.user_id,
                 blood_type=request.blood_type,
-                application_time=ts_time,
-                application_day=ts_day if ts_day else None,
+                application_day=ts_day,
+                slot_index=request.slot_index,
                 location_id=request.location_id or "",
                 status=request.status or "pending"
             )
@@ -56,6 +51,7 @@ class ApplicationGrpcClient:
                         "blood_type": proto_app.blood_type,
                         "application_time": proto_app.application_time.ToDatetime() if proto_app.HasField("application_time") else None,
                         "application_day": proto_app.application_day.ToDatetime() if proto_app.HasField("application_day") else None,
+                        "slot_index": getattr(proto_app, "slot_index", None),
                         "location_id": proto_app.location_id if proto_app.location_id else None,
                         "status": proto_app.status,
                         "created_at": proto_app.created_at.ToDatetime() if proto_app.HasField("created_at") else None,
@@ -81,3 +77,28 @@ class ApplicationGrpcClient:
                 }
             except grpc.RpcError as e:
                 raise Exception(f"gRPC Error in cancel_application: {e.details()}")
+
+    async def get_available_slots(self, date: datetime) -> dict:
+        async with grpc.aio.insecure_channel(self.target) as channel:
+            stub = application_management_pb2_grpc.ApplicationManagementServiceStub(channel)
+            ts = Timestamp()
+            ts.FromDatetime(date)
+            request = application_management_pb2.GetAvailableSlotsRequest(date=ts)
+            try:
+                response = await stub.GetAvailableSlots(request)
+                return {
+                    "slots": [
+                        {
+                            "slot_index": s.slot_index,
+                            "time_label": s.time_label,
+                            "booked_count": s.booked_count,
+                            "capacity": s.capacity,
+                            "is_available": s.is_available,
+                        }
+                        for s in response.slots
+                    ],
+                    "daily_booked": response.daily_booked,
+                    "daily_capacity": response.daily_capacity,
+                }
+            except grpc.RpcError as e:
+                raise Exception(f"gRPC Error in get_available_slots: {e.details()}")

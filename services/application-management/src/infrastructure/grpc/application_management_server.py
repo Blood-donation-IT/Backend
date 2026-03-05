@@ -8,32 +8,34 @@ from google.protobuf.timestamp_pb2 import Timestamp
 
 
 class ApplicationManagementService(application_management_pb2_grpc.ApplicationManagementServiceServicer):
-    def __init__(self, create_use_case, update_use_case, get_use_case, repository=None):
+    def __init__(self, create_use_case, update_use_case, get_use_case, get_available_slots_use_case=None, repository=None):
         self.create_use_case = create_use_case
         self.update_use_case = update_use_case
         self.get_use_case = get_use_case
+        self.get_available_slots_use_case = get_available_slots_use_case
         self.repository = repository
 
     async def CreateApplication(self, request, context: grpc.aio.ServicerContext):
         try:
             import datetime
-            
-            if not request.HasField("application_time"):
-                context.set_details("application_time is required")
+
+            if not request.HasField("application_day"):
+                context.set_details("application_day is required")
                 context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
-                return application_management_pb2.ApplicationResponse(success=False, message="application_time is required")
-            
-            application_time_dt = request.application_time.ToDatetime()
-            
-            application_day_dt = None
-            if request.HasField("application_day"):
-                application_day_dt = request.application_day.ToDatetime()
-            
+                return application_management_pb2.ApplicationResponse(success=False, message="application_day is required")
+
+            application_day_dt = request.application_day.ToDatetime()
+            slot_index = getattr(request, "slot_index", 0)
+            if not (0 <= slot_index <= 9):
+                context.set_details("slot_index must be 0–9")
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                return application_management_pb2.ApplicationResponse(success=False, message="slot_index must be 0–9")
+
             application = await self.create_use_case.execute(
                 user_id=request.user_id,
                 blood_type=request.blood_type,
-                application_time=application_time_dt,
                 application_day=application_day_dt,
+                slot_index=slot_index,
                 location_id=request.location_id if request.location_id else None,
                 status=request.status if request.status else "pending"
             )
@@ -69,7 +71,7 @@ class ApplicationManagementService(application_management_pb2_grpc.ApplicationMa
                 if application.updated_at:
                     ts_updated.FromDatetime(application.updated_at)
                 
-                yield application_management_pb2.Application(
+                app_msg = application_management_pb2.Application(
                     application_id=application.id,
                     user_id=application.user_id,
                     blood_type=application.blood_type,
@@ -80,9 +82,40 @@ class ApplicationManagementService(application_management_pb2_grpc.ApplicationMa
                     created_at=ts_created if application.created_at else None,
                     updated_at=ts_updated if application.updated_at else None
                 )
+                if hasattr(app_msg, "slot_index") and getattr(application, "slot_index", None) is not None:
+                    app_msg.slot_index = application.slot_index
+                yield app_msg
         except Exception as e:
             context.set_details(str(e))
             context.set_code(grpc.StatusCode.INTERNAL)
+
+    async def GetAvailableSlots(self, request, context: grpc.aio.ServicerContext):
+        try:
+            if not request.HasField("date"):
+                context.set_details("date is required")
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                return application_management_pb2.GetAvailableSlotsResponse()
+            date_dt = request.date.ToDatetime()
+            data = await self.get_available_slots_use_case.execute(date_dt)
+            slot_infos = [
+                application_management_pb2.SlotInfo(
+                    slot_index=s["slot_index"],
+                    time_label=s["time_label"],
+                    booked_count=s["booked_count"],
+                    capacity=s["capacity"],
+                    is_available=s["is_available"],
+                )
+                for s in data["slots"]
+            ]
+            return application_management_pb2.GetAvailableSlotsResponse(
+                slots=slot_infos,
+                daily_booked=data["daily_booked"],
+                daily_capacity=data["daily_capacity"],
+            )
+        except Exception as e:
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INTERNAL)
+            return application_management_pb2.GetAvailableSlotsResponse()
 
     async def UpdateApplication(self, request, context: grpc.aio.ServicerContext):
         try:

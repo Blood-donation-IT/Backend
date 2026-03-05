@@ -23,3 +23,13 @@ class IApplicationRepository(ABC):
     @abstractmethod
     async def delete(self, application_id: int) -> None:
         pass
+
+    @abstractmethod
+    async def count_booked_by_date(self, application_date: datetime.date) -> int:
+        pass
+
+    @abstractmethod
+    async def count_booked_by_date_and_slot(
+        self, application_date: datetime.date, slot_index: int
+    ) -> int:
+        pass
