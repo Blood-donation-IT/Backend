@@ -8,6 +8,7 @@ from src.domain.irepositories.i_application_repository import IApplicationReposi
 from src.application.use_cases.create_application import CreateApplicationUseCase
 from src.application.use_cases.update_application import UpdateApplicationUseCase
 from src.application.use_cases.get_application import GetApplicationUseCase
+from src.application.use_cases.get_available_slots import GetAvailableSlotsUseCase
 from src.infrastructure.grpc.application_management_server import ApplicationManagementService
 
 class Container(containers.DeclarativeContainer):
@@ -57,12 +58,18 @@ class Container(containers.DeclarativeContainer):
         GetApplicationUseCase,
         repository=repository
     )
-    
+
+    get_available_slots_use_case = providers.Factory(
+        GetAvailableSlotsUseCase,
+        repository=repository
+    )
+
     application_management_service = providers.Factory(
         ApplicationManagementService,
         create_use_case=create_application_use_case,
         update_use_case=update_application_use_case,
         get_use_case=get_application_use_case,
+        get_available_slots_use_case=get_available_slots_use_case,
         repository=repository
     )
 
