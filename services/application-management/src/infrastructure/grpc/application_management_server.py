@@ -8,11 +8,12 @@ from google.protobuf.timestamp_pb2 import Timestamp
 
 
 class ApplicationManagementService(application_management_pb2_grpc.ApplicationManagementServiceServicer):
-    def __init__(self, create_use_case, update_use_case, get_use_case, get_available_slots_use_case=None, repository=None):
+    def __init__(self, create_use_case, update_use_case, get_use_case, get_available_slots_use_case=None, get_calendar_availability_use_case=None, repository=None):
         self.create_use_case = create_use_case
         self.update_use_case = update_use_case
         self.get_use_case = get_use_case
         self.get_available_slots_use_case = get_available_slots_use_case
+        self.get_calendar_availability_use_case = get_calendar_availability_use_case
         self.repository = repository
 
     async def CreateApplication(self, request, context: grpc.aio.ServicerContext):
@@ -107,15 +108,37 @@ class ApplicationManagementService(application_management_pb2_grpc.ApplicationMa
                 )
                 for s in data["slots"]
             ]
-            return application_management_pb2.GetAvailableSlotsResponse(
+            resp = application_management_pb2.GetAvailableSlotsResponse(
                 slots=slot_infos,
                 daily_booked=data["daily_booked"],
                 daily_capacity=data["daily_capacity"],
             )
+            if hasattr(resp, "day_available"):
+                resp.day_available = data.get("day_available", True)
+            if hasattr(resp, "reason"):
+                resp.reason = data.get("reason", "")
+            return resp
         except Exception as e:
             context.set_details(str(e))
             context.set_code(grpc.StatusCode.INTERNAL)
             return application_management_pb2.GetAvailableSlotsResponse()
+
+    async def GetCalendarAvailability(self, request, context: grpc.aio.ServicerContext):
+        try:
+            year = getattr(request, "year", None) or 0
+            month = getattr(request, "month", None) or 0
+            if not (1 <= month <= 12) or year < 2000:
+                context.set_details("year and month (1–12) required")
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                return application_management_pb2.GetCalendarAvailabilityResponse()
+            dates = await self.get_calendar_availability_use_case.execute(year, month)
+            return application_management_pb2.GetCalendarAvailabilityResponse(
+                available_dates=dates
+            )
+        except Exception as e:
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INTERNAL)
+            return application_management_pb2.GetCalendarAvailabilityResponse()
 
     async def UpdateApplication(self, request, context: grpc.aio.ServicerContext):
         try:
