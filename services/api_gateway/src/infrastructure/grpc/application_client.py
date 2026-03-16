@@ -86,7 +86,7 @@ class ApplicationGrpcClient:
             request = application_management_pb2.GetAvailableSlotsRequest(date=ts)
             try:
                 response = await stub.GetAvailableSlots(request)
-                return {
+                out = {
                     "slots": [
                         {
                             "slot_index": s.slot_index,
@@ -100,5 +100,22 @@ class ApplicationGrpcClient:
                     "daily_booked": response.daily_booked,
                     "daily_capacity": response.daily_capacity,
                 }
+                if hasattr(response, "day_available"):
+                    out["day_available"] = response.day_available
+                if hasattr(response, "reason"):
+                    out["reason"] = response.reason or ""
+                return out
             except grpc.RpcError as e:
                 raise Exception(f"gRPC Error in get_available_slots: {e.details()}")
+
+    async def get_calendar_availability(self, year: int, month: int) -> dict:
+        async with grpc.aio.insecure_channel(self.target) as channel:
+            stub = application_management_pb2_grpc.ApplicationManagementServiceStub(channel)
+            request = application_management_pb2.GetCalendarAvailabilityRequest(
+                year=year, month=month
+            )
+            try:
+                response = await stub.GetCalendarAvailability(request)
+                return {"available_dates": list(response.available_dates)}
+            except grpc.RpcError as e:
+                raise Exception(f"gRPC Error in get_calendar_availability: {e.details()}")

@@ -5,6 +5,7 @@ from src.domain.constants import (
     DAILY_CAPACITY,
     NUM_SLOTS,
 )
+from src.domain.booking_rules import get_day_availability_reason
 
 import datetime
 from typing import List
@@ -20,6 +21,9 @@ class GetAvailableSlotsUseCase:
 
     async def execute(self, date: datetime.datetime) -> dict:
         date_only = _to_date(date)
+        reason = get_day_availability_reason(date_only)
+        day_available = reason is None
+
         daily_booked = await self.repository.count_booked_by_date(date_only)
         slots = []
         for slot_index in range(NUM_SLOTS):
@@ -27,7 +31,7 @@ class GetAvailableSlotsUseCase:
                 date_only, slot_index
             )
             capacity = SLOT_CAPACITY
-            is_available = booked < capacity
+            is_available = day_available and (booked < capacity)
             slots.append({
                 "slot_index": slot_index,
                 "time_label": SLOT_TIME_LABELS[slot_index],
@@ -39,4 +43,6 @@ class GetAvailableSlotsUseCase:
             "slots": slots,
             "daily_booked": daily_booked,
             "daily_capacity": DAILY_CAPACITY,
+            "day_available": day_available,
+            "reason": reason or "",
         }

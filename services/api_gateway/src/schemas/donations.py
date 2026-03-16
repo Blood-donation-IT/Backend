@@ -28,6 +28,8 @@ class GetAvailableSlotsResponse(BaseModel):
     slots: List[SlotInfo]
     daily_booked: int
     daily_capacity: int
+    day_available: bool = True   # false вихідні, 2 місяці+
+    reason: str = ""             # "weekend" | "past" | "out_of_range"
 
 
 class ApplicationResponse(BaseModel):
@@ -64,6 +66,9 @@ class CancelApplicationResponse(BaseModel):
     def _ser_app_id(self, v: int) -> str:
         return _serialize_application_id(v)
 
+
+class GetCalendarAvailabilityResponse(BaseModel):
+    available_dates: List[str]  
 
 class CreateApplicationResponse(BaseModel):
     application_id: int

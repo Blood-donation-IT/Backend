@@ -6,6 +6,7 @@ from src.domain.constants import (
     DAILY_CAPACITY,
     NUM_SLOTS,
 )
+from src.domain.booking_rules import get_day_availability_reason
 
 import datetime
 from typing import Optional
@@ -45,6 +46,14 @@ class CreateApplicationUseCase:
             raise ValueError(f"slot_index must be 0–9, got {slot_index}")
 
         date_only = _application_day_to_date(application_day)
+
+        reason = get_day_availability_reason(date_only)
+        if reason == "past":
+            raise ValueError("Cannot book in the past")
+        if reason == "weekend":
+            raise ValueError("Booking on weekends is not available")
+        if reason == "out_of_range":
+            raise ValueError("Booking is allowed only up to 2 months ahead")
 
         # перевірка чи вже є активна заявка для цього user_id
         async for existing_app in self.application_repository.find_by_user_id(user_id):
