@@ -49,6 +49,11 @@ class ApplicationManagementServiceStub(object):
                 request_serializer=application__management_dot_application__management__pb2.GetAvailableSlotsRequest.SerializeToString,
                 response_deserializer=application__management_dot_application__management__pb2.GetAvailableSlotsResponse.FromString,
                 _registered_method=True)
+        self.GetCalendarAvailability = channel.unary_unary(
+                '/src.protos.application_management.ApplicationManagementService/GetCalendarAvailability',
+                request_serializer=application__management_dot_application__management__pb2.GetCalendarAvailabilityRequest.SerializeToString,
+                response_deserializer=application__management_dot_application__management__pb2.GetCalendarAvailabilityResponse.FromString,
+                _registered_method=True)
         self.UpdateApplication = channel.unary_unary(
                 '/src.protos.application_management.ApplicationManagementService/UpdateApplication',
                 request_serializer=application__management_dot_application__management__pb2.UpdateApplicationRequest.SerializeToString,
@@ -77,6 +82,12 @@ class ApplicationManagementServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
     def GetAvailableSlots(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetCalendarAvailability(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -111,6 +122,11 @@ def add_ApplicationManagementServiceServicer_to_server(servicer, server):
                     servicer.GetAvailableSlots,
                     request_deserializer=application__management_dot_application__management__pb2.GetAvailableSlotsRequest.FromString,
                     response_serializer=application__management_dot_application__management__pb2.GetAvailableSlotsResponse.SerializeToString,
+            ),
+            'GetCalendarAvailability': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetCalendarAvailability,
+                    request_deserializer=application__management_dot_application__management__pb2.GetCalendarAvailabilityRequest.FromString,
+                    response_serializer=application__management_dot_application__management__pb2.GetCalendarAvailabilityResponse.SerializeToString,
             ),
             'UpdateApplication': grpc.unary_unary_rpc_method_handler(
                     servicer.UpdateApplication,
@@ -204,6 +220,33 @@ class ApplicationManagementService(object):
             '/src.protos.application_management.ApplicationManagementService/GetAvailableSlots',
             application__management_dot_application__management__pb2.GetAvailableSlotsRequest.SerializeToString,
             application__management_dot_application__management__pb2.GetAvailableSlotsResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetCalendarAvailability(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/src.protos.application_management.ApplicationManagementService/GetCalendarAvailability',
+            application__management_dot_application__management__pb2.GetCalendarAvailabilityRequest.SerializeToString,
+            application__management_dot_application__management__pb2.GetCalendarAvailabilityResponse.FromString,
             options,
             channel_credentials,
             insecure,
