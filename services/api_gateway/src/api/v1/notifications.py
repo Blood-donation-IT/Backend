@@ -16,7 +16,7 @@ from src.schemas.notifications import (
 router = APIRouter(tags=["Notifications"])
 
 
-@router.get("/notifications", response_model=GetNotificationsResponse)
+@router.get("/notifications/get_notifications", response_model=GetNotificationsResponse)
 async def get_notifications(
     user_id: Annotated[int, Depends(get_current_user_id)],
     only_unread: bool = False,
@@ -36,7 +36,7 @@ async def get_notifications(
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.post("/notifications/mark-read", response_model=MarkAsReadResponse)
+@router.post("/notifications/mark_read", response_model=MarkAsReadResponse)
 async def mark_as_read(
     body: MarkAsReadRequest,
     user_id: Annotated[int, Depends(get_current_user_id)],
@@ -49,7 +49,7 @@ async def mark_as_read(
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.post("/notifications", response_model=CreateNotificationResponse)
+@router.post("/notifications/create_notification", response_model=CreateNotificationResponse)
 async def create_notification(
     body: CreateNotificationRequest,
     user_id: Annotated[int, Depends(get_current_user_id)],
