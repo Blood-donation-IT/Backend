@@ -25,15 +25,15 @@ _sym_db = _symbol_database.Default()
 from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n!notifications/notifications.proto\x12\x18src.protos.notifications\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd3\x01\n\x0cNotification\x12\x17\n\x0fnotification_id\x18\x01 \x01(\x03\x12\x0f\n\x07user_id\x18\x02 \x01(\x03\x12\r\n\x05title\x18\x03 \x01(\t\x12\x0f\n\x07message\x18\x04 \x01(\t\x12.\n\ncreated_at\x18\x05 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x0f\n\x07is_read\x18\x06 \x01(\x08\x12\x38\n\x04type\x18\x07 \x01(\x0e\x32*.src.protos.notifications.NotificationType\"^\n\x17GetNotificationsRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12\x13\n\x0bonly_unread\x18\x02 \x01(\x08\x12\r\n\x05limit\x18\x03 \x01(\x05\x12\x0e\n\x06offset\x18\x04 \x01(\x05\"Y\n\x18GetNotificationsResponse\x12=\n\rnotifications\x18\x01 \x03(\x0b\x32&.src.protos.notifications.Notification\"-\n\x11MarkAsReadRequest\x12\x18\n\x10notification_ids\x18\x01 \x03(\x03\"6\n\x12MarkAsReadResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x86\x01\n\x19\x43reateNotificationRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12\r\n\x05title\x18\x02 \x01(\t\x12\x0f\n\x07message\x18\x03 \x01(\t\x12\x38\n\x04type\x18\x04 \x01(\x0e\x32*.src.protos.notifications.NotificationType\"W\n\x1a\x43reateNotificationResponse\x12\x17\n\x0fnotification_id\x18\x01 \x01(\x03\x12\x0f\n\x07success\x18\x02 \x01(\x08\x12\x0f\n\x07message\x18\x03 \x01(\t*\x85\x01\n\x10NotificationType\x12\x1d\n\x19NOTIFICATION_TYPE_UNKNOWN\x10\x00\x12\x15\n\x11\x44ONATION_REMINDER\x10\x01\x12\x13\n\x0f\x44ONATION_UPDATE\x10\x02\x12\x12\n\x0e\x41\x43\x43OUNT_UPDATE\x10\x03\x12\x12\n\x0eSYSTEM_MESSAGE\x10\x04\x32\xfb\x02\n\x14NotificationsService\x12y\n\x10GetNotifications\x12\x31.src.protos.notifications.GetNotificationsRequest\x1a\x32.src.protos.notifications.GetNotificationsResponse\x12g\n\nMarkAsRead\x12+.src.protos.notifications.MarkAsReadRequest\x1a,.src.protos.notifications.MarkAsReadResponse\x12\x7f\n\x12\x43reateNotification\x12\x33.src.protos.notifications.CreateNotificationRequest\x1a\x34.src.protos.notifications.CreateNotificationResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n!notifications/notifications.proto\x12\x18src.protos.notifications\x1a\x1fgoogle/protobuf/timestamp.proto\"\xd3\x01\n\x0cNotification\x12\x17\n\x0fnotification_id\x18\x01 \x01(\x03\x12\x0f\n\x07user_id\x18\x02 \x01(\x03\x12\r\n\x05title\x18\x03 \x01(\t\x12\x0f\n\x07message\x18\x04 \x01(\t\x12.\n\ncreated_at\x18\x05 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x0f\n\x07is_read\x18\x06 \x01(\x08\x12\x38\n\x04type\x18\x07 \x01(\x0e\x32*.src.protos.notifications.NotificationType\"^\n\x17GetNotificationsRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12\x13\n\x0bonly_unread\x18\x02 \x01(\x08\x12\r\n\x05limit\x18\x03 \x01(\x05\x12\x0e\n\x06offset\x18\x04 \x01(\x05\"Y\n\x18GetNotificationsResponse\x12=\n\rnotifications\x18\x01 \x03(\x0b\x32&.src.protos.notifications.Notification\">\n\x11MarkAsReadRequest\x12\x18\n\x10notification_ids\x18\x01 \x03(\x03\x12\x0f\n\x07user_id\x18\x02 \x01(\x03\"6\n\x12MarkAsReadResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t\"\x86\x01\n\x19\x43reateNotificationRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12\r\n\x05title\x18\x02 \x01(\t\x12\x0f\n\x07message\x18\x03 \x01(\t\x12\x38\n\x04type\x18\x04 \x01(\x0e\x32*.src.protos.notifications.NotificationType\"W\n\x1a\x43reateNotificationResponse\x12\x17\n\x0fnotification_id\x18\x01 \x01(\x03\x12\x0f\n\x07success\x18\x02 \x01(\x08\x12\x0f\n\x07message\x18\x03 \x01(\t*\x85\x01\n\x10NotificationType\x12\x1d\n\x19NOTIFICATION_TYPE_UNKNOWN\x10\x00\x12\x15\n\x11\x44ONATION_REMINDER\x10\x01\x12\x13\n\x0f\x44ONATION_UPDATE\x10\x02\x12\x12\n\x0e\x41\x43\x43OUNT_UPDATE\x10\x03\x12\x12\n\x0eSYSTEM_MESSAGE\x10\x04\x32\xfb\x02\n\x14NotificationsService\x12y\n\x10GetNotifications\x12\x31.src.protos.notifications.GetNotificationsRequest\x1a\x32.src.protos.notifications.GetNotificationsResponse\x12g\n\nMarkAsRead\x12+.src.protos.notifications.MarkAsReadRequest\x1a,.src.protos.notifications.MarkAsReadResponse\x12\x7f\n\x12\x43reateNotification\x12\x33.src.protos.notifications.CreateNotificationRequest\x1a\x34.src.protos.notifications.CreateNotificationResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'notifications.notifications_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_NOTIFICATIONTYPE']._serialized_start=827
-  _globals['_NOTIFICATIONTYPE']._serialized_end=960
+  _globals['_NOTIFICATIONTYPE']._serialized_start=844
+  _globals['_NOTIFICATIONTYPE']._serialized_end=977
   _globals['_NOTIFICATION']._serialized_start=97
   _globals['_NOTIFICATION']._serialized_end=308
   _globals['_GETNOTIFICATIONSREQUEST']._serialized_start=310
@@ -41,13 +41,13 @@ if not _descriptor._USE_C_DESCRIPTORS:
   _globals['_GETNOTIFICATIONSRESPONSE']._serialized_start=406
   _globals['_GETNOTIFICATIONSRESPONSE']._serialized_end=495
   _globals['_MARKASREADREQUEST']._serialized_start=497
-  _globals['_MARKASREADREQUEST']._serialized_end=542
-  _globals['_MARKASREADRESPONSE']._serialized_start=544
-  _globals['_MARKASREADRESPONSE']._serialized_end=598
-  _globals['_CREATENOTIFICATIONREQUEST']._serialized_start=601
-  _globals['_CREATENOTIFICATIONREQUEST']._serialized_end=735
-  _globals['_CREATENOTIFICATIONRESPONSE']._serialized_start=737
-  _globals['_CREATENOTIFICATIONRESPONSE']._serialized_end=824
-  _globals['_NOTIFICATIONSSERVICE']._serialized_start=963
-  _globals['_NOTIFICATIONSSERVICE']._serialized_end=1342
+  _globals['_MARKASREADREQUEST']._serialized_end=559
+  _globals['_MARKASREADRESPONSE']._serialized_start=561
+  _globals['_MARKASREADRESPONSE']._serialized_end=615
+  _globals['_CREATENOTIFICATIONREQUEST']._serialized_start=618
+  _globals['_CREATENOTIFICATIONREQUEST']._serialized_end=752
+  _globals['_CREATENOTIFICATIONRESPONSE']._serialized_start=754
+  _globals['_CREATENOTIFICATIONRESPONSE']._serialized_end=841
+  _globals['_NOTIFICATIONSSERVICE']._serialized_start=980
+  _globals['_NOTIFICATIONSSERVICE']._serialized_end=1359
 # @@protoc_insertion_point(module_scope)

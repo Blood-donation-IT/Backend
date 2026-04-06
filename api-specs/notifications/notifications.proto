@@ -41,7 +41,8 @@ message GetNotificationsResponse {
 }
 
 message MarkAsReadRequest {
-  repeated int64 notification_ids = 1;  
+  repeated int64 notification_ids = 1;
+  int64 user_id = 2; 
 }
 
 message MarkAsReadResponse {
