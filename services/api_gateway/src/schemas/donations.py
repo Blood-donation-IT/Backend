@@ -10,10 +10,26 @@ def _serialize_application_id(v: int) -> str:
 class CreateApplicationRequest(BaseModel):
     user_id: int = Field(..., description="ID користувача")
     blood_type: str = Field(..., description="Група крові")
-    application_time: datetime = Field(..., description="Час подання заявки")
-    application_day: Optional[datetime] = Field(None, description="День подання заявки")
+    application_day: datetime = Field(..., description="День запису на донацію")
+    slot_index: int = Field(..., ge=0, le=9, description="Слот часу")
     location_id: Optional[str] = Field(None, description="ID локації")
     status: Optional[str] = Field("pending", description="Статус заявки")
+
+
+class SlotInfo(BaseModel):
+    slot_index: int
+    time_label: str
+    booked_count: int
+    capacity: int
+    is_available: bool
+
+
+class GetAvailableSlotsResponse(BaseModel):
+    slots: List[SlotInfo]
+    daily_booked: int
+    daily_capacity: int
+    day_available: bool = True   # false вихідні, 2 місяці+
+    reason: str = ""             # "weekend" | "past" | "out_of_range"
 
 
 class ApplicationResponse(BaseModel):
@@ -22,6 +38,7 @@ class ApplicationResponse(BaseModel):
     blood_type: str
     application_time: Optional[datetime]
     application_day: Optional[datetime]
+    slot_index: Optional[int] = None
     location_id: Optional[str]
     status: str
     created_at: Optional[datetime]
@@ -49,6 +66,9 @@ class CancelApplicationResponse(BaseModel):
     def _ser_app_id(self, v: int) -> str:
         return _serialize_application_id(v)
 
+
+class GetCalendarAvailabilityResponse(BaseModel):
+    available_dates: List[str]  
 
 class CreateApplicationResponse(BaseModel):
     application_id: int

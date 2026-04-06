@@ -1,15 +1,46 @@
+from datetime import date, datetime
 from fastapi import APIRouter, HTTPException, Depends
 from src.schemas.donations import (
     CreateApplicationRequest,
     CreateApplicationResponse,
     GetApplicationsResponse,
     ApplicationResponse,
-    CancelApplicationResponse
+    CancelApplicationResponse,
+    GetAvailableSlotsResponse,
+    GetCalendarAvailabilityResponse,
 )
 from src.infrastructure.grpc.application_client import ApplicationGrpcClient
 from src.api.dependencies import get_application_grpc_client
 
 router = APIRouter(tags=["Donations"])
+
+
+@router.get("/donations/available_slots", response_model=GetAvailableSlotsResponse)
+async def get_available_slots(
+    date: date,
+    client: ApplicationGrpcClient = Depends(get_application_grpc_client),
+):
+    try:
+        date_dt = datetime.combine(date, datetime.min.time())
+        result = await client.get_available_slots(date_dt)
+        return GetAvailableSlotsResponse(**result)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.get("/donations/calendar_availability", response_model=GetCalendarAvailabilityResponse)
+async def get_calendar_availability(
+    year: int,
+    month: int,
+    client: ApplicationGrpcClient = Depends(get_application_grpc_client),
+):
+    if not (1 <= month <= 12):
+        raise HTTPException(status_code=400, detail="month must be 1–12")
+    try:
+        result = await client.get_calendar_availability(year, month)
+        return GetCalendarAvailabilityResponse(**result)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.get("/donations/get_applications", response_model=GetApplicationsResponse)

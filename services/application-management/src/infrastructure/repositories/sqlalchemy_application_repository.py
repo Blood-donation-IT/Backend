@@ -1,13 +1,15 @@
 import datetime
 from typing import AsyncGenerator
 
-from sqlalchemy import select
+from sqlalchemy import select, func, and_
 from src.domain.irepositories.i_application_repository import IApplicationRepository
 from typing import Optional
 from application_management_models.application_orm import ApplicationORM
 from sqlalchemy.ext.asyncio import AsyncSession
 from src.domain.entities.application import Application
 from sqlalchemy.exc import NoResultFound
+
+ACTIVE_STATUSES = ("pending", "approved", "scheduled")
 
 class SQLAlchemyApplicationRepository(IApplicationRepository):
     def __init__(self, session: AsyncSession):
@@ -49,6 +51,7 @@ class SQLAlchemyApplicationRepository(IApplicationRepository):
             orm_app.blood_type = application.blood_type
             orm_app.application_time = application.application_time
             orm_app.application_day = application.application_day
+            orm_app.slot_index = application.slot_index
             orm_app.location_id = application.location_id
             orm_app.status = application.status
             orm_app.description = application.description
@@ -64,3 +67,28 @@ class SQLAlchemyApplicationRepository(IApplicationRepository):
             await self._session.delete(orm_app)
             await self._session.commit()
         return None
+
+    async def count_booked_by_date(self, application_date: datetime.date) -> int:
+        result = await self._session.execute(
+            select(func.count()).select_from(ApplicationORM).where(
+                and_(
+                    func.date(ApplicationORM.application_day) == application_date,
+                    ApplicationORM.status.in_(ACTIVE_STATUSES),
+                )
+            )
+        )
+        return result.scalar() or 0
+
+    async def count_booked_by_date_and_slot(
+        self, application_date: datetime.date, slot_index: int
+    ) -> int:
+        result = await self._session.execute(
+            select(func.count()).select_from(ApplicationORM).where(
+                and_(
+                    func.date(ApplicationORM.application_day) == application_date,
+                    ApplicationORM.slot_index == slot_index,
+                    ApplicationORM.status.in_(ACTIVE_STATUSES),
+                )
+            )
+        )
+        return result.scalar() or 0
