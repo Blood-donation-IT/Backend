@@ -3,6 +3,7 @@ from src.config import settings
 from src.infrastructure.grpc.user_client import UserGrpcClient
 from src.infrastructure.grpc.authorization_client import AuthorizationGrpcClient
 from src.infrastructure.grpc.application_client import ApplicationGrpcClient
+from src.infrastructure.grpc.notifications_client import NotificationsGrpcClient
 
 @lru_cache()
 def get_user_grpc_client() -> UserGrpcClient:
@@ -26,4 +27,13 @@ def get_application_grpc_client() -> ApplicationGrpcClient:
     return ApplicationGrpcClient(
         host=settings.APPLICATION_MANAGEMENT_SERVICE_HOST,
         port=settings.APPLICATION_MANAGEMENT_SERVICE_PORT
+    )
+
+
+@lru_cache()
+def get_notifications_grpc_client() -> NotificationsGrpcClient:
+    print("Establishing connection to Notifications gRPC Service...")
+    return NotificationsGrpcClient(
+        host=settings.NOTIFICATIONS_SERVICE_HOST,
+        port=settings.NOTIFICATIONS_SERVICE_PORT,
     )

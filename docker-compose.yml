@@ -36,11 +36,14 @@ services:
       - APPLICATION_MANAGEMENT_SERVICE_PORT=50052
       - AUTHORIZATION_SERVICE_HOST=authorization
       - AUTHORIZATION_SERVICE_PORT=50053
+      - NOTIFICATIONS_SERVICE_HOST=notifications
+      - NOTIFICATIONS_SERVICE_PORT=50054
       - SECRET_KEY=blood-don
     depends_on:
       - user-profile
       - application-management
       - authorization
+      - notifications
     networks:
       - gateway_net
 
@@ -193,6 +196,58 @@ services:
       - authorization_net
     restart: "no"
 
+  notifications:
+    build:
+      context: .
+      dockerfile: ./services/notifications/Dockerfile
+    container_name: notifications
+    depends_on:
+      notifications-db:
+        condition: service_healthy
+      notifications-migrations:
+        condition: service_completed_successfully
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://user:password@notifications-db:5432/notifications_db
+      - PYTHONPATH=/app/service/src
+      - REPOSITORY_TYPE=postgresql
+      - ID_GENERATOR_TYPE=snowflake
+    ports:
+      - "5004:50054"
+    networks:
+      - notifications_net
+      - gateway_net
+
+  notifications-db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: notifications_db
+    volumes:
+      - notifications-data:/var/lib/postgresql/data
+    networks:
+      - notifications_net
+    ports:
+      - "5436:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U user -d notifications_db"]
+      interval: 3s
+      timeout: 5s
+      retries: 5
+
+  notifications-migrations:
+    build:
+      context: .
+      dockerfile: ./services/notifications_migrations/Dockerfile
+    depends_on:
+      notifications-db:
+        condition: service_healthy
+    environment:
+      - DATABASE_URL=postgresql+psycopg2://user:password@notifications-db:5432/notifications_db
+    networks:
+      - notifications_net
+    restart: "no"
+
   admin-dashboard:
     build:
       context: .
@@ -220,9 +275,11 @@ volumes:
   user-profile-data:
   application-management-data:
   authorization-data:
+  notifications-data:
 
 networks:
   user-profile_net:
   gateway_net:
   application_management_net:
   authorization_net:
+  notifications_net:

@@ -8,7 +8,6 @@ def _serialize_application_id(v: int) -> str:
 
 
 class CreateApplicationRequest(BaseModel):
-    user_id: int = Field(..., description="ID користувача")
     blood_type: str = Field(..., description="Група крові")
     application_day: datetime = Field(..., description="День запису на донацію")
     slot_index: int = Field(..., ge=0, le=9, description="Слот часу")

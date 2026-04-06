@@ -25,7 +25,7 @@ _sym_db = _symbol_database.Default()
 from google.protobuf import timestamp_pb2 as google_dot_protobuf_dot_timestamp__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n3application-management/application-management.proto\x12!src.protos.application_management\x1a\x1fgoogle/protobuf/timestamp.proto\"\xad\x01\n\x18\x43reateApplicationRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12\x12\n\nblood_type\x18\x02 \x01(\t\x12\x33\n\x0f\x61pplication_day\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x12\n\nslot_index\x18\x04 \x01(\x05\x12\x13\n\x0blocation_id\x18\x05 \x01(\t\x12\x0e\n\x06status\x18\x07 \x01(\t\"(\n\x15GetApplicationRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\"|\n\x18UpdateApplicationRequest\x12\x16\n\x0e\x61pplication_id\x18\x01 \x01(\x03\x12\x34\n\x10\x61pplication_time\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x12\n\nblood_type\x18\x04 \x01(\t\",\n\x12\x41pplicationRequest\x12\x16\n\x0e\x61pplication_id\x18\x01 \x01(\x03\"O\n\x13\x41pplicationResponse\x12\x16\n\x0e\x61pplication_id\x18\x01 \x01(\x03\x12\x0f\n\x07success\x18\x02 \x01(\x08\x12\x0f\n\x07message\x18\x03 \x01(\t\"\xce\x02\n\x0b\x41pplication\x12\x16\n\x0e\x61pplication_id\x18\x01 \x01(\x03\x12\x0f\n\x07user_id\x18\x02 \x01(\x03\x12\x12\n\nblood_type\x18\x03 \x01(\t\x12\x34\n\x10\x61pplication_time\x18\x04 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x33\n\x0f\x61pplication_day\x18\x05 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x12\n\nslot_index\x18\n \x01(\x05\x12\x13\n\x0blocation_id\x18\x06 \x01(\t\x12\x0e\n\x06status\x18\x07 \x01(\t\x12.\n\ncreated_at\x18\x08 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12.\n\nupdated_at\x18\t \x01(\x0b\x32\x1a.google.protobuf.Timestamp\"D\n\x18GetAvailableSlotsRequest\x12(\n\x04\x64\x61te\x18\x01 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\"p\n\x08SlotInfo\x12\x12\n\nslot_index\x18\x01 \x01(\x05\x12\x12\n\ntime_label\x18\x02 \x01(\t\x12\x14\n\x0c\x62ooked_count\x18\x03 \x01(\x05\x12\x10\n\x08\x63\x61pacity\x18\x04 \x01(\x05\x12\x14\n\x0cis_available\x18\x05 \x01(\x08\"\xac\x01\n\x19GetAvailableSlotsResponse\x12:\n\x05slots\x18\x01 \x03(\x0b\x32+.src.protos.application_management.SlotInfo\x12\x14\n\x0c\x64\x61ily_booked\x18\x02 \x01(\x05\x12\x16\n\x0e\x64\x61ily_capacity\x18\x03 \x01(\x05\x12\x15\n\rday_available\x18\x04 \x01(\x08\x12\x0e\n\x06reason\x18\x05 \x01(\t\"=\n\x1eGetCalendarAvailabilityRequest\x12\x0c\n\x04year\x18\x01 \x01(\x05\x12\r\n\x05month\x18\x02 \x01(\x05\":\n\x1fGetCalendarAvailabilityResponse\x12\x17\n\x0f\x61vailable_dates\x18\x01 \x03(\t2\xf2\x06\n\x1c\x41pplicationManagementService\x12\x88\x01\n\x11\x43reateApplication\x12;.src.protos.application_management.CreateApplicationRequest\x1a\x36.src.protos.application_management.ApplicationResponse\x12\x82\x01\n\x14GetApplicationByUser\x12\x38.src.protos.application_management.GetApplicationRequest\x1a..src.protos.application_management.Application0\x01\x12\x8e\x01\n\x11GetAvailableSlots\x12;.src.protos.application_management.GetAvailableSlotsRequest\x1a<.src.protos.application_management.GetAvailableSlotsResponse\x12\xa0\x01\n\x17GetCalendarAvailability\x12\x41.src.protos.application_management.GetCalendarAvailabilityRequest\x1a\x42.src.protos.application_management.GetCalendarAvailabilityResponse\x12\x88\x01\n\x11UpdateApplication\x12;.src.protos.application_management.UpdateApplicationRequest\x1a\x36.src.protos.application_management.ApplicationResponse\x12\x82\x01\n\x11\x43\x61ncelApplication\x12\x35.src.protos.application_management.ApplicationRequest\x1a\x36.src.protos.application_management.ApplicationResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n3application-management/application-management.proto\x12!src.protos.application_management\x1a\x1fgoogle/protobuf/timestamp.proto\"\xcf\x01\n\x18\x43reateApplicationRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\x12\x12\n\nblood_type\x18\x02 \x01(\t\x12\x34\n\x10\x61pplication_time\x18\x03 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x33\n\x0f\x61pplication_day\x18\x04 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x13\n\x0blocation_id\x18\x05 \x01(\t\x12\x0e\n\x06status\x18\x07 \x01(\t\"(\n\x15GetApplicationRequest\x12\x0f\n\x07user_id\x18\x01 \x01(\x03\"|\n\x18UpdateApplicationRequest\x12\x16\n\x0e\x61pplication_id\x18\x01 \x01(\x03\x12\x34\n\x10\x61pplication_time\x18\x02 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x12\n\nblood_type\x18\x04 \x01(\t\"=\n\x12\x41pplicationRequest\x12\x16\n\x0e\x61pplication_id\x18\x01 \x01(\x03\x12\x0f\n\x07user_id\x18\x02 \x01(\x03\"O\n\x13\x41pplicationResponse\x12\x16\n\x0e\x61pplication_id\x18\x01 \x01(\x03\x12\x0f\n\x07success\x18\x02 \x01(\x08\x12\x0f\n\x07message\x18\x03 \x01(\t\"\xba\x02\n\x0b\x41pplication\x12\x16\n\x0e\x61pplication_id\x18\x01 \x01(\x03\x12\x0f\n\x07user_id\x18\x02 \x01(\x03\x12\x12\n\nblood_type\x18\x03 \x01(\t\x12\x34\n\x10\x61pplication_time\x18\x04 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x33\n\x0f\x61pplication_day\x18\x05 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12\x13\n\x0blocation_id\x18\x06 \x01(\t\x12\x0e\n\x06status\x18\x07 \x01(\t\x12.\n\ncreated_at\x18\x08 \x01(\x0b\x32\x1a.google.protobuf.Timestamp\x12.\n\nupdated_at\x18\t \x01(\x0b\x32\x1a.google.protobuf.Timestamp2\xbe\x04\n\x1c\x41pplicationManagementService\x12\x88\x01\n\x11\x43reateApplication\x12;.src.protos.application_management.CreateApplicationRequest\x1a\x36.src.protos.application_management.ApplicationResponse\x12\x82\x01\n\x14GetApplicationByUser\x12\x38.src.protos.application_management.GetApplicationRequest\x1a..src.protos.application_management.Application0\x01\x12\x88\x01\n\x11UpdateApplication\x12;.src.protos.application_management.UpdateApplicationRequest\x1a\x36.src.protos.application_management.ApplicationResponse\x12\x82\x01\n\x11\x43\x61ncelApplication\x12\x35.src.protos.application_management.ApplicationRequest\x1a\x36.src.protos.application_management.ApplicationResponseb\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
@@ -33,27 +33,17 @@ _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'application_management.appl
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
   _globals['_CREATEAPPLICATIONREQUEST']._serialized_start=124
-  _globals['_CREATEAPPLICATIONREQUEST']._serialized_end=297
-  _globals['_GETAPPLICATIONREQUEST']._serialized_start=299
-  _globals['_GETAPPLICATIONREQUEST']._serialized_end=339
-  _globals['_UPDATEAPPLICATIONREQUEST']._serialized_start=341
-  _globals['_UPDATEAPPLICATIONREQUEST']._serialized_end=465
-  _globals['_APPLICATIONREQUEST']._serialized_start=467
-  _globals['_APPLICATIONREQUEST']._serialized_end=511
-  _globals['_APPLICATIONRESPONSE']._serialized_start=513
-  _globals['_APPLICATIONRESPONSE']._serialized_end=592
-  _globals['_APPLICATION']._serialized_start=595
-  _globals['_APPLICATION']._serialized_end=929
-  _globals['_GETAVAILABLESLOTSREQUEST']._serialized_start=931
-  _globals['_GETAVAILABLESLOTSREQUEST']._serialized_end=999
-  _globals['_SLOTINFO']._serialized_start=1001
-  _globals['_SLOTINFO']._serialized_end=1113
-  _globals['_GETAVAILABLESLOTSRESPONSE']._serialized_start=1116
-  _globals['_GETAVAILABLESLOTSRESPONSE']._serialized_end=1288
-  _globals['_GETCALENDARAVAILABILITYREQUEST']._serialized_start=1290
-  _globals['_GETCALENDARAVAILABILITYREQUEST']._serialized_end=1351
-  _globals['_GETCALENDARAVAILABILITYRESPONSE']._serialized_start=1353
-  _globals['_GETCALENDARAVAILABILITYRESPONSE']._serialized_end=1411
-  _globals['_APPLICATIONMANAGEMENTSERVICE']._serialized_start=1414
-  _globals['_APPLICATIONMANAGEMENTSERVICE']._serialized_end=2296
+  _globals['_CREATEAPPLICATIONREQUEST']._serialized_end=331
+  _globals['_GETAPPLICATIONREQUEST']._serialized_start=333
+  _globals['_GETAPPLICATIONREQUEST']._serialized_end=373
+  _globals['_UPDATEAPPLICATIONREQUEST']._serialized_start=375
+  _globals['_UPDATEAPPLICATIONREQUEST']._serialized_end=499
+  _globals['_APPLICATIONREQUEST']._serialized_start=501
+  _globals['_APPLICATIONREQUEST']._serialized_end=545
+  _globals['_APPLICATIONRESPONSE']._serialized_start=547
+  _globals['_APPLICATIONRESPONSE']._serialized_end=626
+  _globals['_APPLICATION']._serialized_start=629
+  _globals['_APPLICATION']._serialized_end=943
+  _globals['_APPLICATIONMANAGEMENTSERVICE']._serialized_start=946
+  _globals['_APPLICATIONMANAGEMENTSERVICE']._serialized_end=1520
 # @@protoc_insertion_point(module_scope)

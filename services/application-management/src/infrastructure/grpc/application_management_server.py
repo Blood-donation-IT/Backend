@@ -20,8 +20,15 @@ class ApplicationManagementService(application_management_pb2_grpc.ApplicationMa
         try:
             import datetime
 
-            if not request.HasField("application_day"):
-                context.set_details("application_day is required")
+            if request.user_id <= 0:
+                context.set_details("user_id is required and must be positive")
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                return application_management_pb2.ApplicationResponse(
+                    success=False, message="Invalid user_id"
+                )
+
+            if not request.HasField("application_time"):
+                context.set_details("application_time is required")
                 context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
                 return application_management_pb2.ApplicationResponse(success=False, message="application_day is required")
 
@@ -56,6 +63,11 @@ class ApplicationManagementService(application_management_pb2_grpc.ApplicationMa
 
     async def GetApplicationByUser(self, request, context: grpc.aio.ServicerContext):
         try:
+            if request.user_id <= 0:
+                context.set_details("user_id is required and must be positive")
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                return
+
             async for application in self.get_use_case.execute(request.user_id):
                 ts_time = Timestamp()
                 ts_time.FromDatetime(application.application_time)
@@ -169,7 +181,27 @@ class ApplicationManagementService(application_management_pb2_grpc.ApplicationMa
 
     async def CancelApplication(self, request, context: grpc.aio.ServicerContext):
         try:
-            
+            if request.user_id <= 0:
+                context.set_details("user_id is required and must be positive")
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                return application_management_pb2.ApplicationResponse(
+                    success=False, message="Invalid user_id"
+                )
+
+            existing = await self.repository.get_by_id(request.application_id)
+            if not existing:
+                context.set_details(f"Application with id {request.application_id} not found")
+                context.set_code(grpc.StatusCode.NOT_FOUND)
+                return application_management_pb2.ApplicationResponse(
+                    success=False, message="Application not found"
+                )
+            if existing.user_id != request.user_id:
+                context.set_details("Permission denied")
+                context.set_code(grpc.StatusCode.PERMISSION_DENIED)
+                return application_management_pb2.ApplicationResponse(
+                    success=False, message="Permission denied"
+                )
+
             application = await self.update_use_case.execute(
                 application_id=request.application_id,
                 status="cancelled"
