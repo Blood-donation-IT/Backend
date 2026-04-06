@@ -33,6 +33,7 @@ message UpdateApplicationRequest {
 
 message ApplicationRequest {
     int64 application_id = 1;
+    int64 user_id = 2;
 }
 
 message ApplicationResponse {
