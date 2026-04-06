@@ -1,0 +1,87 @@
+syntax = "proto3";
+
+package src.protos.application_management;
+
+import "google/protobuf/timestamp.proto";
+
+service ApplicationManagementService {
+  rpc CreateApplication(CreateApplicationRequest) returns (ApplicationResponse);
+  rpc GetApplicationByUser (GetApplicationRequest) returns (stream Application);
+  rpc GetAvailableSlots (GetAvailableSlotsRequest) returns (GetAvailableSlotsResponse);
+  rpc GetCalendarAvailability(GetCalendarAvailabilityRequest) returs (GetCalendarAvailabilityResponse)
+  rpc UpdateApplication (UpdateApplicationRequest) returns (ApplicationResponse);
+  rpc CancelApplication (ApplicationRequest) returns (ApplicationResponse);
+}
+
+message CreateApplicationRequest {
+    int64 user_id = 1;
+    string blood_type = 2;
+    google.protobuf.Timestamp application_day = 3;  
+    int32 slot_index = 4;                           
+    string location_id = 5;
+    string status = 7;
+}
+
+
+message GetApplicationRequest {
+    int64 user_id = 1;
+}
+
+message UpdateApplicationRequest {
+    int64 application_id = 1;
+    google.protobuf.Timestamp application_time = 2;
+    string blood_type = 4;
+}
+
+message ApplicationRequest {
+    int64 application_id = 1;
+    int64 user_id = 2;
+}
+
+message ApplicationResponse {
+    int64 application_id = 1;
+    bool success = 2;
+    string message = 3;
+}
+
+message Application {
+    int64 application_id = 1;
+    int64 user_id = 2;
+    string blood_type = 3;
+    google.protobuf.Timestamp application_time = 4;
+    google.protobuf.Timestamp application_day = 5;
+    int32 slot_index = 10;
+    string location_id = 6;
+    string status = 7;
+    google.protobuf.Timestamp created_at = 8;
+    google.protobuf.Timestamp updated_at = 9;
+}
+
+message GetAvailableSlotsRequest {
+    google.protobuf.Timestamp date = 1; 
+}
+
+message SlotInfo {
+    int32 slot_index = 1;
+    string time_label = 2;   
+    int32 booked_count = 3;
+    int32 capacity = 4;
+    bool is_available = 5;
+}
+
+message GetAvailableSlotsResponse {
+    repeated SlotInfo slots = 1;
+    int32 daily_booked = 2;
+    int32 daily_capacity = 3;
+    bool day_available = 4; 
+    string reason = 5;
+}
+
+message GetCalendarAvailabilityRequest {
+    int32 year  = 1;
+    int32 month = 2;
+}
+
+message GetCalendarAvailabilityResponse {
+    repeated string available_dates = 1; 
+}

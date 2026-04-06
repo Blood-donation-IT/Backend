@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "./contracts/src",
+        "./libs/user_profile/src"
+    ]
+}
