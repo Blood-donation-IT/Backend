@@ -77,8 +77,8 @@ class ApplicationGrpcClient:
                     "success": response.success,
                     "message": response.message
                 }
-            except grpc.RpcError as e:
-                raise Exception(f"gRPC Error in cancel_application: {e.details()}")
+            except grpc.RpcError:
+                raise
 
     async def get_available_slots(self, date: datetime) -> dict:
         async with grpc.aio.insecure_channel(self.target) as channel:
@@ -107,8 +107,8 @@ class ApplicationGrpcClient:
                 if hasattr(response, "reason"):
                     out["reason"] = response.reason or ""
                 return out
-            except grpc.RpcError as e:
-                raise Exception(f"gRPC Error in get_available_slots: {e.details()}")
+            except grpc.RpcError:
+                raise
 
     async def get_calendar_availability(self, year: int, month: int) -> dict:
         async with grpc.aio.insecure_channel(self.target) as channel:
@@ -119,5 +119,5 @@ class ApplicationGrpcClient:
             try:
                 response = await stub.GetCalendarAvailability(request)
                 return {"available_dates": list(response.available_dates)}
-            except grpc.RpcError as e:
-                raise Exception(f"gRPC Error in get_calendar_availability: {e.details()}")
+            except grpc.RpcError:
+                raise
