@@ -45,12 +45,15 @@ class SQLAlchemyNotificationRepository(INotificationRepository):
         result = await self._session.execute(stmt)
         return [self._to_entity(x) for x in result.scalars().all()]
 
-    async def mark_as_read(self, notification_ids: list[int]) -> int:
+    async def mark_as_read(self, user_id: int, notification_ids: list[int]) -> int:
         if not notification_ids:
             return 0
         stmt = (
             update(NotificationORM)
-            .where(NotificationORM.id.in_(notification_ids))
+            .where(
+                NotificationORM.user_id == user_id,
+                NotificationORM.id.in_(notification_ids),
+            )
             .values(is_read=True)
         )
         result = await self._session.execute(stmt)

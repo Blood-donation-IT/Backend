@@ -5,5 +5,5 @@ class MarkAsReadUseCase:
     def __init__(self, repository: INotificationRepository):
         self.repository = repository
 
-    async def execute(self, notification_ids: list[int]) -> int:
-        return await self.repository.mark_as_read(notification_ids)
+    async def execute(self, user_id: int, notification_ids: list[int]) -> int:
+        return await self.repository.mark_as_read(user_id, notification_ids)

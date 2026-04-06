@@ -37,7 +37,6 @@ class MarkAsReadResponse(BaseModel):
 
 
 class CreateNotificationRequest(BaseModel):
-    user_id: int
     title: str
     message: str
     type: NotificationType

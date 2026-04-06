@@ -39,11 +39,11 @@ async def get_notifications(
 @router.post("/notifications/mark-read", response_model=MarkAsReadResponse)
 async def mark_as_read(
     body: MarkAsReadRequest,
-    _: Annotated[int, Depends(get_current_user_id)],
+    user_id: Annotated[int, Depends(get_current_user_id)],
     client: NotificationsGrpcClient = Depends(get_notifications_grpc_client),
 ):
     try:
-        result = await client.mark_as_read(body.notification_ids)
+        result = await client.mark_as_read(user_id, body.notification_ids)
         return MarkAsReadResponse(**result)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -52,12 +52,12 @@ async def mark_as_read(
 @router.post("/notifications", response_model=CreateNotificationResponse)
 async def create_notification(
     body: CreateNotificationRequest,
-    _: Annotated[int, Depends(get_current_user_id)],
+    user_id: Annotated[int, Depends(get_current_user_id)],
     client: NotificationsGrpcClient = Depends(get_notifications_grpc_client),
 ):
     try:
         result = await client.create_notification(
-            user_id=body.user_id,
+            user_id=user_id,
             title=body.title,
             message=body.message,
             type=body.type,

@@ -15,7 +15,7 @@ class INotificationRepository(ABC):
         pass
 
     @abstractmethod
-    async def mark_as_read(self, notification_ids: list[int]) -> int:
+    async def mark_as_read(self, user_id: int, notification_ids: list[int]) -> int:
         pass
 
     @abstractmethod

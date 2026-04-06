@@ -36,6 +36,10 @@ class NotificationsService(notifications_pb2_grpc.NotificationsServiceServicer):
 
     async def GetNotifications(self, request, context):
         try:
+            if request.user_id <= 0:
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                context.set_details("user_id is required and must be positive")
+                return notifications_pb2.GetNotificationsResponse()
             notifications = await self.get_notifications_use_case.execute(
                 user_id=request.user_id,
                 only_unread=request.only_unread,
@@ -52,8 +56,14 @@ class NotificationsService(notifications_pb2_grpc.NotificationsServiceServicer):
 
     async def MarkAsRead(self, request, context):
         try:
+            if request.user_id <= 0:
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                context.set_details("user_id is required and must be positive")
+                return notifications_pb2.MarkAsReadResponse(
+                    success=False, message="Invalid user_id"
+                )
             updated = await self.mark_as_read_use_case.execute(
-                list(request.notification_ids)
+                int(request.user_id), list(request.notification_ids)
             )
             return notifications_pb2.MarkAsReadResponse(
                 success=True, message=f"Marked as read: {updated}"
@@ -65,6 +75,12 @@ class NotificationsService(notifications_pb2_grpc.NotificationsServiceServicer):
 
     async def CreateNotification(self, request, context):
         try:
+            if request.user_id <= 0:
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                context.set_details("user_id is required and must be positive")
+                return notifications_pb2.CreateNotificationResponse(
+                    notification_id=0, success=False, message="Invalid user_id"
+                )
             notification = await self.create_notification_use_case.execute(
                 user_id=request.user_id,
                 title=request.title,

@@ -1,4 +1,8 @@
+from typing import Annotated
+
+import grpc
 from fastapi import APIRouter, HTTPException, Depends
+
 from src.schemas.donations import (
     CreateApplicationRequest,
     CreateApplicationResponse,
@@ -8,18 +12,36 @@ from src.schemas.donations import (
 )
 from src.infrastructure.grpc.application_client import ApplicationGrpcClient
 from src.api.dependencies import get_application_grpc_client
+from src.core.auth import get_current_user_id
 
 router = APIRouter(tags=["Donations"])
 
 
+def _map_grpc_error(e: grpc.RpcError) -> HTTPException:
+    code = e.code()
+    detail = e.details() or "gRPC error"
+    if code == grpc.StatusCode.PERMISSION_DENIED:
+        return HTTPException(status_code=403, detail=detail)
+    if code == grpc.StatusCode.NOT_FOUND:
+        return HTTPException(status_code=404, detail=detail)
+    if code == grpc.StatusCode.INVALID_ARGUMENT:
+        return HTTPException(status_code=400, detail=detail)
+    return HTTPException(status_code=502, detail=detail)
+
+
 @router.get("/donations/get_applications", response_model=GetApplicationsResponse)
-async def get_applications(user_id: int, client: ApplicationGrpcClient = Depends(get_application_grpc_client)):
+async def get_applications(
+    user_id: Annotated[int, Depends(get_current_user_id)],
+    client: ApplicationGrpcClient = Depends(get_application_grpc_client),
+):
     try:
         applications_data = await client.get_applications_by_user(user_id)
         applications = [
             ApplicationResponse(**app) for app in applications_data
         ]
         return GetApplicationsResponse(applications=applications)
+    except grpc.RpcError as e:
+        raise _map_grpc_error(e) from e
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -27,11 +49,14 @@ async def get_applications(user_id: int, client: ApplicationGrpcClient = Depends
 @router.post("/donations/create_application", response_model=CreateApplicationResponse)
 async def create_application(
     request: CreateApplicationRequest,
-    client: ApplicationGrpcClient = Depends(get_application_grpc_client)
+    user_id: Annotated[int, Depends(get_current_user_id)],
+    client: ApplicationGrpcClient = Depends(get_application_grpc_client),
 ):
     try:
-        result = await client.create_application(request)
+        result = await client.create_application(user_id, request)
         return CreateApplicationResponse(**result)
+    except grpc.RpcError as e:
+        raise _map_grpc_error(e) from e
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
@@ -42,14 +67,17 @@ async def create_application(
 )
 async def cancel_application(
     application_id: str,
-    client: ApplicationGrpcClient = Depends(get_application_grpc_client)
+    user_id: Annotated[int, Depends(get_current_user_id)],
+    client: ApplicationGrpcClient = Depends(get_application_grpc_client),
 ):
     try:
         aid = int(application_id)
     except ValueError:
         raise HTTPException(status_code=400, detail="Invalid application_id")
     try:
-        result = await client.cancel_application(aid)
+        result = await client.cancel_application(aid, user_id)
         return CancelApplicationResponse(**result)
+    except grpc.RpcError as e:
+        raise _map_grpc_error(e) from e
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))

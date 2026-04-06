@@ -47,10 +47,12 @@ class NotificationsGrpcClient:
                 )
             return {"notifications": notifications}
 
-    async def mark_as_read(self, notification_ids: list[int]) -> dict:
+    async def mark_as_read(self, user_id: int, notification_ids: list[int]) -> dict:
         async with grpc.aio.insecure_channel(self.target) as channel:
             stub = notifications_pb2_grpc.NotificationsServiceStub(channel)
-            request = notifications_pb2.MarkAsReadRequest(notification_ids=notification_ids)
+            request = notifications_pb2.MarkAsReadRequest(
+                notification_ids=notification_ids, user_id=user_id
+            )
             response = await stub.MarkAsRead(request)
             return {"success": response.success, "message": response.message}
 

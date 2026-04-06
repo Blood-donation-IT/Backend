@@ -10,7 +10,7 @@ class ApplicationGrpcClient:
     def __init__(self, host: str, port: int):
         self.target = f"{host}:{port}"
 
-    async def create_application(self, request: CreateApplicationRequest) -> dict:
+    async def create_application(self, user_id: int, request: CreateApplicationRequest) -> dict:
         async with grpc.aio.insecure_channel(self.target) as channel:
             stub = application_management_pb2_grpc.ApplicationManagementServiceStub(channel)
             
@@ -23,7 +23,7 @@ class ApplicationGrpcClient:
                 ts_day.FromDatetime(request.application_day)
             
             grpc_request = application_management_pb2.CreateApplicationRequest(
-                user_id=request.user_id,
+                user_id=user_id,
                 blood_type=request.blood_type,
                 application_time=ts_time,
                 application_day=ts_day if ts_day else None,
@@ -38,8 +38,8 @@ class ApplicationGrpcClient:
                     "success": response.success,
                     "message": response.message
                 }
-            except grpc.RpcError as e:
-                raise Exception(f"gRPC Error in create_application: {e.details()}")
+            except grpc.RpcError:
+                raise
 
     async def get_applications_by_user(self, user_id: int) -> List[dict]:
         async with grpc.aio.insecure_channel(self.target) as channel:
@@ -63,14 +63,16 @@ class ApplicationGrpcClient:
                     }
                     applications.append(app_dict)
                 return applications
-            except grpc.RpcError as e:
-                raise Exception(f"gRPC Error in get_applications_by_user: {e.details()}")
+            except grpc.RpcError:
+                raise
 
-    async def cancel_application(self, application_id: int) -> dict:
+    async def cancel_application(self, application_id: int, user_id: int) -> dict:
         async with grpc.aio.insecure_channel(self.target) as channel:
             stub = application_management_pb2_grpc.ApplicationManagementServiceStub(channel)
             
-            request = application_management_pb2.ApplicationRequest(application_id=application_id)
+            request = application_management_pb2.ApplicationRequest(
+                application_id=application_id, user_id=user_id
+            )
             
             try:
                 response = await stub.CancelApplication(request)
@@ -79,5 +81,5 @@ class ApplicationGrpcClient:
                     "success": response.success,
                     "message": response.message
                 }
-            except grpc.RpcError as e:
-                raise Exception(f"gRPC Error in cancel_application: {e.details()}")
+            except grpc.RpcError:
+                raise
