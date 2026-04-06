@@ -1,3 +1,7 @@
+from datetime import date, datetime
+from typing import Annotated
+
+import grpc
 from fastapi import APIRouter, HTTPException, Depends
 
 from src.schemas.donations import (
@@ -16,8 +20,21 @@ from src.core.auth import get_current_user_id
 router = APIRouter(tags=["Donations"])
 
 
+def _map_grpc_error(e: grpc.RpcError) -> HTTPException:
+    code = e.code()
+    detail = e.details() or "gRPC error"
+    if code == grpc.StatusCode.PERMISSION_DENIED:
+        return HTTPException(status_code=403, detail=detail)
+    if code == grpc.StatusCode.NOT_FOUND:
+        return HTTPException(status_code=404, detail=detail)
+    if code == grpc.StatusCode.INVALID_ARGUMENT:
+        return HTTPException(status_code=400, detail=detail)
+    return HTTPException(status_code=502, detail=detail)
+
+
 @router.get("/donations/available_slots", response_model=GetAvailableSlotsResponse)
 async def get_available_slots(
+    _user_id: Annotated[int, Depends(get_current_user_id)],
     date: date,
     client: ApplicationGrpcClient = Depends(get_application_grpc_client),
 ):
@@ -25,12 +42,15 @@ async def get_available_slots(
         date_dt = datetime.combine(date, datetime.min.time())
         result = await client.get_available_slots(date_dt)
         return GetAvailableSlotsResponse(**result)
+    except grpc.RpcError as e:
+        raise _map_grpc_error(e) from e
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.get("/donations/calendar_availability", response_model=GetCalendarAvailabilityResponse)
 async def get_calendar_availability(
+    _user_id: Annotated[int, Depends(get_current_user_id)],
     year: int,
     month: int,
     client: ApplicationGrpcClient = Depends(get_application_grpc_client),
@@ -40,6 +60,8 @@ async def get_calendar_availability(
     try:
         result = await client.get_calendar_availability(year, month)
         return GetCalendarAvailabilityResponse(**result)
+    except grpc.RpcError as e:
+        raise _map_grpc_error(e) from e
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
