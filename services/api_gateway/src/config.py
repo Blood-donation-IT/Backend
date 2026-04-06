@@ -12,6 +12,9 @@ class Settings(BaseSettings):
     
     AUTHORIZATION_SERVICE_HOST: str = "localhost"
     AUTHORIZATION_SERVICE_PORT: int = 50053
+
+    NOTIFICATIONS_SERVICE_HOST: str = "localhost"
+    NOTIFICATIONS_SERVICE_PORT: int = 50054
     
     SECRET_KEY: str = "blood-don"
     JWT_SECRET: str = "secret-key-for-testing"  # Має збігатися з authorization (JWT_SECRET)
