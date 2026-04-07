@@ -4,8 +4,6 @@ COPY contracts ./contracts
 COPY libs/authorization ./libs/authorization
 COPY services/authorization ./service
 RUN pip install --no-cache-dir -r service/requirements.txt
-
-RUN pip install -e ./contracts
 RUN pip install -e ./libs/authorization
-# ENV PYTHONPATH=/app/service/src
+ENV PYTHONPATH=/app:/app/service/src
 CMD ["python", "service/main.py"]

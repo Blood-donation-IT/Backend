@@ -4,6 +4,6 @@ COPY contracts ./contracts
 COPY libs/notifications ./libs/notifications
 COPY services/notifications ./service
 RUN pip install --no-cache-dir -r service/requirements.txt
-RUN pip install -e ./contracts
 RUN pip install -e ./libs/notifications
+ENV PYTHONPATH=/app:/app/service/src
 CMD ["python", "service/main.py"]
