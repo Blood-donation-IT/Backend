@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
 from sqlalchemy import create_engine
@@ -122,16 +122,7 @@ admin.add_view(ApplicationView(ApplicationORM, app_session, name='Applications',
 
 @app.route('/')
 def index():
-    return '''
-    <h1>Blood Donation Admin Dashboard</h1>
-    <p><a href="/admin/">Go to Admin Panel</a></p>
-    <p>Available sections:</p>
-    <ul>
-        <li><strong>Authorization</strong> - Manage user authorizations (email, password, name)</li>
-        <li><strong>User Profile</strong> - Manage user profiles (full info, donations, status)</li>
-        <li><strong>Applications</strong> - Manage blood donation applications</li>
-    </ul>
-    '''
+    return render_template('index.html')
 
 @app.teardown_appcontext
 def shutdown_session(exception=None):

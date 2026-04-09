@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Адмін-панель | Донорство крові</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="head">
+        <h1>Адмін-панель донорства крові</h1>
+      </div>
+
+      <div class="content">
+        <div class="grid">
+          <div class="item">
+            <h3>Профілі донорів</h3>
+            <p>Перегляд та оновлення медичних і контактних даних донорів</p>
+          </div>
+          <div class="item">
+            <h3>Заявки на донацію</h3>
+            <p>Контроль статусів заявок, слотів та історії записів</p>
+          </div>
+        </div>
+
+        <a class="btn" href="/admin/">Відкрити адмін-панель</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
