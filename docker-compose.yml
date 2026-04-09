@@ -11,7 +11,7 @@ services:
         condition: service_completed_successfully
     environment:
       - DATABASE_URL=postgresql+asyncpg://user:password@user-profile-db:5432/user_profile_db
-      - PYTHONPATH=/app/service/src
+      - PYTHONPATH=/app:/app/service/src
       - REPOSITORY_TYPE=postgresql
       - ID_GENERATOR_TYPE=snowflake
     ports:
@@ -39,6 +39,7 @@ services:
       - NOTIFICATIONS_SERVICE_HOST=notifications
       - NOTIFICATIONS_SERVICE_PORT=50054
       - SECRET_KEY=blood-don
+      - JWT_SECRET=jwt-secret-key
     depends_on:
       - user-profile
       - application-management
@@ -104,7 +105,7 @@ services:
         condition: service_completed_successfully
     environment:
       - DATABASE_URL=postgresql+asyncpg://user:password@application-management-db:5432/application_management_db
-      - PYTHONPATH=/app/service/src
+      - PYTHONPATH=/app:/app/service/src
       - REPOSITORY_TYPE=postgresql
       - ID_GENERATOR_TYPE=snowflake
     ports:
@@ -156,7 +157,7 @@ services:
         condition: service_completed_successfully
     environment:
       - DATABASE_URL=postgresql+asyncpg://user:password@authorization-db:5432/authorization_db
-      - PYTHONPATH=/app/service/src
+      - PYTHONPATH=/app:/app/service/src
       - REPOSITORY_TYPE=postgresql
       - ID_GENERATOR_TYPE=snowflake
     ports:
@@ -208,7 +209,7 @@ services:
         condition: service_completed_successfully
     environment:
       - DATABASE_URL=postgresql+asyncpg://user:password@notifications-db:5432/notifications_db
-      - PYTHONPATH=/app/service/src
+      - PYTHONPATH=/app:/app/service/src
       - REPOSITORY_TYPE=postgresql
       - ID_GENERATOR_TYPE=snowflake
     ports:
@@ -258,7 +259,7 @@ services:
       - user-profile-db
       - application-management-db
     environment:
-      - SECRET_KEY=admin-dashboard-secret-key
+      - ADMIN_SECRET_KEY=admin-dashboard-secret-key
       - AUTHORIZATION_DATABASE_URL=postgresql://user:password@authorization-db:5432/authorization_db
       - USER_PROFILE_DATABASE_URL=postgresql://user:password@user-profile-db:5432/user_profile_db
       - APPLICATION_MANAGEMENT_DATABASE_URL=postgresql://user:password@application-management-db:5432/application_management_db
