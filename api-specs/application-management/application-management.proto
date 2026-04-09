@@ -8,7 +8,7 @@ service ApplicationManagementService {
   rpc CreateApplication(CreateApplicationRequest) returns (ApplicationResponse);
   rpc GetApplicationByUser (GetApplicationRequest) returns (stream Application);
   rpc GetAvailableSlots (GetAvailableSlotsRequest) returns (GetAvailableSlotsResponse);
-  rpc GetCalendarAvailability(GetCalendarAvailabilityRequest) returs (GetCalendarAvailabilityResponse)
+  rpc GetCalendarAvailability(GetCalendarAvailabilityRequest) returns (GetCalendarAvailabilityResponse);
   rpc UpdateApplication (UpdateApplicationRequest) returns (ApplicationResponse);
   rpc CancelApplication (ApplicationRequest) returns (ApplicationResponse);
 }

@@ -3,7 +3,6 @@ import logging
 from typing import AsyncGenerator
 from contextlib import asynccontextmanager
 
-from sqlalchemy import text
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
 
@@ -23,7 +22,6 @@ async def on_startup() -> None:
         async with engine.begin() as connection:
             from user_profile_models.base import Base
             await connection.run_sync(Base.metadata.create_all)
-            await connection.execute(text)
         logging.info("Successful DB connection")
     except Exception as e:
         logging.error(f"Error with DB connecting: {e}")
