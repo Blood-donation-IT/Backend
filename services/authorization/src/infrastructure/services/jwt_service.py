@@ -8,7 +8,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 REFRESH_TOKEN_EXPIRE_DAYS = 7
 
 def _get_jwt_secret() -> str:
-    secret = os.getenv("JWT_SECRET", "secret-key-for-testing")
+    secret = os.getenv("JWT_SECRET")
     if not secret:
         raise ValueError("JWT_SECRET environment variable is not set")
     return secret

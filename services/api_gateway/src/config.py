@@ -1,4 +1,3 @@
-import os
 from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
@@ -16,8 +15,8 @@ class Settings(BaseSettings):
     NOTIFICATIONS_SERVICE_HOST: str = "localhost"
     NOTIFICATIONS_SERVICE_PORT: int = 50054
     
-    SECRET_KEY: str = "blood-don"
-    JWT_SECRET: str = "secret-key-for-testing"  # Має збігатися з authorization (JWT_SECRET)
+    SECRET_KEY: str
+    JWT_SECRET: str  # Має збігатися з authorization (JWT_SECRET)
 
     class Config:
         env_file = ".env"

@@ -142,4 +142,4 @@ def shutdown_session(exception=None):
 if __name__ == '__main__':
     print("Starting Admin Dashboard on http://0.0.0.0:5000")
     print("Access admin panel at: http://localhost:5000/admin/")
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=False, use_reloader=False)
