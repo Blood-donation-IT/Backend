@@ -21,6 +21,13 @@ class LoginRequest(BaseModel):
 class GoogleLoginRequest(BaseModel):
     token: str 
 
+
+class GoogleOAuthRequest(BaseModel):
+    idToken: str
+    email: Optional[EmailStr] = None
+    name: Optional[str] = None
+    avatar: Optional[str] = None
+
 class RefreshTokenRequest(BaseModel):
     refresh_token: str
 
@@ -38,3 +45,10 @@ class TokenResponse(BaseModel):
     refresh_token: str
     token_type: str = "bearer"
     user_id: Optional[int] = None
+
+
+class OAuthGoogleResponse(TokenResponse):
+    email: EmailStr
+    name: str
+    avatar: Optional[str] = None
+    is_new_user: bool = False
