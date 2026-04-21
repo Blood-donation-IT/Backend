@@ -29,6 +29,14 @@ def _map_grpc_error(e: grpc.RpcError) -> HTTPException:
         return HTTPException(status_code=404, detail=detail)
     if code == grpc.StatusCode.INVALID_ARGUMENT:
         return HTTPException(status_code=400, detail=detail)
+    if code == grpc.StatusCode.UNAVAILABLE:
+        return HTTPException(
+            status_code=503,
+            detail=(
+                f"{detail}. Verify APPLICATION_MANAGEMENT_SERVICE_HOST and "
+                "APPLICATION_MANAGEMENT_SERVICE_PORT variables."
+            ),
+        )
     return HTTPException(status_code=502, detail=detail)
 
 
