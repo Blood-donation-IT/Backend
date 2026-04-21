@@ -41,7 +41,7 @@ services:
       - OAUTH_SERVICE_HOST=oauth
       - OAUTH_SERVICE_PORT=50055
       - SECRET_KEY=blood-don
-      - JWT_SECRET=jwt-secret-key
+      - JWT_SECRET=local-dev-jwt-secret
     depends_on:
       - user-profile
       - application-management
@@ -163,7 +163,7 @@ services:
       - PYTHONPATH=/app:/app/service/src
       - REPOSITORY_TYPE=postgresql
       - ID_GENERATOR_TYPE=snowflake
-      - JWT_SECRET=authorization-jwt-secret-key
+      - JWT_SECRET=local-dev-jwt-secret
     ports:
       - "5003:50053"  
     networks:
@@ -266,8 +266,8 @@ services:
       - AUTHORIZATION_SERVICE_PORT=50053
       - USER_SERVICE_HOST=user-profile
       - USER_SERVICE_PORT=50051
-      - OAUTH_PASSWORD=local-dev-oauth-pepper
-      - GOOGLE_CLIENT_ID=
+      - OAUTH_PASSWORD=local-dev-oauth
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-}
       - PYTHONPATH=/app:/app/service/src
     ports:
       - "5005:50055"

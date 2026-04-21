@@ -2,3 +2,4 @@ grpcio>=1.76.0
 grpcio-tools>=1.76.0
 protobuf==6.31.1
 google-auth==2.40.3
+requests>=2.31.0

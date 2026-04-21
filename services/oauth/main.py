@@ -1,6 +1,7 @@
 import asyncio
 import grpc
 import sys
+import requests
 
 from contracts.oauth import oauth_pb2_grpc
 from src.oauth_server import OAuthService
