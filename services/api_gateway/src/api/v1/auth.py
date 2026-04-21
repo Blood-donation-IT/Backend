@@ -1,8 +1,22 @@
 from fastapi import APIRouter, HTTPException, Depends
-from src.schemas.auth import TokenResponse, LoginRequest, RegisterRequest, RegisterResponse, RefreshTokenRequest
+import grpc
+from src.schemas.auth import (
+    TokenResponse,
+    LoginRequest,
+    RegisterRequest,
+    RegisterResponse,
+    RefreshTokenRequest,
+    GoogleOAuthRequest,
+    OAuthGoogleResponse,
+)
 from src.infrastructure.grpc.authorization_client import AuthorizationGrpcClient
 from src.infrastructure.grpc.user_client import UserGrpcClient
-from src.api.dependencies import get_authorization_grpc_client, get_user_grpc_client
+from src.infrastructure.grpc.oauth_client import OAuthGrpcClient
+from src.api.dependencies import (
+    get_authorization_grpc_client,
+    get_user_grpc_client,
+    get_oauth_grpc_client,
+)
 
 router = APIRouter(tags=["Auth"], responses={200: {"description": "OK"}})
 
@@ -162,3 +176,39 @@ async def refresh_token(
         if "invalid" in err.lower() or "expired" in err.lower() or "refresh" in err.lower():
             raise HTTPException(status_code=401, detail=err)
         raise HTTPException(status_code=400, detail=err)
+
+
+@router.post("/oauth/google/", response_model=OAuthGoogleResponse)
+async def google_oauth_sign_in(
+    body: GoogleOAuthRequest,
+    oauth_client: OAuthGrpcClient = Depends(get_oauth_grpc_client),
+):
+    try:
+        result = await oauth_client.google_sign_in(
+            id_token=body.idToken,
+            email=str(body.email or ""),
+            name=body.name or "",
+            avatar_url=body.avatar or "",
+        )
+        if not result.get("success"):
+            raise HTTPException(status_code=400, detail=result.get("message", "OAuth sign-in failed"))
+        return {
+            "access_token": result["access_token"],
+            "refresh_token": result["refresh_token"],
+            "token_type": "bearer",
+            "user_id": result["user_id"],
+            "email": result["email"],
+            "name": result["name"] or "",
+            "avatar": result.get("avatar_url") or None,
+            "is_new_user": result.get("is_new_user", False),
+        }
+    except grpc.RpcError as e:
+        if e.code() == grpc.StatusCode.INVALID_ARGUMENT:
+            raise HTTPException(status_code=400, detail=e.details())
+        if e.code() == grpc.StatusCode.UNAVAILABLE:
+            raise HTTPException(status_code=503, detail=e.details() or "OAuth service unavailable")
+        raise HTTPException(status_code=502, detail=e.details() or "OAuth upstream error")
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))

@@ -163,6 +163,7 @@ services:
       - PYTHONPATH=/app:/app/service/src
       - REPOSITORY_TYPE=postgresql
       - ID_GENERATOR_TYPE=snowflake
+      - JWT_SECRET=authorization-jwt-secret-key
     ports:
       - "5003:50053"  
     networks:
@@ -265,7 +266,7 @@ services:
       - AUTHORIZATION_SERVICE_PORT=50053
       - USER_SERVICE_HOST=user-profile
       - USER_SERVICE_PORT=50051
-      - OAUTH_PASSWORD_PEPPER=local-dev-oauth-pepper
+      - OAUTH_PASSWORD=local-dev-oauth-pepper
       - GOOGLE_CLIENT_ID=
       - PYTHONPATH=/app:/app/service/src
     ports:
