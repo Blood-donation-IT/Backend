@@ -4,6 +4,8 @@ from contracts.user import user_profile_pb2_grpc, user_profile_pb2
 from src.application.use_cases.create_user import CreateUserUseCase
 from src.application.use_cases.get_user_by_id import GetUserByIdUseCase
 from src.application.use_cases.update_user import UpdateUserUseCase
+from src.application.use_cases.get_health_test_questions import GetHealthTestQuestionsUseCase
+from src.application.use_cases.submit_health_test import SubmitHealthTestUseCase
 from src.domain.entities.user import User
 from google.protobuf.timestamp_pb2 import Timestamp
 
@@ -49,10 +51,16 @@ class UserProfileService(user_profile_pb2_grpc.UserProfileServiceServicer):
                  create_user_profile_use_case: CreateUserUseCase,
                  get_user_by_id_use_case: GetUserByIdUseCase,
                  update_user_use_case: UpdateUserUseCase,
+                 get_health_test_questions_use_case: GetHealthTestQuestionsUseCase,
+                 submit_health_test_use_case: SubmitHealthTestUseCase,
                  )->None:
         self.create_user_profile_use_case: CreateUserUseCase = create_user_profile_use_case
         self.get_user_by_id_use_case: GetUserByIdUseCase = get_user_by_id_use_case
         self.update_user_use_case: UpdateUserUseCase = update_user_use_case
+        self.get_health_test_questions_use_case: GetHealthTestQuestionsUseCase = (
+            get_health_test_questions_use_case
+        )
+        self.submit_health_test_use_case: SubmitHealthTestUseCase = submit_health_test_use_case
     async def CreateProfile(self,
                             request:user_profile_pb2.CreateProfileRequest,
                             context:grpc.aio.ServicerContext
@@ -132,3 +140,62 @@ class UserProfileService(user_profile_pb2_grpc.UserProfileServiceServicer):
             context.set_details(str(e))
             context.set_code(grpc.StatusCode.INTERNAL)
             return user_profile_pb2.UserProfile()
+
+    async def GetHealthTestQuestions(
+        self,
+        request: user_profile_pb2.GetHealthTestQuestionsRequest,
+        context: grpc.aio.ServicerContext,
+    ) -> user_profile_pb2.GetHealthTestQuestionsResponse:
+        try:
+            _ = request 
+            data = self.get_health_test_questions_use_case.execute()
+            resp = user_profile_pb2.GetHealthTestQuestionsResponse(
+                blood_type_unknown_value=data["blood_type_unknown_value"],
+            )
+            for q in data["questions"]:
+                resp.questions.add(question_id=q["question_id"], text=q["text"])
+            for bt in data["blood_type_options"]:
+                resp.blood_type_options.append(bt)
+            return resp
+        except Exception as e:
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INTERNAL)
+            return user_profile_pb2.GetHealthTestQuestionsResponse()
+
+    async def SubmitHealthTest(
+        self,
+        request: user_profile_pb2.SubmitHealthTestRequest,
+        context: grpc.aio.ServicerContext,
+    ) -> user_profile_pb2.SubmitHealthTestResponse:
+        try:
+            if request.user_id <= 0:
+                context.set_details("user_id is required")
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                return user_profile_pb2.SubmitHealthTestResponse(
+                    success=False, message="user_id is required"
+                )
+            if not request.HasField("completed_at"):
+                context.set_details("completed_at is required")
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                return user_profile_pb2.SubmitHealthTestResponse(
+                    success=False, message="completed_at is required"
+                )
+            answers = {a.question_id: a.value for a in request.answers}
+            completed_at = request.completed_at.ToDatetime()
+            await self.submit_health_test_use_case.execute(
+                user_id=int(request.user_id),
+                completed_at=completed_at,
+                answers=answers,
+                blood_type_raw=request.blood_type,
+            )
+            return user_profile_pb2.SubmitHealthTestResponse(
+                success=True, message="Health test saved"
+            )
+        except ValueError as e:
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+            return user_profile_pb2.SubmitHealthTestResponse(success=False, message=str(e))
+        except Exception as e:
+            context.set_details(str(e))
+            context.set_code(grpc.StatusCode.INTERNAL)
+            return user_profile_pb2.SubmitHealthTestResponse(success=False, message=str(e))

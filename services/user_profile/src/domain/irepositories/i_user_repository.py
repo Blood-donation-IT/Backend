@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from ..entities.user import User
-from typing import Optional
+from typing import Optional, Any
 import datetime
 class IUserRepository(ABC):
     @abstractmethod
@@ -26,4 +26,17 @@ class IUserRepository(ABC):
     @abstractmethod
     async def get_last_donation_date(self, user_id: int) -> Optional[datetime.datetime]:
         pass
-    
+
+    @abstractmethod
+    async def upsert_health_test_result(
+        self,
+        user_id: int,
+        completed_at: datetime.datetime,
+        answers: dict[int, bool],
+        blood_type: Optional[str],
+    ) -> None:
+        pass
+
+    @abstractmethod
+    async def get_health_test_result(self, user_id: int) -> Optional[dict[str, Any]]:
+        pass

@@ -11,7 +11,40 @@ service UserProfileService {
   rpc CreateProfile (CreateProfileRequest) returns (UserProfile);
   rpc DeleteProfile (DeleteProfileRequest) returns (DeleteProfileResponse);
   rpc GetUserAuthData (GetUserAuthRequest) returns (UserAuthData);
+  rpc GetHealthTestQuestions (GetHealthTestQuestionsRequest) returns (GetHealthTestQuestionsResponse);
+  rpc SubmitHealthTest (SubmitHealthTestRequest) returns (SubmitHealthTestResponse);
+}
 
+message GetHealthTestQuestionsRequest {
+  int64 user_id = 1;
+}
+
+message HealthTestQuestion {
+  int32 question_id = 1;
+  string text = 2;
+}
+
+message GetHealthTestQuestionsResponse {
+  repeated HealthTestQuestion questions = 1;
+  repeated string blood_type_options = 2;
+  string blood_type_unknown_value = 3;
+}
+
+message HealthTestAnswer {
+  int32 question_id = 1;
+  bool value = 2;
+}
+
+message SubmitHealthTestRequest {
+  int64 user_id = 1;
+  google.protobuf.Timestamp completed_at = 2;
+  repeated HealthTestAnswer answers = 3;
+  string blood_type = 4;
+}
+
+message SubmitHealthTestResponse {
+  bool success = 1;
+  string message = 2;
 }
 message GetUserAuthRequest {
   string email = 1;
