@@ -38,6 +38,8 @@ services:
       - AUTHORIZATION_SERVICE_PORT=50053
       - NOTIFICATIONS_SERVICE_HOST=notifications
       - NOTIFICATIONS_SERVICE_PORT=50054
+      - OAUTH_SERVICE_HOST=oauth
+      - OAUTH_SERVICE_PORT=50055
       - SECRET_KEY=blood-don
       - JWT_SECRET=jwt-secret-key
     depends_on:
@@ -45,6 +47,7 @@ services:
       - application-management
       - authorization
       - notifications
+      - oauth
     networks:
       - gateway_net
 
@@ -248,6 +251,27 @@ services:
     networks:
       - notifications_net
     restart: "no"
+
+  oauth:
+    build:
+      context: .
+      dockerfile: ./services/oauth/Dockerfile
+    container_name: oauth
+    depends_on:
+      - authorization
+      - user-profile
+    environment:
+      - AUTHORIZATION_SERVICE_HOST=authorization
+      - AUTHORIZATION_SERVICE_PORT=50053
+      - USER_SERVICE_HOST=user-profile
+      - USER_SERVICE_PORT=50051
+      - OAUTH_PASSWORD_PEPPER=local-dev-oauth-pepper
+      - GOOGLE_CLIENT_ID=
+      - PYTHONPATH=/app:/app/service/src
+    ports:
+      - "5005:50055"
+    networks:
+      - gateway_net
 
   admin-dashboard:
     build:
