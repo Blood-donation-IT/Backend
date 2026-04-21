@@ -64,6 +64,16 @@ class UserProfileServiceStub(object):
                 request_serializer=user_dot_user__profile__pb2.GetUserAuthRequest.SerializeToString,
                 response_deserializer=user_dot_user__profile__pb2.UserAuthData.FromString,
                 _registered_method=True)
+        self.GetHealthTestQuestions = channel.unary_unary(
+                '/src.protos.user.UserProfileService/GetHealthTestQuestions',
+                request_serializer=user_dot_user__profile__pb2.GetHealthTestQuestionsRequest.SerializeToString,
+                response_deserializer=user_dot_user__profile__pb2.GetHealthTestQuestionsResponse.FromString,
+                _registered_method=True)
+        self.SubmitHealthTest = channel.unary_unary(
+                '/src.protos.user.UserProfileService/SubmitHealthTest',
+                request_serializer=user_dot_user__profile__pb2.SubmitHealthTestRequest.SerializeToString,
+                response_deserializer=user_dot_user__profile__pb2.SubmitHealthTestResponse.FromString,
+                _registered_method=True)
 
 
 class UserProfileServiceServicer(object):
@@ -105,6 +115,18 @@ class UserProfileServiceServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def GetHealthTestQuestions(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SubmitHealthTest(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_UserProfileServiceServicer_to_server(servicer, server):
     rpc_method_handlers = {
@@ -137,6 +159,16 @@ def add_UserProfileServiceServicer_to_server(servicer, server):
                     servicer.GetUserAuthData,
                     request_deserializer=user_dot_user__profile__pb2.GetUserAuthRequest.FromString,
                     response_serializer=user_dot_user__profile__pb2.UserAuthData.SerializeToString,
+            ),
+            'GetHealthTestQuestions': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetHealthTestQuestions,
+                    request_deserializer=user_dot_user__profile__pb2.GetHealthTestQuestionsRequest.FromString,
+                    response_serializer=user_dot_user__profile__pb2.GetHealthTestQuestionsResponse.SerializeToString,
+            ),
+            'SubmitHealthTest': grpc.unary_unary_rpc_method_handler(
+                    servicer.SubmitHealthTest,
+                    request_deserializer=user_dot_user__profile__pb2.SubmitHealthTestRequest.FromString,
+                    response_serializer=user_dot_user__profile__pb2.SubmitHealthTestResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -301,6 +333,60 @@ class UserProfileService(object):
             '/src.protos.user.UserProfileService/GetUserAuthData',
             user_dot_user__profile__pb2.GetUserAuthRequest.SerializeToString,
             user_dot_user__profile__pb2.UserAuthData.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetHealthTestQuestions(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/src.protos.user.UserProfileService/GetHealthTestQuestions',
+            user_dot_user__profile__pb2.GetHealthTestQuestionsRequest.SerializeToString,
+            user_dot_user__profile__pb2.GetHealthTestQuestionsResponse.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SubmitHealthTest(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/src.protos.user.UserProfileService/SubmitHealthTest',
+            user_dot_user__profile__pb2.SubmitHealthTestRequest.SerializeToString,
+            user_dot_user__profile__pb2.SubmitHealthTestResponse.FromString,
             options,
             channel_credentials,
             insecure,
