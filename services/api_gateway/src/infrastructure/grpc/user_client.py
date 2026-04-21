@@ -3,8 +3,8 @@ from google.protobuf.timestamp_pb2 import Timestamp
 # Импорты твоих контрактов
 from contracts.user import user_profile_pb2, user_profile_pb2_grpc
 from src.schemas.user import UserProfileResponse, UserRole
-from typing import Optional
-from datetime import date
+from typing import Optional, List, Tuple
+from datetime import date, datetime
 
 
 def _birth_date_from_proto(proto_user) -> Optional[date]:
@@ -118,6 +118,45 @@ class UserGrpcClient:
                 )
             except grpc.RpcError as e:
                 return None
+
+    async def get_health_test_questions(self, user_id: int) -> dict:
+        async with grpc.aio.insecure_channel(self.target) as channel:
+            stub = user_profile_pb2_grpc.UserProfileServiceStub(channel)
+            request = user_profile_pb2.GetHealthTestQuestionsRequest(user_id=user_id)
+            resp = await stub.GetHealthTestQuestions(request)
+            return {
+                "questions": [
+                    {"questionId": q.question_id, "text": q.text} for q in resp.questions
+                ],
+                "bloodTypeOptions": list(resp.blood_type_options),
+                "bloodTypeUnknownValue": resp.blood_type_unknown_value,
+            }
+
+    async def submit_health_test(
+        self,
+        user_id: int,
+        completed_at: datetime,
+        answers: List[Tuple[int, bool]],
+        blood_type: str,
+    ) -> Tuple[bool, str]:
+        async with grpc.aio.insecure_channel(self.target) as channel:
+            stub = user_profile_pb2_grpc.UserProfileServiceStub(channel)
+            ts = Timestamp()
+            dt = completed_at
+            if dt.tzinfo is not None:
+                dt = dt.replace(tzinfo=None)
+            ts.FromDatetime(dt)
+            request = user_profile_pb2.SubmitHealthTestRequest(
+                user_id=user_id,
+                completed_at=ts,
+                blood_type=blood_type or "",
+            )
+            for qid, val in answers:
+                a = request.answers.add()
+                a.question_id = qid
+                a.value = val
+            resp = await stub.SubmitHealthTest(request)
+            return resp.success, (resp.message or "")
 
     def _map_proto_to_pydantic(self, proto_user) -> UserProfileResponse:
         last_donation_dt = None
