@@ -1,6 +1,6 @@
 from typing import Optional, List
 from datetime import datetime
-from pydantic import BaseModel, Field, field_serializer
+from pydantic import AliasChoices, BaseModel, Field, field_serializer
 
 
 def _serialize_application_id(v: int) -> str:
@@ -12,7 +12,11 @@ class CreateApplicationRequest(BaseModel):
     application_day: datetime = Field(..., description="День запису на донацію")
     application_time: Optional[datetime] = Field(None, description="Час запису на донацію")
     slot_index: int = Field(..., ge=0, le=9, description="Слот часу")
-    location_id: Optional[str] = Field(None, description="ID локації")
+    location_id: str = Field(
+        ...,
+        description="ID локації",
+        validation_alias=AliasChoices("location_id", "locationId"),
+    )
     status: Optional[str] = Field("pending", description="Статус заявки")
 
 

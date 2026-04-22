@@ -4,6 +4,7 @@ from src.domain.constants import (
     SLOT_CAPACITY,
     DAILY_CAPACITY,
     NUM_SLOTS,
+    LOCATIONS,
 )
 from src.domain.booking_rules import get_day_availability_reason
 
@@ -19,16 +20,22 @@ class GetAvailableSlotsUseCase:
     def __init__(self, repository: IApplicationRepository):
         self.repository = repository
 
-    async def execute(self, date: datetime.datetime) -> dict:
+    async def execute(self, date: datetime.datetime, location_id: str) -> dict:
+        if location_id not in LOCATIONS:
+            raise ValueError(
+                f"location_id must be one of: {', '.join(LOCATIONS)}"
+            )
         date_only = _to_date(date)
         reason = get_day_availability_reason(date_only)
         day_available = reason is None
 
-        daily_booked = await self.repository.count_booked_by_date(date_only)
+        daily_booked = await self.repository.count_booked_by_date(
+            date_only, location_id
+        )
         slots = []
         for slot_index in range(NUM_SLOTS):
             booked = await self.repository.count_booked_by_date_and_slot(
-                date_only, slot_index
+                date_only, slot_index, location_id
             )
             capacity = SLOT_CAPACITY
             is_available = day_available and (booked < capacity)
