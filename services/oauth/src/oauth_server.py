@@ -20,7 +20,7 @@ class OAuthService(oauth_pb2_grpc.OAuthServiceServicer):
             f"{os.getenv('USER_SERVICE_HOST', 'user-profile')}:"
             f"{int(os.getenv('USER_SERVICE_PORT', '50051'))}"
         )
-        self.google_client_id = os.getenv("GOOGLE_CLIENT_ID", "").strip()
+        self.google_client_id = os.getenv("GOOGLE_CLIENT_ID").strip()
         self.password_pepper = os.getenv("OAUTH_PASSWORD")
         if not self.password_pepper:
             raise ValueError("OAUTH_PASSWORD environment variable is not set")
