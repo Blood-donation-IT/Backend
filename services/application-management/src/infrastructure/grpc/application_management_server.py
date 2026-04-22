@@ -27,10 +27,12 @@ class ApplicationManagementService(application_management_pb2_grpc.ApplicationMa
                     success=False, message="Invalid user_id"
                 )
 
-            if not request.HasField("application_time"):
-                context.set_details("application_time is required")
+            if not request.HasField("application_day"):
+                context.set_details("application_day is required")
                 context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
-                return application_management_pb2.ApplicationResponse(success=False, message="application_day is required")
+                return application_management_pb2.ApplicationResponse(
+                    success=False, message="application_day is required"
+                )
 
             application_day_dt = request.application_day.ToDatetime()
             slot_index = getattr(request, "slot_index", 0)
