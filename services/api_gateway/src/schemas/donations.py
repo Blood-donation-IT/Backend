@@ -10,6 +10,7 @@ def _serialize_application_id(v: int) -> str:
 class CreateApplicationRequest(BaseModel):
     blood_type: str = Field(..., description="Група крові")
     application_day: datetime = Field(..., description="День запису на донацію")
+    application_time: Optional[datetime] = Field(None, description="Час запису на донацію")
     slot_index: int = Field(..., ge=0, le=9, description="Слот часу")
     location_id: Optional[str] = Field(None, description="ID локації")
     status: Optional[str] = Field("pending", description="Статус заявки")
