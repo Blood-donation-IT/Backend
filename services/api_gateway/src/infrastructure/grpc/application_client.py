@@ -80,12 +80,14 @@ class ApplicationGrpcClient:
             except grpc.RpcError:
                 raise
 
-    async def get_available_slots(self, date: datetime) -> dict:
+    async def get_available_slots(self, date: datetime, location_id: str) -> dict:
         async with grpc.aio.insecure_channel(self.target) as channel:
             stub = application_management_pb2_grpc.ApplicationManagementServiceStub(channel)
             ts = Timestamp()
             ts.FromDatetime(date)
-            request = application_management_pb2.GetAvailableSlotsRequest(date=ts)
+            request = application_management_pb2.GetAvailableSlotsRequest(
+                date=ts, location_id=location_id
+            )
             try:
                 response = await stub.GetAvailableSlots(request)
                 out = {

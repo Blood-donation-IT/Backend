@@ -68,27 +68,38 @@ class SQLAlchemyApplicationRepository(IApplicationRepository):
             await self._session.commit()
         return None
 
-    async def count_booked_by_date(self, application_date: datetime.date) -> int:
+    async def count_booked_by_date(
+        self, application_date: datetime.date, location_id: Optional[str] = None
+    ) -> int:
+        conditions = [
+            func.date(ApplicationORM.application_day) == application_date,
+            ApplicationORM.status.in_(ACTIVE_STATUSES),
+        ]
+        if location_id:
+            conditions.append(ApplicationORM.location_id == location_id)
         result = await self._session.execute(
             select(func.count()).select_from(ApplicationORM).where(
-                and_(
-                    func.date(ApplicationORM.application_day) == application_date,
-                    ApplicationORM.status.in_(ACTIVE_STATUSES),
-                )
+                and_(*conditions)
             )
         )
         return result.scalar() or 0
 
     async def count_booked_by_date_and_slot(
-        self, application_date: datetime.date, slot_index: int
+        self,
+        application_date: datetime.date,
+        slot_index: int,
+        location_id: Optional[str] = None,
     ) -> int:
+        conditions = [
+            func.date(ApplicationORM.application_day) == application_date,
+            ApplicationORM.slot_index == slot_index,
+            ApplicationORM.status.in_(ACTIVE_STATUSES),
+        ]
+        if location_id:
+            conditions.append(ApplicationORM.location_id == location_id)
         result = await self._session.execute(
             select(func.count()).select_from(ApplicationORM).where(
-                and_(
-                    func.date(ApplicationORM.application_day) == application_date,
-                    ApplicationORM.slot_index == slot_index,
-                    ApplicationORM.status.in_(ACTIVE_STATUSES),
-                )
+                and_(*conditions)
             )
         )
         return result.scalar() or 0

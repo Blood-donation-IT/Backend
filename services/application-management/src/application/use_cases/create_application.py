@@ -5,6 +5,7 @@ from src.domain.constants import (
     SLOT_CAPACITY,
     DAILY_CAPACITY,
     NUM_SLOTS,
+    LOCATIONS,
 )
 from src.domain.booking_rules import get_day_availability_reason
 
@@ -44,6 +45,12 @@ class CreateApplicationUseCase:
                       updated_at: Optional[datetime.datetime] = None) -> Application:
         if not 0 <= slot_index < NUM_SLOTS:
             raise ValueError(f"slot_index must be 0–9, got {slot_index}")
+        if not location_id:
+            raise ValueError("location_id is required")
+        if location_id not in LOCATIONS:
+            raise ValueError(
+                f"location_id must be one of: {', '.join(LOCATIONS)}"
+            )
 
         date_only = _application_day_to_date(application_day)
 
@@ -65,14 +72,16 @@ class CreateApplicationUseCase:
 
        
         booked_in_slot = await self.application_repository.count_booked_by_date_and_slot(
-            date_only, slot_index
+            date_only, slot_index, location_id
         )
         if booked_in_slot >= SLOT_CAPACITY:
             raise ValueError(
                 f"Slot {slot_index} on {date_only} is full ({SLOT_CAPACITY} people max)"
             )
 
-        booked_in_day = await self.application_repository.count_booked_by_date(date_only)
+        booked_in_day = await self.application_repository.count_booked_by_date(
+            date_only, location_id
+        )
         if booked_in_day >= DAILY_CAPACITY:
             raise ValueError(f"Day {date_only} is full ({DAILY_CAPACITY} people max)")
 

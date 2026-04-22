@@ -25,11 +25,16 @@ class IApplicationRepository(ABC):
         pass
 
     @abstractmethod
-    async def count_booked_by_date(self, application_date: datetime.date) -> int:
+    async def count_booked_by_date(
+        self, application_date: datetime.date, location_id: Optional[str] = None
+    ) -> int:
         pass
 
     @abstractmethod
     async def count_booked_by_date_and_slot(
-        self, application_date: datetime.date, slot_index: int
+        self,
+        application_date: datetime.date,
+        slot_index: int,
+        location_id: Optional[str] = None,
     ) -> int:
         pass

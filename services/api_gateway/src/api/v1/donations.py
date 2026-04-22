@@ -2,7 +2,7 @@ from datetime import date, datetime
 from typing import Annotated
 
 import grpc
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Query
 
 from src.schemas.donations import (
     CreateApplicationRequest,
@@ -44,11 +44,18 @@ def _map_grpc_error(e: grpc.RpcError) -> HTTPException:
 async def get_available_slots(
     _user_id: Annotated[int, Depends(get_current_user_id)],
     date: date,
+    location_id: str | None = Query(None),
+    location_id_camel: str | None = Query(None, alias="locationId"),
     client: ApplicationGrpcClient = Depends(get_application_grpc_client),
 ):
+    selected_location_id = location_id or location_id_camel
+    if not selected_location_id:
+        raise HTTPException(
+            status_code=400, detail="location_id (or locationId) is required"
+        )
     try:
         date_dt = datetime.combine(date, datetime.min.time())
-        result = await client.get_available_slots(date_dt)
+        result = await client.get_available_slots(date_dt, selected_location_id)
         return GetAvailableSlotsResponse(**result)
     except grpc.RpcError as e:
         raise _map_grpc_error(e) from e

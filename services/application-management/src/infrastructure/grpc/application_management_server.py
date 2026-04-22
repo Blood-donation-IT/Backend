@@ -26,6 +26,12 @@ class ApplicationManagementService(application_management_pb2_grpc.ApplicationMa
                 return application_management_pb2.ApplicationResponse(
                     success=False, message="Invalid user_id"
                 )
+            if not request.location_id:
+                context.set_details("location_id is required")
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                return application_management_pb2.ApplicationResponse(
+                    success=False, message="location_id is required"
+                )
 
             if not request.HasField("application_day"):
                 context.set_details("application_day is required")
@@ -110,8 +116,14 @@ class ApplicationManagementService(application_management_pb2_grpc.ApplicationMa
                 context.set_details("date is required")
                 context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
                 return application_management_pb2.GetAvailableSlotsResponse()
+            if not request.location_id:
+                context.set_details("location_id is required")
+                context.set_code(grpc.StatusCode.INVALID_ARGUMENT)
+                return application_management_pb2.GetAvailableSlotsResponse()
             date_dt = request.date.ToDatetime()
-            data = await self.get_available_slots_use_case.execute(date_dt)
+            data = await self.get_available_slots_use_case.execute(
+                date_dt, request.location_id
+            )
             slot_infos = [
                 application_management_pb2.SlotInfo(
                     slot_index=s["slot_index"],
