@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, HTTPException, Depends, Body
 import grpc
 from src.schemas.auth import (
     TokenResponse,
@@ -6,7 +6,6 @@ from src.schemas.auth import (
     RegisterRequest,
     RegisterResponse,
     RefreshTokenRequest,
-    GoogleOAuthRequest,
     OAuthGoogleResponse,
 )
 from src.infrastructure.grpc.authorization_client import AuthorizationGrpcClient
@@ -180,15 +179,26 @@ async def refresh_token(
 
 @router.post("/oauth/google/", response_model=OAuthGoogleResponse)
 async def google_oauth_sign_in(
-    body: GoogleOAuthRequest,
+    body: dict = Body(...),
     oauth_client: OAuthGrpcClient = Depends(get_oauth_grpc_client),
 ):
     try:
+        raw_id_token = str(
+            body.get("idToken")
+            or body.get("IdToken")
+            or body.get("id_token")
+            or ""
+        ).strip()
+        if raw_id_token.lower().startswith("bearer "):
+            raw_id_token = raw_id_token[7:].strip()
+        if not raw_id_token:
+            raise HTTPException(status_code=400, detail="idToken is required")
+
         result = await oauth_client.google_sign_in(
-            id_token=body.idToken,
-            email=str(body.email or ""),
-            name=body.name or "",
-            avatar_url=body.avatar or "",
+            id_token=raw_id_token,
+            email=str((body.get("email") or "")),
+            name=str((body.get("name") or "")),
+            avatar_url=str((body.get("avatar") or "")),
         )
         if not result.get("success"):
             raise HTTPException(status_code=400, detail=result.get("message", "OAuth sign-in failed"))
