@@ -28,6 +28,17 @@ class GoogleOAuthRequest(BaseModel):
     name: Optional[str] = None
     avatar: Optional[str] = None
 
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_empty_values(cls, data):
+        if not isinstance(data, dict):
+            return data
+        normalized = dict(data)
+        for key in ("email", "name", "avatar"):
+            if normalized.get(key) == "":
+                normalized[key] = None
+        return normalized
+
 class RefreshTokenRequest(BaseModel):
     refresh_token: str
 
