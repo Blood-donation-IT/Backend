@@ -267,6 +267,7 @@ services:
       - USER_SERVICE_HOST=user-profile
       - USER_SERVICE_PORT=50051
       - OAUTH_PASSWORD=local-dev-oauth
+      - FIREBASE_SERVICE_ACCOUNT_JSON=${FIREBASE_SERVICE_ACCOUNT_JSON:-}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-}
       - PYTHONPATH=/app:/app/service/src
     ports:
