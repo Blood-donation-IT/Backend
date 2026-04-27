@@ -1,6 +1,6 @@
 from typing import Optional, List
 from datetime import datetime
-from pydantic import AliasChoices, BaseModel, Field, field_serializer
+from pydantic import AliasChoices, BaseModel, ConfigDict, Field, field_serializer
 
 
 def _serialize_application_id(v: int) -> str:
@@ -94,3 +94,24 @@ class CreateApplicationResponse(BaseModel):
     @field_serializer("application_id")
     def _ser_app_id(self, v: int) -> str:
         return _serialize_application_id(v)
+
+
+class DonationAnalyticsSlot(BaseModel): # кількість записів на кожен слот для гістограми
+    model_config = ConfigDict(populate_by_name=True)
+    slot_index: int = Field(serialization_alias="slotIndex")
+    time_label: str = Field(serialization_alias="timeLabel")
+    registered_count: int = Field(serialization_alias="registeredCount")
+
+
+class DonationAnalyticsResponse(BaseModel): # кількість записів на кожен слот + загальна кількість для гістограми
+    model_config = ConfigDict(populate_by_name=True)
+    location_id: str = Field(serialization_alias="locationId")
+    application_day: str = Field(serialization_alias="applicationDay")
+    total_registered: int = Field(serialization_alias="totalRegistered")
+    slots: List[DonationAnalyticsSlot]
+    selected_slot_index: Optional[int] = Field(
+        default=None, serialization_alias="selectedSlotIndex"
+    )
+    registered_for_selected_slot: Optional[int] = Field(
+        default=None, serialization_alias="registeredForSelectedSlot"
+    )
