@@ -6,6 +6,7 @@ from src.domain.constants import (
     DAILY_CAPACITY,
     NUM_SLOTS,
     LOCATIONS,
+    SLOT_TIME_LABELS
 )
 from src.domain.booking_rules import get_day_availability_reason
 
@@ -51,7 +52,12 @@ class CreateApplicationUseCase:
             raise ValueError(
                 f"location_id must be one of: {', '.join(LOCATIONS)}"
             )
-
+        if not application_time:
+            raise ValueError("Either application_time must be provided")
+        if application_time not in SLOT_TIME_LABELS:
+            raise ValueError(
+                f"application_time must be one of: {', '.join(SLOT_TIME_LABELS)}"
+            )
         date_only = _application_day_to_date(application_day)
 
         reason = get_day_availability_reason(date_only)
