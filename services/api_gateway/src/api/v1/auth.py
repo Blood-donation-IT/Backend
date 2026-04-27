@@ -184,11 +184,11 @@ async def google_oauth_sign_in(
     oauth_client: OAuthGrpcClient = Depends(get_oauth_grpc_client),
 ):
     try:
-        raw_id_token = str(body.idToken or "").strip()
+        raw_id_token = str(body.id_token or "").strip()
         if raw_id_token.lower().startswith("bearer "):
             raw_id_token = raw_id_token[7:].strip()
         if not raw_id_token:
-            raise HTTPException(status_code=400, detail="idToken is required")
+            raise HTTPException(status_code=400, detail="id_token is required")
 
         result = await oauth_client.google_sign_in(
             id_token=raw_id_token,

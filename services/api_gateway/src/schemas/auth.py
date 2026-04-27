@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import AliasChoices, BaseModel, EmailStr, Field, model_validator
+from pydantic import BaseModel, EmailStr, Field, model_validator
 
 
 class RegisterRequest(BaseModel):
@@ -23,10 +23,7 @@ class GoogleLoginRequest(BaseModel):
 
 
 class GoogleOAuthRequest(BaseModel):
-    idToken: str = Field(
-        ...,
-        validation_alias=AliasChoices("idToken", "IdToken", "id_token"),
-    )
+    id_token: str
     email: Optional[EmailStr] = None
     name: Optional[str] = None
     avatar: Optional[str] = None
