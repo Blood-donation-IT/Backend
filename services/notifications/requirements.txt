@@ -3,7 +3,7 @@ asyncpg==0.30.0
 dependency-injector==4.48.2
 grpcio>=1.76.0
 grpcio-tools>=1.76.0
-protobuf==6.32.1
+protobuf==6.33.5
 setuptools==80.9.0
 snowflake-id==1.0.2
 SQLAlchemy==2.0.43
