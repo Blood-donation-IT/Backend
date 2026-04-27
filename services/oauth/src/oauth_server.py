@@ -1,5 +1,6 @@
 import hashlib
 import os
+from typing import Any, Tuple
 
 import grpc
 from google.auth.transport.requests import Request
@@ -8,6 +9,12 @@ from google.oauth2 import id_token
 from contracts.authorization import authorization_pb2, authorization_pb2_grpc
 from contracts.oauth import oauth_pb2, oauth_pb2_grpc
 from contracts.user import user_profile_pb2, user_profile_pb2_grpc
+from src.firebase_init import try_initialize_firebase
+
+try:
+    from firebase_admin import auth as firebase_auth
+except ImportError: 
+    firebase_auth = None  
 
 
 class OAuthService(oauth_pb2_grpc.OAuthServiceServicer):
@@ -20,17 +27,43 @@ class OAuthService(oauth_pb2_grpc.OAuthServiceServicer):
             f"{os.getenv('USER_SERVICE_HOST', 'user-profile')}:"
             f"{int(os.getenv('USER_SERVICE_PORT', '50051'))}"
         )
-        self.google_client_id = os.getenv("GOOGLE_CLIENT_ID").strip()
+        self._firebase_enabled = try_initialize_firebase() and firebase_auth is not None
+        self.google_client_id = (os.getenv("GOOGLE_CLIENT_ID") or "").strip()
         self.password_pepper = os.getenv("OAUTH_PASSWORD")
         if not self.password_pepper:
             raise ValueError("OAUTH_PASSWORD environment variable is not set")
+        if not self._firebase_enabled and not self.google_client_id:
+            pass
 
-    def _resolve_google_profile(self, request: oauth_pb2.GoogleSignInRequest) -> tuple[str, str, str]:
-        payload = id_token.verify_oauth2_token(
-            request.id_token,
-            Request(),
-            self.google_client_id or None,
-        )
+    @staticmethod
+    def _profile_from_firebase_claims(
+        claims: dict[str, Any],
+        request: oauth_pb2.GoogleSignInRequest,
+    ) -> Tuple[str, str, str]:
+        email_raw = claims.get("email") or request.email or ""
+        email = str(email_raw).strip().lower()
+        verified = claims.get("email_verified")
+        if verified is None:
+            verified = True
+        if not email:
+            raise ValueError(
+                "Firebase token has no email claim. Use Google provider or send email"
+            )
+        if not verified:
+            raise ValueError("Google account email is missing or not verified")
+        name = (
+            claims.get("name") or claims.get("display_name") or request.name or ""
+        ).strip()
+        avatar_url = (
+            claims.get("picture") or request.avatar_url or ""
+        ).strip()
+        return email, name, avatar_url
+
+    @staticmethod
+    def _profile_from_google_oauth_payload(
+        payload: dict[str, Any],
+        request: oauth_pb2.GoogleSignInRequest,
+    ) -> Tuple[str, str, str]:
         email_verified = payload.get("email_verified", False)
         email = (payload.get("email") or request.email).strip().lower()
         if not email or not email_verified:
@@ -38,6 +71,43 @@ class OAuthService(oauth_pb2_grpc.OAuthServiceServicer):
         name = (payload.get("name") or request.name or "").strip()
         avatar_url = (payload.get("picture") or request.avatar_url or "").strip()
         return email, name, avatar_url
+
+    def _resolve_google_profile(
+        self, request: oauth_pb2.GoogleSignInRequest
+    ) -> Tuple[str, str, str]:
+        token = (request.id_token or "").strip()
+        if not token:
+            raise ValueError("id_token is empty")
+
+        errors: list[str] = []
+
+        if self._firebase_enabled and firebase_auth is not None:
+            try:
+                claims = firebase_auth.verify_id_token(token)
+                return self._profile_from_firebase_claims(claims, request)
+            except Exception as e:  
+                errors.append(f"Firebase: {e!s}")
+
+        if self.google_client_id:
+            try:
+                payload = id_token.verify_oauth2_token(
+                    token,
+                    Request(),
+                    self.google_client_id,
+                )
+                return self._profile_from_google_oauth_payload(payload, request)
+            except Exception as e:
+                errors.append(f"Google OAuth: {e!s}")
+
+        hint = (
+            "Configure Firebase Auth"
+        )
+        if errors:
+            raise ValueError("; ".join(errors) + f". {hint}")
+        raise ValueError(
+            "No token verifier configured "
+            f"or token. {hint}"
+        )
 
     def _oauth_password(self, email: str) -> str:
         digest = hashlib.sha256(f"{email}:{self.password_pepper}".encode("utf-8")).hexdigest()
