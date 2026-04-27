@@ -1,6 +1,6 @@
 from typing import Optional, List
 from datetime import datetime
-from pydantic import AliasChoices, BaseModel, ConfigDict, Field, field_serializer
+from pydantic import BaseModel, ConfigDict, Field, field_serializer
 
 
 def _serialize_application_id(v: int) -> str:
@@ -11,12 +11,8 @@ class CreateApplicationRequest(BaseModel):
     blood_type: str = Field(..., description="Група крові")
     application_day: datetime = Field(..., description="День запису на донацію")
     application_time: Optional[datetime] = Field(None, description="Час запису на донацію")
-    slot_index: int = Field(..., ge=0, le=9, description="Слот часу")
-    location_id: str = Field(
-        ...,
-        description="ID локації",
-        validation_alias=AliasChoices("location_id", "locationId"),
-    )
+    slot_index: int = Field(..., ge=0, le=10, description="Слот часу ")
+    location_id: str = Field(..., description="ID локації")
     status: Optional[str] = Field("pending", description="Статус заявки")
 
 

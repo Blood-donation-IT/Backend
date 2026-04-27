@@ -42,22 +42,24 @@ def _map_grpc_error(e: grpc.RpcError) -> HTTPException:
     return HTTPException(status_code=502, detail=detail)
 
 
+async def _slots_for_day_location(
+    client: ApplicationGrpcClient,
+    application_day: date,
+    location_id: str,
+) -> dict:
+    date_dt = datetime.combine(application_day, datetime.min.time())
+    return await client.get_available_slots(date_dt, location_id)
+
+
 @router.get("/donations/available_slots", response_model=GetAvailableSlotsResponse)
 async def get_available_slots(
     _user_id: Annotated[int, Depends(get_current_user_id)],
-    date: date,
-    location_id: str | None = Query(None),
-    location_id_camel: str | None = Query(None, alias="locationId"),
+    application_day: date,
+    location_id: str,
     client: ApplicationGrpcClient = Depends(get_application_grpc_client),
 ):
-    selected_location_id = location_id or location_id_camel
-    if not selected_location_id:
-        raise HTTPException(
-            status_code=400, detail="location_id (or locationId) is required"
-        )
     try:
-        date_dt = datetime.combine(date, datetime.min.time())
-        result = await client.get_available_slots(date_dt, selected_location_id)
+        result = await _slots_for_day_location(client, application_day, location_id)
         return GetAvailableSlotsResponse(**result)
     except grpc.RpcError as e:
         raise _map_grpc_error(e) from e
@@ -65,33 +67,16 @@ async def get_available_slots(
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.get("/donations/analytics", response_model=DonationAnalyticsResponse) # аналітика записів на обрану локацію та день 
+@router.get("/donations/analytics", response_model=DonationAnalyticsResponse)
 async def get_donations_analytics(
     _user_id: Annotated[int, Depends(get_current_user_id)],
-    application_day: Optional[date] = Query(None, alias="applicationDay"),
-    application_day_snake: Optional[date] = Query(None, alias="application_day"),
-    location_id: Optional[str] = Query(None),
-    location_id_camel: Optional[str] = Query(None, alias="locationId"),
+    application_day: date,
+    location_id: str,
     slot_index: Optional[int] = Query(None, ge=0, le=10),
-    slot_index_camel: Optional[int] = Query(
-        None, ge=0, le=10, alias="slotIndex"
-    ),
     client: ApplicationGrpcClient = Depends(get_application_grpc_client),
 ):
-    day = application_day or application_day_snake
-    if not day:
-        raise HTTPException(
-            status_code=400,
-            detail="application_day is required",
-        )
-    selected_location_id = location_id or location_id_camel
-    if not selected_location_id:
-        raise HTTPException(
-            status_code=400, detail="location_id is required",
-        )
     try:
-        date_dt = datetime.combine(day, datetime.min.time())
-        data = await client.get_available_slots(date_dt, selected_location_id)
+        data = await _slots_for_day_location(client, application_day, location_id)
         slots_out = [
             DonationAnalyticsSlot(
                 slot_index=s["slot_index"],
@@ -101,25 +86,22 @@ async def get_donations_analytics(
             for s in data["slots"]
         ]
         by_idx = {s.slot_index: s.registered_count for s in slots_out}
-        selected_slot = (
-            slot_index if slot_index is not None else slot_index_camel
-        )
         registered_selected = None
-        if selected_slot is not None:
-            if selected_slot not in by_idx:
+        if slot_index is not None:
+            if slot_index not in by_idx:
                 hi = max(by_idx) if by_idx else 0
                 raise HTTPException(
                     status_code=400,
                     detail=f"slot_index must be between 0 and {hi}",
                 )
-            registered_selected = by_idx[selected_slot]
+            registered_selected = by_idx[slot_index]
 
         return DonationAnalyticsResponse(
-            location_id=selected_location_id,
-            application_day=day.isoformat(),
+            location_id=location_id,
+            application_day=application_day.isoformat(),
             total_registered=data["daily_booked"],
             slots=slots_out,
-            selected_slot_index=selected_slot,
+            selected_slot_index=slot_index,
             registered_for_selected_slot=registered_selected,
         )
     except grpc.RpcError as e:
