@@ -56,7 +56,7 @@ class ApplicationResponse(BaseModel):
     def _ser_application_time(self, v: Optional[datetime]) -> Optional[str]:
         if v is None:
             return None
-        return v.strftime("H%:%M")
+        return v.strftime("%H:%M")
 
     @field_serializer("application_day")
     def _ser_application_day(self, v: Optional[datetime]) -> Optional[str]:
