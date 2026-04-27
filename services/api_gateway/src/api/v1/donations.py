@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from typing import Annotated
+from typing import Annotated, Optional
 
 import grpc
 from fastapi import APIRouter, HTTPException, Depends, Query
@@ -12,6 +12,8 @@ from src.schemas.donations import (
     CancelApplicationResponse,
     GetAvailableSlotsResponse,
     GetCalendarAvailabilityResponse,
+    DonationAnalyticsResponse,
+    DonationAnalyticsSlot,
 )
 from src.infrastructure.grpc.application_client import ApplicationGrpcClient
 from src.api.dependencies import get_application_grpc_client
@@ -59,6 +61,71 @@ async def get_available_slots(
         return GetAvailableSlotsResponse(**result)
     except grpc.RpcError as e:
         raise _map_grpc_error(e) from e
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.get("/donations/analytics", response_model=DonationAnalyticsResponse) # аналітика записів на обрану локацію та день 
+async def get_donations_analytics(
+    _user_id: Annotated[int, Depends(get_current_user_id)],
+    application_day: Optional[date] = Query(None, alias="applicationDay"),
+    application_day_snake: Optional[date] = Query(None, alias="application_day"),
+    location_id: Optional[str] = Query(None),
+    location_id_camel: Optional[str] = Query(None, alias="locationId"),
+    slot_index: Optional[int] = Query(None, ge=0, le=10),
+    slot_index_camel: Optional[int] = Query(
+        None, ge=0, le=10, alias="slotIndex"
+    ),
+    client: ApplicationGrpcClient = Depends(get_application_grpc_client),
+):
+    day = application_day or application_day_snake
+    if not day:
+        raise HTTPException(
+            status_code=400,
+            detail="application_day is required",
+        )
+    selected_location_id = location_id or location_id_camel
+    if not selected_location_id:
+        raise HTTPException(
+            status_code=400, detail="location_id is required",
+        )
+    try:
+        date_dt = datetime.combine(day, datetime.min.time())
+        data = await client.get_available_slots(date_dt, selected_location_id)
+        slots_out = [
+            DonationAnalyticsSlot(
+                slot_index=s["slot_index"],
+                time_label=s["time_label"],
+                registered_count=s["booked_count"],
+            )
+            for s in data["slots"]
+        ]
+        by_idx = {s.slot_index: s.registered_count for s in slots_out}
+        selected_slot = (
+            slot_index if slot_index is not None else slot_index_camel
+        )
+        registered_selected = None
+        if selected_slot is not None:
+            if selected_slot not in by_idx:
+                hi = max(by_idx) if by_idx else 0
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"slot_index must be between 0 and {hi}",
+                )
+            registered_selected = by_idx[selected_slot]
+
+        return DonationAnalyticsResponse(
+            location_id=selected_location_id,
+            application_day=day.isoformat(),
+            total_registered=data["daily_booked"],
+            slots=slots_out,
+            selected_slot_index=selected_slot,
+            registered_for_selected_slot=registered_selected,
+        )
+    except grpc.RpcError as e:
+        raise _map_grpc_error(e) from e
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
