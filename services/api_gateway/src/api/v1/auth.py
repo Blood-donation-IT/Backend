@@ -64,7 +64,7 @@ async def register(
             raise
         except Exception as profile_error:
             error_msg = str(profile_error)
-            if "avatar_url" in error_msg or "UndefinedColumn" in error_msg:
+            if "avatar" in error_msg or "UndefinedColumn" in error_msg:
                 raise HTTPException(status_code=503, detail="User profile DB is being updated. Restart user-profile service and retry")
             if "already exists" in error_msg.lower() or "duplicate" in error_msg.lower() or "ALREADY_EXISTS" in error_msg:
                 try:
@@ -194,7 +194,7 @@ async def google_oauth_sign_in(
             id_token=raw_id_token,
             email=str(body.email or ""),
             name=str(body.name or ""),
-            avatar_url=str(body.avatar or ""),
+            avatar=str(body.avatar or ""),
         )
         if not result.get("success"):
             raise HTTPException(status_code=400, detail=result.get("message", "OAuth sign-in failed"))
@@ -205,7 +205,7 @@ async def google_oauth_sign_in(
             "user_id": result["user_id"],
             "email": result["email"],
             "name": result["name"] or "",
-            "avatar": result.get("avatar_url") or None,
+            "avatar": result.get("avatar") or None,
             "is_new_user": result.get("is_new_user", False),
         }
     except grpc.RpcError as e:

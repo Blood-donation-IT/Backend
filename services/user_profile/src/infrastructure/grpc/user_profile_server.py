@@ -38,7 +38,7 @@ def _user_to_proto(user: User, ts: Timestamp) -> "user_profile_pb2.UserProfile":
         updated_at=ts.FromDatetime(user.updated_at) if user.updated_at else None,
         is_active=user.is_active,
         created_at=ts.FromDatetime(user.created_at) if user.created_at else None,
-        avatar_url=getattr(user, "avatar_url", None) or "",
+        avatar=getattr(user, "avatar", None) or "",
         lives_saved_count=lives,
         donor_status=getattr(user, "donor_status", None) or "",
         has_donor_book=getattr(user, "has_donor_book", False),
@@ -107,12 +107,12 @@ class UserProfileService(user_profile_pb2_grpc.UserProfileServiceServicer):
                 return user_profile_pb2.UpdateProfileResponse(success=False, message="user_id is required")
             name = request.name if request.name else None
             blood_type = request.blood_type if request.blood_type else None
-            avatar_url = request.avatar_url if request.avatar_url else None
+            avatar = request.avatar if request.avatar else None
             await self.update_user_use_case.execute(
                 user_id=request.user_id,
                 name=name,
                 blood_type=blood_type,
-                avatar_url=avatar_url,
+                avatar=avatar,
             )
             return user_profile_pb2.UpdateProfileResponse(success=True, message="Profile updated")
         except ValueError as e:

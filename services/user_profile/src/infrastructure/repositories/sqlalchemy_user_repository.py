@@ -60,7 +60,7 @@ class SQlAlchemyUserRepository(IUserRepository):
             orm_user.roles = user.roles or ["donor"]
             if user.password_hash is not None:
                 orm_user.password_hash = user.password_hash
-            orm_user.avatar_url = getattr(user, "avatar_url", None)
+            orm_user.avatar = getattr(user, "avatar", None)
             orm_user.lives_saved_count = getattr(user, "lives_saved_count", 0) or 0
             orm_user.donor_status = getattr(user, "donor_status", None)
             orm_user.has_donor_book = getattr(user, "has_donor_book", False) or False

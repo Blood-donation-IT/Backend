@@ -84,7 +84,7 @@ message GetProfileResponse {
   string name = 2;
   string email = 3;
   string phone = 4;
-  string avatar_url = 5;
+  string avatar = 5;
   bool is_verified = 6;
   google.protobuf.Timestamp registered_at = 7;
   UserRole role = 8;
@@ -94,7 +94,7 @@ message UpdateProfileRequest {
   int64 user_id = 1;
   string name = 2;
   string blood_type = 3;
-  string avatar_url = 4;
+  string avatar = 4;
 }
 
 message UpdateProfileResponse {
@@ -115,7 +115,7 @@ message UserProfile {
   bool is_banned = 10;
   google.protobuf.Timestamp created_at = 11;
   google.protobuf.Timestamp updated_at = 12;
-  string avatar_url = 13;
+  string avatar = 13;
   string phone = 14;
   int32 lives_saved_count = 15;
   string donor_status = 16;

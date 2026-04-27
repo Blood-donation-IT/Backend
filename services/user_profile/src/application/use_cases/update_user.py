@@ -12,7 +12,7 @@ class UpdateUserUseCase:
         user_id: int,
         name: Optional[str] = None,
         blood_type: Optional[str] = None,
-        avatar_url: Optional[str] = None,
+        avatar: Optional[str] = None,
     ) -> User:
         user = await self.repository.get_user_by_id(user_id)
         if not user:
@@ -21,7 +21,7 @@ class UpdateUserUseCase:
             user.name = name
         if blood_type is not None:
             user.blood_type = blood_type
-        if avatar_url is not None:
-            user.avatar_url = avatar_url
+        if avatar is not None:
+            user.avatar = avatar
         await self.repository.update(user)
         return user

@@ -54,10 +54,10 @@ class OAuthService(oauth_pb2_grpc.OAuthServiceServicer):
         name = (
             claims.get("name") or claims.get("display_name") or request.name or ""
         ).strip()
-        avatar_url = (
-            claims.get("picture") or request.avatar_url or ""
+        avatar = (
+            claims.get("picture") or request.avatar or ""
         ).strip()
-        return email, name, avatar_url
+        return email, name, avatar
 
     @staticmethod
     def _profile_from_google_oauth_payload(
@@ -69,8 +69,8 @@ class OAuthService(oauth_pb2_grpc.OAuthServiceServicer):
         if not email or not email_verified:
             raise ValueError("Google account email is missing or not verified")
         name = (payload.get("name") or request.name or "").strip()
-        avatar_url = (payload.get("picture") or request.avatar_url or "").strip()
-        return email, name, avatar_url
+        avatar = (payload.get("picture") or request.avatar or "").strip()
+        return email, name, avatar
 
     def _resolve_google_profile(
         self, request: oauth_pb2.GoogleSignInRequest
@@ -134,7 +134,7 @@ class OAuthService(oauth_pb2_grpc.OAuthServiceServicer):
                 raise RuntimeError(login_resp.message or "OAuth login failed")
             return int(login_resp.user_id), login_resp.access_token, login_resp.refresh_token, is_new_user
 
-    async def _sync_profile(self, user_id: int, email: str, name: str, avatar_url: str) -> None:
+    async def _sync_profile(self, user_id: int, email: str, name: str, avatar: str) -> None:
         async with grpc.aio.insecure_channel(self.user_target) as channel:
             stub = user_profile_pb2_grpc.UserProfileServiceStub(channel)
             profile_name = name or email.split("@")[0]
@@ -157,7 +157,7 @@ class OAuthService(oauth_pb2_grpc.OAuthServiceServicer):
                     user_profile_pb2.UpdateProfileRequest(
                         user_id=user_id,
                         name=profile_name,
-                        avatar_url=avatar_url,
+                        avatar=avatar,
                     )
                 )
             except grpc.RpcError:
@@ -167,21 +167,21 @@ class OAuthService(oauth_pb2_grpc.OAuthServiceServicer):
         self, request: oauth_pb2.GoogleSignInRequest, context: grpc.aio.ServicerContext
     ) -> oauth_pb2.GoogleSignInResponse:
         try:
-            email, name, avatar_url = self._resolve_google_profile(request)
+            email, name, avatar = self._resolve_google_profile(request)
             password = self._oauth_password(email)
             user_id, access_token, refresh_token, is_new_user = await self._register_or_login(
                 email=email,
                 name=name,
                 password=password,
             )
-            await self._sync_profile(user_id, email, name, avatar_url)
+            await self._sync_profile(user_id, email, name, avatar)
             return oauth_pb2.GoogleSignInResponse(
                 success=True,
                 message="OAuth login successful",
                 user_id=user_id,
                 email=email,
                 name=name,
-                avatar_url=avatar_url,
+                avatar=avatar,
                 access_token=access_token,
                 refresh_token=refresh_token,
                 is_new_user=is_new_user,

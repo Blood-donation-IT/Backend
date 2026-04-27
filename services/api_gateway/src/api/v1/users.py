@@ -40,7 +40,7 @@ async def edit_profile(
             user_id=user_id,
             name=body.name,
             blood_type=body.blood_type,
-            avatar_url=body.avatar,
+            avatar=body.avatar,
         )
         return profile
     except Exception as e:

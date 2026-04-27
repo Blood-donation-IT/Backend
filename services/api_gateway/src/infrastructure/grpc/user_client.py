@@ -82,7 +82,7 @@ class UserGrpcClient:
         user_id: int,
         name: Optional[str] = None,
         blood_type: Optional[str] = None,
-        avatar_url: Optional[str] = None,
+        avatar: Optional[str] = None,
     ) -> UserProfileResponse:
         async with grpc.aio.insecure_channel(self.target) as channel:
             stub = user_profile_pb2_grpc.UserProfileServiceStub(channel)
@@ -91,8 +91,8 @@ class UserGrpcClient:
                 request.name = name
             if blood_type is not None:
                 request.blood_type = blood_type
-            if avatar_url is not None:
-                request.avatar_url = avatar_url
+            if avatar is not None:
+                request.avatar = avatar
             try:
                 response = await stub.UpdateProfile(request)
                 if not response.success:
@@ -176,7 +176,7 @@ class UserGrpcClient:
             name=name,
             email=proto_user.email or "",
             phone=getattr(proto_user, "phone", None) or None,
-            avatar=getattr(proto_user, "avatar_url", None) or None,
+            avatar=getattr(proto_user, "avatar", None) or None,
             last_donation=last_donation_date,
             total_donations=proto_user.total_donations,
             blood_type=proto_user.blood_type or "N/A",

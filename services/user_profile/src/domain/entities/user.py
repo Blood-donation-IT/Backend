@@ -16,7 +16,7 @@ class User:
                  created_at: Optional[datetime.datetime] = None,
                  updated_at: Optional[datetime.datetime] = None,
                  password_hash: Optional[str] = None,
-                 avatar_url: Optional[str] = None,
+                 avatar: Optional[str] = None,
                  lives_saved_count: int = 0,
                  donor_status: Optional[str] = None,
                  has_donor_book: bool = False,
@@ -28,7 +28,7 @@ class User:
         self.email: str = email
         self.phone: Optional[str] = phone
         self.blood_type: Optional[str] = blood_type
-        self.avatar_url: Optional[str] = avatar_url
+        self.avatar: Optional[str] = avatar
         self.is_verified: bool = is_verified
         self.total_donations: int = total_donations
         self.last_donation_at: Optional[datetime.datetime] = last_donation_at

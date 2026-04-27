@@ -24,7 +24,7 @@ class CreateUserUseCase:
                 password_hash: Optional[str] = None,
                 updated_at: Optional[datetime.datetime] = None,
                 user_id: Optional[int] = None,
-                avatar_url: Optional[str] = None)->User:
+                avatar: Optional[str] = None)->User:
         
         if user_id is not None and user_id > 0:
             existing_by_id = await self.user_repository.get_user_by_id(user_id)
@@ -55,7 +55,7 @@ class CreateUserUseCase:
             created_at=created_at,
             updated_at=updated_at,
             password_hash=password_hash if password_hash is not None else "",
-            avatar_url=avatar_url,
+            avatar=avatar,
         )
         await self.user_repository.save(user)
         return user

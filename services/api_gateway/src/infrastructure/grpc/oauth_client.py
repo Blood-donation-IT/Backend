@@ -8,7 +8,7 @@ class OAuthGrpcClient:
         self.target = f"{host}:{port}"
 
     async def google_sign_in(
-        self, id_token: str, email: str = "", name: str = "", avatar_url: str = ""
+        self, id_token: str, email: str = "", name: str = "", avatar: str = ""
     ) -> dict:
         async with grpc.aio.insecure_channel(self.target) as channel:
             stub = oauth_pb2_grpc.OAuthServiceStub(channel)
@@ -16,7 +16,7 @@ class OAuthGrpcClient:
                 id_token=id_token,
                 email=email,
                 name=name,
-                avatar_url=avatar_url,
+                avatar=avatar,
             )
             response = await stub.GoogleSignIn(request)
             return {
@@ -25,7 +25,7 @@ class OAuthGrpcClient:
                 "user_id": response.user_id,
                 "email": response.email,
                 "name": response.name,
-                "avatar_url": response.avatar_url,
+                "avatar": response.avatar,
                 "access_token": response.access_token,
                 "refresh_token": response.refresh_token,
                 "is_new_user": response.is_new_user,

@@ -10,7 +10,7 @@ message GoogleSignInRequest {
   string id_token = 1;
   string email = 2;
   string name = 3;
-  string avatar_url = 4;
+  string avatar = 4;
 }
 
 message GoogleSignInResponse {
@@ -19,7 +19,7 @@ message GoogleSignInResponse {
   int64 user_id = 3;
   string email = 4;
   string name = 5;
-  string avatar_url = 6;
+  string avatar = 6;
   string access_token = 7;
   string refresh_token = 8;
   bool is_new_user = 9;
