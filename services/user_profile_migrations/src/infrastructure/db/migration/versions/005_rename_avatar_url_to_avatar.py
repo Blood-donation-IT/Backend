@@ -1,26 +1,14 @@
-<<<<<<< HEAD
-"""rename users_.avatar_url -> avatar
-
-Revision ID: 005_avatar
-Revises: 004_health_test
-=======
 """rename users_.avatar_url to avatar
 
 Revision ID: 005_avatar
 Revises: 004_health_test
 Create Date: 2026-04-28
->>>>>>> feature/oauth-fix
 """
 
 from typing import Sequence, Union
 
-<<<<<<< HEAD
 import sqlalchemy as sa
 from alembic import op
-=======
-from alembic import op
-import sqlalchemy as sa
->>>>>>> feature/oauth-fix
 
 revision: str = "005_avatar"
 down_revision: Union[str, Sequence[str], None] = "004_health_test"
@@ -29,13 +17,6 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-<<<<<<< HEAD
-    op.execute(sa.text("ALTER TABLE users_ RENAME COLUMN avatar_url TO avatar"))
-
-
-def downgrade() -> None:
-    op.execute(sa.text("ALTER TABLE users_ RENAME COLUMN avatar TO avatar_url"))
-=======
     op.execute(
         sa.text(
             """
@@ -79,4 +60,3 @@ def downgrade() -> None:
             """
         )
     )
->>>>>>> feature/oauth-fix
