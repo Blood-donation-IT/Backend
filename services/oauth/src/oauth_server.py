@@ -9,12 +9,12 @@ from google.oauth2 import id_token
 from contracts.authorization import authorization_pb2, authorization_pb2_grpc
 from contracts.oauth import oauth_pb2, oauth_pb2_grpc
 from contracts.user import user_profile_pb2, user_profile_pb2_grpc
-from src.firebase_init import try_initialize_firebase
+from src.firebase_init import firebase_configured, try_initialize_firebase
 
 try:
     from firebase_admin import auth as firebase_auth
-except ImportError: 
-    firebase_auth = None  
+except ImportError:
+    firebase_auth = None
 
 
 class OAuthService(oauth_pb2_grpc.OAuthServiceServicer):
@@ -27,7 +27,18 @@ class OAuthService(oauth_pb2_grpc.OAuthServiceServicer):
             f"{os.getenv('USER_SERVICE_HOST', 'user-profile')}:"
             f"{int(os.getenv('USER_SERVICE_PORT', '50051'))}"
         )
-        self._firebase_enabled = try_initialize_firebase() and firebase_auth is not None
+        _firebase_json_set = bool((os.getenv("FIREBASE_SERVICE_ACCOUNT_JSON") or "").strip())
+        if _firebase_json_set and firebase_auth is None:
+            raise ValueError(
+                "FIREBASE_SERVICE_ACCOUNT_JSON is set but firebase_admin.auth is not available "
+            )
+        try_initialize_firebase()
+        if _firebase_json_set and not firebase_configured():
+            raise ValueError(
+                "FIREBASE_SERVICE_ACCOUNT_JSON is set but Firebase Admin failed to initialize "
+                "(invalid JSON, missing fields, or bad private key)"
+            )
+        self._firebase_enabled = firebase_configured() and firebase_auth is not None
         self.google_client_id = (os.getenv("GOOGLE_CLIENT_ID") or "").strip()
         self.password_pepper = os.getenv("OAUTH_PASSWORD")
         if not self.password_pepper:
